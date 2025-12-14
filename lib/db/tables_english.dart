@@ -1,0 +1,39 @@
+// 单词表
+import 'package:drift/drift.dart';
+
+class Words extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get word => text().unique()(); // 单词
+  TextColumn get definition => text().nullable()(); // 释义
+  DateTimeColumn get createdAt =>
+      dateTime().withDefault(currentDateAndTime)(); // 创建时间
+}
+
+class WordLogs extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get wordID => integer().references(Words, #id)(); // 关联单词ID
+  TextColumn get type => text().map(const LogTypeConverter())(); // 日志类型
+  DateTimeColumn get timestamp =>
+      dateTime().withDefault(currentDateAndTime)(); // 时间戳
+  TextColumn get notes => text().nullable()(); // 备注，可选
+}
+
+enum LogType { view, test, repeat }
+
+class LogTypeConverter extends TypeConverter<LogType, String> {
+  const LogTypeConverter();
+
+  @override
+  LogType fromSql(String fromDb) {
+    try {
+      return LogType.values.byName(fromDb);
+    } catch (e) {
+      throw ArgumentError('Invalid LogType index: $fromDb');
+    }
+  }
+
+  @override
+  String toSql(LogType value) {
+    return value.name;
+  }
+}
