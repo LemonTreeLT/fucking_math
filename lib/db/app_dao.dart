@@ -64,6 +64,13 @@ class WordsDao extends DatabaseAccessor<AppDatabase> with _$WordsDaoMixin {
     return (select(words)..where((w) => w.word.like('%$query%'))).get();
   }
 
+  Future<Word?> getWord(String word) {
+    return (select(words)
+          ..where((filter) => filter.word.equals(word))
+          ..limit(1))
+        .getSingleOrNull();
+  }
+
   // 更新单词
   Future<bool> updateWord(Word word) => update(words).replace(word);
 
@@ -230,7 +237,9 @@ class KnowledgeDao extends DatabaseAccessor<AppDatabase>
 // =======================================================
 // Mistakes DAO
 // =======================================================
-@DriftAccessor(tables: [mist.Mistakes, mist.MistakesTagLink, tag.Tags])
+@DriftAccessor(
+  tables: [mist.Mistakes, mist.MistakesTagLink, mist.MistakeLogs, tag.Tags],
+)
 class MistakesDao extends DatabaseAccessor<AppDatabase>
     with _$MistakesDaoMixin {
   MistakesDao(super.db);
@@ -319,6 +328,14 @@ class MistakesDao extends DatabaseAccessor<AppDatabase>
         ))
         .get();
   }
+
+  // 为错题添加日志
+  Future<int> addMistakeLog(MistakeLogsCompanion entry) =>
+      into(mistakeLogs).insert(entry);
+
+  // 获取错题的所有日志
+  Future<List<MistakeLog>> getMistakeLogs(int mistakeId) =>
+      (select(mistakeLogs)..where((l) => l.mistakeID.equals(mistakeId))).get();
 }
 
 // =======================================================

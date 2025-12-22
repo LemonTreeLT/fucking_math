@@ -36,6 +36,7 @@ part 'app_database.g.dart';
     know.KnowledgeTagLink,
     mist.Mistakes,
     mist.MistakesTagLink,
+    mist.MistakeLogs,
   ],
   daos: [TagsDao, WordsDao, KnowledgeDao, MistakesDao, PhrasesDao],
 )
@@ -43,7 +44,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1; // 在测试阶段这个值为1
+  int get schemaVersion => 1; // 在mvp之前这个值为1
 
   static LazyDatabase _openConnection() {
     return LazyDatabase(() async {

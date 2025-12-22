@@ -24,6 +24,7 @@ mixin _$MistakesDaoMixin on DatabaseAccessor<AppDatabase> {
   $MistakesTable get mistakes => attachedDatabase.mistakes;
   $TagsTable get tags => attachedDatabase.tags;
   $MistakesTagLinkTable get mistakesTagLink => attachedDatabase.mistakesTagLink;
+  $MistakeLogsTable get mistakeLogs => attachedDatabase.mistakeLogs;
 }
 mixin _$PhrasesDaoMixin on DatabaseAccessor<AppDatabase> {
   $WordsTable get words => attachedDatabase.words;

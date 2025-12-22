@@ -2793,6 +2793,15 @@ class $MistakesTable extends mist.Mistakes
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _sourceMeta = const VerificationMeta('source');
+  @override
+  late final GeneratedColumn<String> source = GeneratedColumn<String>(
+    'source',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -2814,6 +2823,7 @@ class $MistakesTable extends mist.Mistakes
     correctAnswer,
     unvifiedAnswer,
     userAnswer,
+    source,
     createdAt,
   ];
   @override
@@ -2877,6 +2887,12 @@ class $MistakesTable extends mist.Mistakes
         userAnswer.isAcceptableOrUnknown(data['user_answer']!, _userAnswerMeta),
       );
     }
+    if (data.containsKey('source')) {
+      context.handle(
+        _sourceMeta,
+        source.isAcceptableOrUnknown(data['source']!, _sourceMeta),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -2922,6 +2938,10 @@ class $MistakesTable extends mist.Mistakes
         DriftSqlType.string,
         data['${effectivePrefix}user_answer'],
       ),
+      source: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source'],
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -2946,6 +2966,7 @@ class Mistake extends DataClass implements Insertable<Mistake> {
   final String? correctAnswer;
   final String? unvifiedAnswer;
   final String? userAnswer;
+  final String? source;
   final DateTime createdAt;
   const Mistake({
     required this.id,
@@ -2955,6 +2976,7 @@ class Mistake extends DataClass implements Insertable<Mistake> {
     this.correctAnswer,
     this.unvifiedAnswer,
     this.userAnswer,
+    this.source,
     required this.createdAt,
   });
   @override
@@ -2977,6 +2999,9 @@ class Mistake extends DataClass implements Insertable<Mistake> {
     if (!nullToAbsent || userAnswer != null) {
       map['user_answer'] = Variable<String>(userAnswer);
     }
+    if (!nullToAbsent || source != null) {
+      map['source'] = Variable<String>(source);
+    }
     map['created_at'] = Variable<DateTime>(createdAt);
     return map;
   }
@@ -2996,6 +3021,9 @@ class Mistake extends DataClass implements Insertable<Mistake> {
       userAnswer: userAnswer == null && nullToAbsent
           ? const Value.absent()
           : Value(userAnswer),
+      source: source == null && nullToAbsent
+          ? const Value.absent()
+          : Value(source),
       createdAt: Value(createdAt),
     );
   }
@@ -3013,6 +3041,7 @@ class Mistake extends DataClass implements Insertable<Mistake> {
       correctAnswer: serializer.fromJson<String?>(json['correctAnswer']),
       unvifiedAnswer: serializer.fromJson<String?>(json['unvifiedAnswer']),
       userAnswer: serializer.fromJson<String?>(json['userAnswer']),
+      source: serializer.fromJson<String?>(json['source']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
   }
@@ -3027,6 +3056,7 @@ class Mistake extends DataClass implements Insertable<Mistake> {
       'correctAnswer': serializer.toJson<String?>(correctAnswer),
       'unvifiedAnswer': serializer.toJson<String?>(unvifiedAnswer),
       'userAnswer': serializer.toJson<String?>(userAnswer),
+      'source': serializer.toJson<String?>(source),
       'createdAt': serializer.toJson<DateTime>(createdAt),
     };
   }
@@ -3039,6 +3069,7 @@ class Mistake extends DataClass implements Insertable<Mistake> {
     Value<String?> correctAnswer = const Value.absent(),
     Value<String?> unvifiedAnswer = const Value.absent(),
     Value<String?> userAnswer = const Value.absent(),
+    Value<String?> source = const Value.absent(),
     DateTime? createdAt,
   }) => Mistake(
     id: id ?? this.id,
@@ -3052,6 +3083,7 @@ class Mistake extends DataClass implements Insertable<Mistake> {
         ? unvifiedAnswer.value
         : this.unvifiedAnswer,
     userAnswer: userAnswer.present ? userAnswer.value : this.userAnswer,
+    source: source.present ? source.value : this.source,
     createdAt: createdAt ?? this.createdAt,
   );
   Mistake copyWithCompanion(MistakesCompanion data) {
@@ -3073,6 +3105,7 @@ class Mistake extends DataClass implements Insertable<Mistake> {
       userAnswer: data.userAnswer.present
           ? data.userAnswer.value
           : this.userAnswer,
+      source: data.source.present ? data.source.value : this.source,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
@@ -3087,6 +3120,7 @@ class Mistake extends DataClass implements Insertable<Mistake> {
           ..write('correctAnswer: $correctAnswer, ')
           ..write('unvifiedAnswer: $unvifiedAnswer, ')
           ..write('userAnswer: $userAnswer, ')
+          ..write('source: $source, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
@@ -3101,6 +3135,7 @@ class Mistake extends DataClass implements Insertable<Mistake> {
     correctAnswer,
     unvifiedAnswer,
     userAnswer,
+    source,
     createdAt,
   );
   @override
@@ -3114,6 +3149,7 @@ class Mistake extends DataClass implements Insertable<Mistake> {
           other.correctAnswer == this.correctAnswer &&
           other.unvifiedAnswer == this.unvifiedAnswer &&
           other.userAnswer == this.userAnswer &&
+          other.source == this.source &&
           other.createdAt == this.createdAt);
 }
 
@@ -3125,6 +3161,7 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
   final Value<String?> correctAnswer;
   final Value<String?> unvifiedAnswer;
   final Value<String?> userAnswer;
+  final Value<String?> source;
   final Value<DateTime> createdAt;
   const MistakesCompanion({
     this.id = const Value.absent(),
@@ -3134,6 +3171,7 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
     this.correctAnswer = const Value.absent(),
     this.unvifiedAnswer = const Value.absent(),
     this.userAnswer = const Value.absent(),
+    this.source = const Value.absent(),
     this.createdAt = const Value.absent(),
   });
   MistakesCompanion.insert({
@@ -3144,6 +3182,7 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
     this.correctAnswer = const Value.absent(),
     this.unvifiedAnswer = const Value.absent(),
     this.userAnswer = const Value.absent(),
+    this.source = const Value.absent(),
     this.createdAt = const Value.absent(),
   }) : subject = Value(subject),
        questionHeader = Value(questionHeader),
@@ -3156,6 +3195,7 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
     Expression<String>? correctAnswer,
     Expression<String>? unvifiedAnswer,
     Expression<String>? userAnswer,
+    Expression<String>? source,
     Expression<DateTime>? createdAt,
   }) {
     return RawValuesInsertable({
@@ -3166,6 +3206,7 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
       if (correctAnswer != null) 'correct_answer': correctAnswer,
       if (unvifiedAnswer != null) 'unvified_answer': unvifiedAnswer,
       if (userAnswer != null) 'user_answer': userAnswer,
+      if (source != null) 'source': source,
       if (createdAt != null) 'created_at': createdAt,
     });
   }
@@ -3178,6 +3219,7 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
     Value<String?>? correctAnswer,
     Value<String?>? unvifiedAnswer,
     Value<String?>? userAnswer,
+    Value<String?>? source,
     Value<DateTime>? createdAt,
   }) {
     return MistakesCompanion(
@@ -3188,6 +3230,7 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
       correctAnswer: correctAnswer ?? this.correctAnswer,
       unvifiedAnswer: unvifiedAnswer ?? this.unvifiedAnswer,
       userAnswer: userAnswer ?? this.userAnswer,
+      source: source ?? this.source,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -3218,6 +3261,9 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
     if (userAnswer.present) {
       map['user_answer'] = Variable<String>(userAnswer.value);
     }
+    if (source.present) {
+      map['source'] = Variable<String>(source.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -3234,6 +3280,7 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
           ..write('correctAnswer: $correctAnswer, ')
           ..write('unvifiedAnswer: $unvifiedAnswer, ')
           ..write('userAnswer: $userAnswer, ')
+          ..write('source: $source, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
@@ -3463,6 +3510,353 @@ class MistakesTagLinkCompanion extends UpdateCompanion<MistakesTagLinkData> {
   }
 }
 
+class $MistakeLogsTable extends mist.MistakeLogs
+    with TableInfo<$MistakeLogsTable, MistakeLog> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MistakeLogsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _mistakeIDMeta = const VerificationMeta(
+    'mistakeID',
+  );
+  @override
+  late final GeneratedColumn<int> mistakeID = GeneratedColumn<int>(
+    'mistake_i_d',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES mistakes (id)',
+    ),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<mist.MistakeLogType, String>
+  type = GeneratedColumn<String>(
+    'type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  ).withConverter<mist.MistakeLogType>($MistakeLogsTable.$convertertype);
+  static const VerificationMeta _timestampMeta = const VerificationMeta(
+    'timestamp',
+  );
+  @override
+  late final GeneratedColumn<DateTime> timestamp = GeneratedColumn<DateTime>(
+    'timestamp',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, mistakeID, type, timestamp, notes];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'mistake_logs';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<MistakeLog> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('mistake_i_d')) {
+      context.handle(
+        _mistakeIDMeta,
+        mistakeID.isAcceptableOrUnknown(data['mistake_i_d']!, _mistakeIDMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_mistakeIDMeta);
+    }
+    if (data.containsKey('timestamp')) {
+      context.handle(
+        _timestampMeta,
+        timestamp.isAcceptableOrUnknown(data['timestamp']!, _timestampMeta),
+      );
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  MistakeLog map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MistakeLog(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      mistakeID: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}mistake_i_d'],
+      )!,
+      type: $MistakeLogsTable.$convertertype.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}type'],
+        )!,
+      ),
+      timestamp: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}timestamp'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+    );
+  }
+
+  @override
+  $MistakeLogsTable createAlias(String alias) {
+    return $MistakeLogsTable(attachedDatabase, alias);
+  }
+
+  static TypeConverter<mist.MistakeLogType, String> $convertertype =
+      const mist.MistakeLogTypeConverter();
+}
+
+class MistakeLog extends DataClass implements Insertable<MistakeLog> {
+  final int id;
+  final int mistakeID;
+  final mist.MistakeLogType type;
+  final DateTime timestamp;
+  final String? notes;
+  const MistakeLog({
+    required this.id,
+    required this.mistakeID,
+    required this.type,
+    required this.timestamp,
+    this.notes,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['mistake_i_d'] = Variable<int>(mistakeID);
+    {
+      map['type'] = Variable<String>(
+        $MistakeLogsTable.$convertertype.toSql(type),
+      );
+    }
+    map['timestamp'] = Variable<DateTime>(timestamp);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    return map;
+  }
+
+  MistakeLogsCompanion toCompanion(bool nullToAbsent) {
+    return MistakeLogsCompanion(
+      id: Value(id),
+      mistakeID: Value(mistakeID),
+      type: Value(type),
+      timestamp: Value(timestamp),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+    );
+  }
+
+  factory MistakeLog.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MistakeLog(
+      id: serializer.fromJson<int>(json['id']),
+      mistakeID: serializer.fromJson<int>(json['mistakeID']),
+      type: serializer.fromJson<mist.MistakeLogType>(json['type']),
+      timestamp: serializer.fromJson<DateTime>(json['timestamp']),
+      notes: serializer.fromJson<String?>(json['notes']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'mistakeID': serializer.toJson<int>(mistakeID),
+      'type': serializer.toJson<mist.MistakeLogType>(type),
+      'timestamp': serializer.toJson<DateTime>(timestamp),
+      'notes': serializer.toJson<String?>(notes),
+    };
+  }
+
+  MistakeLog copyWith({
+    int? id,
+    int? mistakeID,
+    mist.MistakeLogType? type,
+    DateTime? timestamp,
+    Value<String?> notes = const Value.absent(),
+  }) => MistakeLog(
+    id: id ?? this.id,
+    mistakeID: mistakeID ?? this.mistakeID,
+    type: type ?? this.type,
+    timestamp: timestamp ?? this.timestamp,
+    notes: notes.present ? notes.value : this.notes,
+  );
+  MistakeLog copyWithCompanion(MistakeLogsCompanion data) {
+    return MistakeLog(
+      id: data.id.present ? data.id.value : this.id,
+      mistakeID: data.mistakeID.present ? data.mistakeID.value : this.mistakeID,
+      type: data.type.present ? data.type.value : this.type,
+      timestamp: data.timestamp.present ? data.timestamp.value : this.timestamp,
+      notes: data.notes.present ? data.notes.value : this.notes,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MistakeLog(')
+          ..write('id: $id, ')
+          ..write('mistakeID: $mistakeID, ')
+          ..write('type: $type, ')
+          ..write('timestamp: $timestamp, ')
+          ..write('notes: $notes')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, mistakeID, type, timestamp, notes);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MistakeLog &&
+          other.id == this.id &&
+          other.mistakeID == this.mistakeID &&
+          other.type == this.type &&
+          other.timestamp == this.timestamp &&
+          other.notes == this.notes);
+}
+
+class MistakeLogsCompanion extends UpdateCompanion<MistakeLog> {
+  final Value<int> id;
+  final Value<int> mistakeID;
+  final Value<mist.MistakeLogType> type;
+  final Value<DateTime> timestamp;
+  final Value<String?> notes;
+  const MistakeLogsCompanion({
+    this.id = const Value.absent(),
+    this.mistakeID = const Value.absent(),
+    this.type = const Value.absent(),
+    this.timestamp = const Value.absent(),
+    this.notes = const Value.absent(),
+  });
+  MistakeLogsCompanion.insert({
+    this.id = const Value.absent(),
+    required int mistakeID,
+    required mist.MistakeLogType type,
+    this.timestamp = const Value.absent(),
+    this.notes = const Value.absent(),
+  }) : mistakeID = Value(mistakeID),
+       type = Value(type);
+  static Insertable<MistakeLog> custom({
+    Expression<int>? id,
+    Expression<int>? mistakeID,
+    Expression<String>? type,
+    Expression<DateTime>? timestamp,
+    Expression<String>? notes,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (mistakeID != null) 'mistake_i_d': mistakeID,
+      if (type != null) 'type': type,
+      if (timestamp != null) 'timestamp': timestamp,
+      if (notes != null) 'notes': notes,
+    });
+  }
+
+  MistakeLogsCompanion copyWith({
+    Value<int>? id,
+    Value<int>? mistakeID,
+    Value<mist.MistakeLogType>? type,
+    Value<DateTime>? timestamp,
+    Value<String?>? notes,
+  }) {
+    return MistakeLogsCompanion(
+      id: id ?? this.id,
+      mistakeID: mistakeID ?? this.mistakeID,
+      type: type ?? this.type,
+      timestamp: timestamp ?? this.timestamp,
+      notes: notes ?? this.notes,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (mistakeID.present) {
+      map['mistake_i_d'] = Variable<int>(mistakeID.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(
+        $MistakeLogsTable.$convertertype.toSql(type.value),
+      );
+    }
+    if (timestamp.present) {
+      map['timestamp'] = Variable<DateTime>(timestamp.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MistakeLogsCompanion(')
+          ..write('id: $id, ')
+          ..write('mistakeID: $mistakeID, ')
+          ..write('type: $type, ')
+          ..write('timestamp: $timestamp, ')
+          ..write('notes: $notes')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3482,6 +3876,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $MistakesTagLinkTable mistakesTagLink = $MistakesTagLinkTable(
     this,
   );
+  late final $MistakeLogsTable mistakeLogs = $MistakeLogsTable(this);
   late final TagsDao tagsDao = TagsDao(this as AppDatabase);
   late final WordsDao wordsDao = WordsDao(this as AppDatabase);
   late final KnowledgeDao knowledgeDao = KnowledgeDao(this as AppDatabase);
@@ -3503,6 +3898,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     knowledgeTagLink,
     mistakes,
     mistakesTagLink,
+    mistakeLogs,
   ];
 }
 
@@ -7114,6 +7510,7 @@ typedef $$MistakesTableCreateCompanionBuilder =
       Value<String?> correctAnswer,
       Value<String?> unvifiedAnswer,
       Value<String?> userAnswer,
+      Value<String?> source,
       Value<DateTime> createdAt,
     });
 typedef $$MistakesTableUpdateCompanionBuilder =
@@ -7125,6 +7522,7 @@ typedef $$MistakesTableUpdateCompanionBuilder =
       Value<String?> correctAnswer,
       Value<String?> unvifiedAnswer,
       Value<String?> userAnswer,
+      Value<String?> source,
       Value<DateTime> createdAt,
     });
 
@@ -7150,6 +7548,24 @@ final class $$MistakesTableReferences
     final cache = $_typedResult.readTableOrNull(
       _mistakesTagLinkRefsTable($_db),
     );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$MistakeLogsTable, List<MistakeLog>>
+  _mistakeLogsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.mistakeLogs,
+    aliasName: $_aliasNameGenerator(db.mistakes.id, db.mistakeLogs.mistakeID),
+  );
+
+  $$MistakeLogsTableProcessedTableManager get mistakeLogsRefs {
+    final manager = $$MistakeLogsTableTableManager(
+      $_db,
+      $_db.mistakeLogs,
+    ).filter((f) => f.mistakeID.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_mistakeLogsRefsTable($_db));
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -7201,6 +7617,11 @@ class $$MistakesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnFilters(column),
@@ -7222,6 +7643,31 @@ class $$MistakesTableFilterComposer
           }) => $$MistakesTagLinkTableFilterComposer(
             $db: $db,
             $table: $db.mistakesTagLink,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> mistakeLogsRefs(
+    Expression<bool> Function($$MistakeLogsTableFilterComposer f) f,
+  ) {
+    final $$MistakeLogsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.mistakeLogs,
+      getReferencedColumn: (t) => t.mistakeID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MistakeLogsTableFilterComposer(
+            $db: $db,
+            $table: $db.mistakeLogs,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -7276,6 +7722,11 @@ class $$MistakesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -7322,6 +7773,9 @@ class $$MistakesTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get source =>
+      $composableBuilder(column: $table.source, builder: (column) => column);
+
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
@@ -7349,6 +7803,31 @@ class $$MistakesTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> mistakeLogsRefs<T extends Object>(
+    Expression<T> Function($$MistakeLogsTableAnnotationComposer a) f,
+  ) {
+    final $$MistakeLogsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.mistakeLogs,
+      getReferencedColumn: (t) => t.mistakeID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MistakeLogsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.mistakeLogs,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$MistakesTableTableManager
@@ -7364,7 +7843,10 @@ class $$MistakesTableTableManager
           $$MistakesTableUpdateCompanionBuilder,
           (Mistake, $$MistakesTableReferences),
           Mistake,
-          PrefetchHooks Function({bool mistakesTagLinkRefs})
+          PrefetchHooks Function({
+            bool mistakesTagLinkRefs,
+            bool mistakeLogsRefs,
+          })
         > {
   $$MistakesTableTableManager(_$AppDatabase db, $MistakesTable table)
     : super(
@@ -7386,6 +7868,7 @@ class $$MistakesTableTableManager
                 Value<String?> correctAnswer = const Value.absent(),
                 Value<String?> unvifiedAnswer = const Value.absent(),
                 Value<String?> userAnswer = const Value.absent(),
+                Value<String?> source = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
               }) => MistakesCompanion(
                 id: id,
@@ -7395,6 +7878,7 @@ class $$MistakesTableTableManager
                 correctAnswer: correctAnswer,
                 unvifiedAnswer: unvifiedAnswer,
                 userAnswer: userAnswer,
+                source: source,
                 createdAt: createdAt,
               ),
           createCompanionCallback:
@@ -7406,6 +7890,7 @@ class $$MistakesTableTableManager
                 Value<String?> correctAnswer = const Value.absent(),
                 Value<String?> unvifiedAnswer = const Value.absent(),
                 Value<String?> userAnswer = const Value.absent(),
+                Value<String?> source = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
               }) => MistakesCompanion.insert(
                 id: id,
@@ -7415,6 +7900,7 @@ class $$MistakesTableTableManager
                 correctAnswer: correctAnswer,
                 unvifiedAnswer: unvifiedAnswer,
                 userAnswer: userAnswer,
+                source: source,
                 createdAt: createdAt,
               ),
           withReferenceMapper: (p0) => p0
@@ -7425,37 +7911,63 @@ class $$MistakesTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({mistakesTagLinkRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [
-                if (mistakesTagLinkRefs) db.mistakesTagLink,
-              ],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (mistakesTagLinkRefs)
-                    await $_getPrefetchedData<
-                      Mistake,
-                      $MistakesTable,
-                      MistakesTagLinkData
-                    >(
-                      currentTable: table,
-                      referencedTable: $$MistakesTableReferences
-                          ._mistakesTagLinkRefsTable(db),
-                      managerFromTypedResult: (p0) => $$MistakesTableReferences(
-                        db,
-                        table,
-                        p0,
-                      ).mistakesTagLinkRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.mistakeID == item.id),
-                      typedResults: items,
-                    ),
-                ];
+          prefetchHooksCallback:
+              ({mistakesTagLinkRefs = false, mistakeLogsRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (mistakesTagLinkRefs) db.mistakesTagLink,
+                    if (mistakeLogsRefs) db.mistakeLogs,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (mistakesTagLinkRefs)
+                        await $_getPrefetchedData<
+                          Mistake,
+                          $MistakesTable,
+                          MistakesTagLinkData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$MistakesTableReferences
+                              ._mistakesTagLinkRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$MistakesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).mistakesTagLinkRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.mistakeID == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (mistakeLogsRefs)
+                        await $_getPrefetchedData<
+                          Mistake,
+                          $MistakesTable,
+                          MistakeLog
+                        >(
+                          currentTable: table,
+                          referencedTable: $$MistakesTableReferences
+                              ._mistakeLogsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$MistakesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).mistakeLogsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.mistakeID == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -7472,7 +7984,7 @@ typedef $$MistakesTableProcessedTableManager =
       $$MistakesTableUpdateCompanionBuilder,
       (Mistake, $$MistakesTableReferences),
       Mistake,
-      PrefetchHooks Function({bool mistakesTagLinkRefs})
+      PrefetchHooks Function({bool mistakesTagLinkRefs, bool mistakeLogsRefs})
     >;
 typedef $$MistakesTagLinkTableCreateCompanionBuilder =
     MistakesTagLinkCompanion Function({
@@ -7838,6 +8350,324 @@ typedef $$MistakesTagLinkTableProcessedTableManager =
       MistakesTagLinkData,
       PrefetchHooks Function({bool mistakeID, bool tagID})
     >;
+typedef $$MistakeLogsTableCreateCompanionBuilder =
+    MistakeLogsCompanion Function({
+      Value<int> id,
+      required int mistakeID,
+      required mist.MistakeLogType type,
+      Value<DateTime> timestamp,
+      Value<String?> notes,
+    });
+typedef $$MistakeLogsTableUpdateCompanionBuilder =
+    MistakeLogsCompanion Function({
+      Value<int> id,
+      Value<int> mistakeID,
+      Value<mist.MistakeLogType> type,
+      Value<DateTime> timestamp,
+      Value<String?> notes,
+    });
+
+final class $$MistakeLogsTableReferences
+    extends BaseReferences<_$AppDatabase, $MistakeLogsTable, MistakeLog> {
+  $$MistakeLogsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $MistakesTable _mistakeIDTable(_$AppDatabase db) =>
+      db.mistakes.createAlias(
+        $_aliasNameGenerator(db.mistakeLogs.mistakeID, db.mistakes.id),
+      );
+
+  $$MistakesTableProcessedTableManager get mistakeID {
+    final $_column = $_itemColumn<int>('mistake_i_d')!;
+
+    final manager = $$MistakesTableTableManager(
+      $_db,
+      $_db.mistakes,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_mistakeIDTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$MistakeLogsTableFilterComposer
+    extends Composer<_$AppDatabase, $MistakeLogsTable> {
+  $$MistakeLogsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<
+    mist.MistakeLogType,
+    mist.MistakeLogType,
+    String
+  >
+  get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<DateTime> get timestamp => $composableBuilder(
+    column: $table.timestamp,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$MistakesTableFilterComposer get mistakeID {
+    final $$MistakesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.mistakeID,
+      referencedTable: $db.mistakes,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MistakesTableFilterComposer(
+            $db: $db,
+            $table: $db.mistakes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$MistakeLogsTableOrderingComposer
+    extends Composer<_$AppDatabase, $MistakeLogsTable> {
+  $$MistakeLogsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get timestamp => $composableBuilder(
+    column: $table.timestamp,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$MistakesTableOrderingComposer get mistakeID {
+    final $$MistakesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.mistakeID,
+      referencedTable: $db.mistakes,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MistakesTableOrderingComposer(
+            $db: $db,
+            $table: $db.mistakes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$MistakeLogsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $MistakeLogsTable> {
+  $$MistakeLogsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<mist.MistakeLogType, String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get timestamp =>
+      $composableBuilder(column: $table.timestamp, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  $$MistakesTableAnnotationComposer get mistakeID {
+    final $$MistakesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.mistakeID,
+      referencedTable: $db.mistakes,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MistakesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.mistakes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$MistakeLogsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $MistakeLogsTable,
+          MistakeLog,
+          $$MistakeLogsTableFilterComposer,
+          $$MistakeLogsTableOrderingComposer,
+          $$MistakeLogsTableAnnotationComposer,
+          $$MistakeLogsTableCreateCompanionBuilder,
+          $$MistakeLogsTableUpdateCompanionBuilder,
+          (MistakeLog, $$MistakeLogsTableReferences),
+          MistakeLog,
+          PrefetchHooks Function({bool mistakeID})
+        > {
+  $$MistakeLogsTableTableManager(_$AppDatabase db, $MistakeLogsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$MistakeLogsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$MistakeLogsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$MistakeLogsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> mistakeID = const Value.absent(),
+                Value<mist.MistakeLogType> type = const Value.absent(),
+                Value<DateTime> timestamp = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+              }) => MistakeLogsCompanion(
+                id: id,
+                mistakeID: mistakeID,
+                type: type,
+                timestamp: timestamp,
+                notes: notes,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int mistakeID,
+                required mist.MistakeLogType type,
+                Value<DateTime> timestamp = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+              }) => MistakeLogsCompanion.insert(
+                id: id,
+                mistakeID: mistakeID,
+                type: type,
+                timestamp: timestamp,
+                notes: notes,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$MistakeLogsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({mistakeID = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (mistakeID) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.mistakeID,
+                                referencedTable: $$MistakeLogsTableReferences
+                                    ._mistakeIDTable(db),
+                                referencedColumn: $$MistakeLogsTableReferences
+                                    ._mistakeIDTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$MistakeLogsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $MistakeLogsTable,
+      MistakeLog,
+      $$MistakeLogsTableFilterComposer,
+      $$MistakeLogsTableOrderingComposer,
+      $$MistakeLogsTableAnnotationComposer,
+      $$MistakeLogsTableCreateCompanionBuilder,
+      $$MistakeLogsTableUpdateCompanionBuilder,
+      (MistakeLog, $$MistakeLogsTableReferences),
+      MistakeLog,
+      PrefetchHooks Function({bool mistakeID})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -7863,4 +8693,6 @@ class $AppDatabaseManager {
       $$MistakesTableTableManager(_db, _db.mistakes);
   $$MistakesTagLinkTableTableManager get mistakesTagLink =>
       $$MistakesTagLinkTableTableManager(_db, _db.mistakesTagLink);
+  $$MistakeLogsTableTableManager get mistakeLogs =>
+      $$MistakeLogsTableTableManager(_db, _db.mistakeLogs);
 }

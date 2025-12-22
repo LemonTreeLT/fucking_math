@@ -16,10 +16,14 @@ class WordsProvider extends ChangeNotifier {
   String? get error => _error;
 
   WordsProvider(AppDatabase database)
-      : _repository = WordsRepository(WordsDao(database));
+    : _repository = WordsRepository(WordsDao(database));
 
   // --- 操作：添加单词 ---
-  Future<void> addWord(String word, {String? definition, List<int>? tags}) async {
+  Future<void> addWord(
+    String word, {
+    String? definition,
+    List<int>? tags,
+  }) async {
     _error = null;
     try {
       await _repository.addWord(word, definition: definition, tags: tags);
@@ -42,6 +46,23 @@ class WordsProvider extends ChangeNotifier {
       _words = await _repository.getAllWords();
     } catch (e) {
       _error = '加载单词失败: $e';
+      if (kDebugMode) print(_error);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // 删除单词
+  Future<void> deleteWord(int wordID) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await _repository.deleteWord(wordID);
+    } catch (e) {
+      _error = '删除单词失败: $e';
       if (kDebugMode) print(_error);
     } finally {
       _isLoading = false;

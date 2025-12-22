@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
-class English extends StatelessWidget {
-  const English({super.key});
+class EnglishLearning extends StatelessWidget{
+  const EnglishLearning({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("这个页面老子正在开发"));
+    // TODO: implement build
+    return Text('这个页面老子正在开发');
   }
 }

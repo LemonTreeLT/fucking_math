@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:fucking_math/db/app_dao.dart';
+import 'package:fucking_math/db/tables_english.dart';
 import 'package:fucking_math/utils/types.dart';
 
 import 'package:fucking_math/db/app_database.dart' as db;
@@ -8,11 +9,21 @@ class WordsRepository {
   final WordsDao _dao;
   WordsRepository(this._dao);
 
+  // 添加一个单词
   Future<void> addWord(
     String word, {
     String? definition,
     List<int>? tags,
   }) async {
+    // 查询是否已存在
+    final eword = await _dao.getWord(word);
+    if (eword != null) {
+      await _dao.addWordLog(
+        db.WordLogsCompanion.insert(wordID: eword.id, type: LogType.repeat),
+      );
+      return;
+    }
+
     // 创建单词
     int wordId = await _dao.createWord(
       db.WordsCompanion.insert(word: word, definition: Value(definition)),
@@ -27,6 +38,7 @@ class WordsRepository {
     }
   }
 
+  // 获取所有单词
   Future<List<WordWithTags>> getAllWords() async {
     final words = await _dao.getAllWords();
 
@@ -40,7 +52,7 @@ class WordsRepository {
           name: tag.tag,
           description: tag.description,
           color: tag.color,
-          subject: null
+          subject: null,
         );
       }).toList();
 
@@ -54,5 +66,22 @@ class WordsRepository {
 
     return await Future.wait(wordsFutures);
   }
-}
 
+  // 获取单词的标签
+  Future<List<Tag>> getWordTags(int wordId) async {
+    final dbTags = await _dao.getWordTags(wordId);
+    return dbTags.map((tag) {
+      return (
+        name: tag.tag,
+        description: tag.description,
+        color: tag.color,
+        subject: null,
+      );
+    }).toList();
+  }
+
+  // 删除单词
+  Future<void> deleteWord(int wordId) async {
+    await _dao.deleteWord(wordId);
+  }
+}

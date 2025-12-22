@@ -33,12 +33,31 @@ class Debug extends StatelessWidget {
 
           return Column(
             children: [
-              _buildAddWordButton(context),
+              Row(children: [_buildAddWordButton(context),_buildDeleteAllWordButton(context)]),
+
               const Divider(),
               _buildWordList(provider.words),
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildDeleteAllWordButton(BuildContext context) {
+    final provider = context.read<WordsProvider>();
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ElevatedButton(
+        onPressed: () async {
+          List<int> wordsIDs = provider.words
+              .map((word) => word.wordID)
+              .toList();
+          for (var id in wordsIDs) {
+            await provider.deleteWord(id);
+          }
+        },
+        child: const Text('删除全部单词'),
       ),
     );
   }

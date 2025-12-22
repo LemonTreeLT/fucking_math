@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:fucking_math/pages/english_editor.dart';
+import 'package:fucking_math/pages/english_learning.dart';
 import 'package:go_router/go_router.dart';
 
 import 'debug.dart';
 import 'home.dart';
-import 'english_learning.dart';
+import 'english_home.dart';
 import 'shell_screen.dart';
 
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
+final _englishNavigatorKey = GlobalKey<NavigatorState>();
+
 final GoRouter appRouter = GoRouter(
   initialLocation: '/home',
 
@@ -24,10 +28,22 @@ final GoRouter appRouter = GoRouter(
           name: "首页",
           builder: (context, state) => const Home(),
         ),
-        GoRoute(
-          path: "/english",
-          name: '英语相关',
-          builder: (context, state) => const English(),
+        ShellRoute(
+          navigatorKey: _englishNavigatorKey,
+          builder:(context, state, child) => EnglishShell(child: child),
+
+          routes: [
+            GoRoute(
+              path: '/english/editor',
+              name: '编辑器',
+              builder: (context, state) => EnglishEditor(),
+            ),
+            GoRoute(
+              path: '/english',
+              name: '学习页',
+              builder: (context, state) => const EnglishLearning(),
+            ),
+          ],
         ),
         GoRoute(
           path: "/debug",
