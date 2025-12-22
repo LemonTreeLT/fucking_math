@@ -1,0 +1,58 @@
+import 'package:drift/drift.dart';
+import 'package:fucking_math/db/app_dao.dart';
+import 'package:fucking_math/utils/types.dart';
+
+import 'package:fucking_math/db/app_database.dart' as db;
+
+class WordsRepository {
+  final WordsDao _dao;
+  WordsRepository(this._dao);
+
+  Future<void> addWord(
+    String word, {
+    String? definition,
+    List<int>? tags,
+  }) async {
+    // 创建单词
+    int wordId = await _dao.createWord(
+      db.WordsCompanion.insert(word: word, definition: Value(definition)),
+    );
+
+    // 关联标签
+    if (tags != null && tags.isNotEmpty) {
+      final tagFutures = tags.map((tagId) {
+        return _dao.addTagToWord(wordId, tagId);
+      }).toList();
+      await Future.wait(tagFutures);
+    }
+  }
+
+  Future<List<WordWithTags>> getAllWords() async {
+    final words = await _dao.getAllWords();
+
+    // 空单词库，直接返回
+    if (words.isEmpty) return [];
+
+    final List<Future<WordWithTags>> wordsFutures = words.map((word) async {
+      final List<db.Tag> dbTags = await _dao.getWordTags(word.id);
+      final List<Tag> tags = dbTags.map((tag) {
+        return (
+          name: tag.tag,
+          description: tag.description,
+          color: tag.color,
+          subject: null
+        );
+      }).toList();
+
+      return (
+        word: word.word,
+        wordID: word.id,
+        definition: word.definition,
+        tags: tags,
+      );
+    }).toList();
+
+    return await Future.wait(wordsFutures);
+  }
+}
+

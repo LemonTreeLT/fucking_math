@@ -29,3 +29,17 @@ class SubjectConverter extends TypeConverter<Subject, String> {
     return value.name;
   }
 }
+
+typedef WordWithTags = ({
+  String word,
+  int wordID,
+  List<Tag> tags,
+  String? definition,
+});
+
+typedef Tag = ({
+  String name,
+  String? description,
+  int? color,
+  Subject? subject,
+});

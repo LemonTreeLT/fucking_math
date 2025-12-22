@@ -43,7 +43,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 1; // 在测试阶段这个值为1
 
   static LazyDatabase _openConnection() {
     return LazyDatabase(() async {

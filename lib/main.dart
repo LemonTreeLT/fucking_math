@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fucking_math/db/app_database.dart';
+import 'package:fucking_math/utils/providers/english_proivder.dart';
 import 'package:provider/provider.dart';
 
 import 'pages/router.dart';
@@ -9,9 +10,18 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   final AppDatabase database = AppDatabase();
   runApp(
-    Provider(
-      create: (_) => database,
-      dispose: (_, db) => db.close(),
+    MultiProvider(
+      providers: [
+        Provider(
+          create: (_) => database,
+          dispose: (_, db) => db.close(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => WordsProvider(
+            context.read<AppDatabase>(),
+          ),
+        ),
+      ],
       child: const App(),
     ),
   );

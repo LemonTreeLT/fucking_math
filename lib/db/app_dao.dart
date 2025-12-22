@@ -5,7 +5,7 @@ import 'package:fucking_math/db/tables_english.dart' as eng;
 import 'package:fucking_math/db/tables_knowledge.dart' as know;
 import 'package:fucking_math/db/tables_mistakes.dart' as mist;
 import 'package:fucking_math/db/tables_tags.dart' as tag;
-import 'package:fucking_math/utils/types.dart';
+import 'package:fucking_math/utils/types.dart' show Subject;
 
 part 'app_dao.g.dart';
 
