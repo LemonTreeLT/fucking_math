@@ -49,14 +49,20 @@ class _AddWordFormState extends State<AddWordForm> {
       _definitionController.clear();
 
       // 显示成功提示
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('单词 "$word" 添加成功!')));
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          // ignore: use_build_context_synchronously
+          context,
+        ).showSnackBar(SnackBar(content: Text('单词 "$word" 添加成功!')));
+      }
     } catch (e) {
       // 错误信息会由 provider 内部处理和打印
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('添加失败: ${provider.error}')));
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          // ignore: use_build_context_synchronously
+          context,
+        ).showSnackBar(SnackBar(content: Text('添加失败: ${provider.error}')));
+      }
     }
   }
 
@@ -114,7 +120,7 @@ class _AddWordFormState extends State<AddWordForm> {
 
               Row(
                 spacing: 8.0,
-                
+
                 children: [
                   // --- 5. 提交按钮 ---
                   ElevatedButton.icon(

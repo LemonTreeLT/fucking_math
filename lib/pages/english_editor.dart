@@ -6,7 +6,7 @@ class EnglishEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    // TODO: implement editor UI
     return const AddWordForm();
   }
 }

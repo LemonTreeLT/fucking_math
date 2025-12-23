@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
 import 'package:fucking_math/db/app_dao.dart';
 import 'package:fucking_math/db/tables_english.dart';
 import 'package:fucking_math/utils/types.dart';
@@ -21,6 +22,20 @@ class WordsRepository {
       await _dao.addWordLog(
         db.WordLogsCompanion.insert(wordID: eword.id, type: LogType.repeat),
       );
+      // 补充tag
+      final tags = (await _dao.getWordTags(eword.id)).map((e) => e.id).toList();
+      for (var tagId in tags) {
+        try {
+          _dao.addTagToWord(eword.id, tagId);
+        } on SqliteException catch (e) {
+          if (e.message.contains("FOREIGN KEY constraint failed")) {
+            throw Exception('无法关联：标签或单词不存在。');
+          } else if (e.message.contains("UNIQUE constraint failed")) {
+            break; // 已存在该关联，跳过
+          }
+        }
+      }
+
       return;
     }
 

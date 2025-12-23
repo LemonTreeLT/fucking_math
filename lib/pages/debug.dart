@@ -33,7 +33,12 @@ class Debug extends StatelessWidget {
 
           return Column(
             children: [
-              Row(children: [_buildAddWordButton(context),_buildDeleteAllWordButton(context)]),
+              Row(
+                children: [
+                  _buildAddWordButton(context),
+                  _buildDeleteAllWordButton(context),
+                ],
+              ),
 
               const Divider(),
               _buildWordList(provider.words),
@@ -78,9 +83,12 @@ class Debug extends StatelessWidget {
                 // 假设标签ID 1, 2 存在
                 tags: [1, 2],
               );
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(const SnackBar(content: Text('尝试添加单词...')));
+
+              if (context.mounted){
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('尝试添加单词...')));
+              }
             },
             child: const Text('添加测试单词 (带标签)'),
           ),
