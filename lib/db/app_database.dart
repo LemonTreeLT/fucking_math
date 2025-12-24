@@ -31,6 +31,7 @@ part 'app_database.g.dart';
     eng.WordTagLink,
     eng.Phrases,
     eng.PhrasesTagLink,
+    eng.PhraseLogs,
     know.KnowledgeTable,
     know.KnowledgeLogTable,
     know.KnowledgeTagLink,

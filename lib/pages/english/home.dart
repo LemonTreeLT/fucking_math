@@ -12,6 +12,7 @@ class EnglishShell extends StatelessWidget {
       appBar: AppBar(
         title: Text("English Learning"),
         actions: [
+          Text('Go to:   '),
           _goToEditorPage(context),
           const SizedBox(width: 8),
           _goToLearningPage(context),
@@ -27,7 +28,7 @@ Widget _goToEditorPage(BuildContext context) {
     onPressed: () {
       context.go('/english/editor');
     },
-    child: const Text("Go to English Learning Page"),
+    child: const Text("Editor"),
   );
 }
 
@@ -36,6 +37,6 @@ Widget _goToLearningPage(BuildContext context) {
     onPressed: () {
       context.go('/english');
     },
-    child: const Text("Go to English Editor Page"),
+    child: const Text("Learning"),
   );
 }

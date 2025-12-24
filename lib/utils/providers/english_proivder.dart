@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:fucking_math/db/app_database.dart';
+import 'package:fucking_math/db/app_database.dart' as db;
 import 'package:fucking_math/db/app_dao.dart';
 import 'package:fucking_math/utils/db/english_repository.dart';
 import 'package:fucking_math/utils/types.dart';
@@ -7,26 +7,34 @@ import 'package:fucking_math/utils/types.dart';
 class WordsProvider extends ChangeNotifier {
   final WordsRepository _repository;
 
-  List<WordWithTags> _words = [];
+  List<Word> _words = [];
   bool _isLoading = false;
   String? _error;
 
-  List<WordWithTags> get words => _words;
+  List<Word> get words => _words;
   bool get isLoading => _isLoading;
   String? get error => _error;
 
-  WordsProvider(AppDatabase database)
+  WordsProvider(db.AppDatabase database)
     : _repository = WordsRepository(WordsDao(database));
 
   // --- 操作：添加单词 ---
   Future<void> addWord(
     String word, {
     String? definition,
+    String? definitionPre,
     List<int>? tags,
+    String? note,
   }) async {
     _error = null;
     try {
-      await _repository.addWord(word, definition: definition, tags: tags);
+      await _repository.saveWord(
+        word,
+        definition: definition,
+        definitionPreview: definitionPre,
+        tags: tags,
+        note: note
+      );
       // 添加成功后刷新列表
       await loadWords();
     } catch (e) {

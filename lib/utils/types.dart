@@ -30,10 +30,11 @@ class SubjectConverter extends TypeConverter<Subject, String> {
   }
 }
 
-typedef WordWithTags = ({
+typedef Word = ({
   String word,
   int wordID,
   List<Tag> tags,
+  String? definitionPreview,
   String? definition,
 });
 

@@ -98,7 +98,7 @@ class Debug extends StatelessWidget {
   }
 
   // --- 辅助方法: 单词列表 ---
-  Widget _buildWordList(List<WordWithTags> words) {
+  Widget _buildWordList(List<Word> words) {
     if (words.isEmpty) {
       return const Center(
         child: Padding(

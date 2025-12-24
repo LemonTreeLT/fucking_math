@@ -31,4 +31,5 @@ mixin _$PhrasesDaoMixin on DatabaseAccessor<AppDatabase> {
   $PhrasesTable get phrases => attachedDatabase.phrases;
   $TagsTable get tags => attachedDatabase.tags;
   $PhrasesTagLinkTable get phrasesTagLink => attachedDatabase.phrasesTagLink;
+  $PhraseLogsTable get phraseLogs => attachedDatabase.phraseLogs;
 }

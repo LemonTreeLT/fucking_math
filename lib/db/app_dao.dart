@@ -64,6 +64,7 @@ class WordsDao extends DatabaseAccessor<AppDatabase> with _$WordsDaoMixin {
     return (select(words)..where((w) => w.word.like('%$query%'))).get();
   }
 
+  // 根据单词文本获取单词
   Future<Word?> getWord(String word) {
     return (select(words)
           ..where((filter) => filter.word.equals(word))
@@ -341,13 +342,29 @@ class MistakesDao extends DatabaseAccessor<AppDatabase>
 // =======================================================
 // Phrases DAO
 // =======================================================
-@DriftAccessor(tables: [eng.Phrases, eng.PhrasesTagLink, eng.Words, tag.Tags])
+@DriftAccessor(
+  tables: [
+    eng.Phrases,
+    eng.PhrasesTagLink,
+    eng.Words,
+    tag.Tags,
+    eng.PhraseLogs,
+  ],
+)
 class PhrasesDao extends DatabaseAccessor<AppDatabase> with _$PhrasesDaoMixin {
   PhrasesDao(super.db);
 
   // 创建短语
   Future<int> createPhrase(PhrasesCompanion entry) =>
       into(phrases).insert(entry);
+
+  // 全匹配获取短语
+  Future<Phrase?> getPhrase(String phrase) {
+    return (select(phrases)
+          ..where((p) => p.phrase.equals(phrase))
+          ..limit(1))
+        .getSingleOrNull();
+  }
 
   // 获取所有短语
   Future<List<Phrase>> getAllPhrases() => select(phrases).get();
@@ -434,5 +451,24 @@ class PhrasesDao extends DatabaseAccessor<AppDatabase> with _$PhrasesDaoMixin {
     }
 
     return result;
+  }
+
+  // 添加短语日志
+  Future<int> addPhraseLog(PhraseLogsCompanion entry) =>
+      into(phraseLogs).insert(entry);
+
+  // 获取短语的所有日志
+  Future<List<PhraseLog>> getPhraseLogs(int phraseId) {
+    return (select(
+      phraseLogs,
+    )..where((l) => l.phraseID.equals(phraseId))).get();
+  }
+
+  // 获取短语的特定类型日志
+  Future<List<PhraseLog>> getPhraseLogsByType(int phraseId, eng.LogType type) {
+    return (select(
+          phraseLogs,
+        )..where((l) => l.phraseID.equals(phraseId) & l.type.equalsValue(type)))
+        .get();
   }
 }

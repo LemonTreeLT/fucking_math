@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:fucking_math/pages/english_editor.dart';
-import 'package:fucking_math/pages/english_learning.dart';
+import 'package:fucking_math/pages/english/editor.dart';
+import 'package:fucking_math/pages/english/learning.dart';
 import 'package:go_router/go_router.dart';
 
 import 'debug.dart';
 import 'home.dart';
-import 'english_home.dart';
+import 'english/home.dart';
 import 'shell_screen.dart';
 
 final _shellNavigatorKey = GlobalKey<NavigatorState>();

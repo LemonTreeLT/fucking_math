@@ -383,6 +383,18 @@ class $WordsTable extends eng.Words with TableInfo<$WordsTable, Word> {
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
   );
+  static const VerificationMeta _definitionPreviewMeta = const VerificationMeta(
+    'definitionPreview',
+  );
+  @override
+  late final GeneratedColumn<String> definitionPreview =
+      GeneratedColumn<String>(
+        'definition_preview',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _definitionMeta = const VerificationMeta(
     'definition',
   );
@@ -407,7 +419,13 @@ class $WordsTable extends eng.Words with TableInfo<$WordsTable, Word> {
     defaultValue: currentDateAndTime,
   );
   @override
-  List<GeneratedColumn> get $columns => [id, word, definition, createdAt];
+  List<GeneratedColumn> get $columns => [
+    id,
+    word,
+    definitionPreview,
+    definition,
+    createdAt,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -430,6 +448,15 @@ class $WordsTable extends eng.Words with TableInfo<$WordsTable, Word> {
       );
     } else if (isInserting) {
       context.missing(_wordMeta);
+    }
+    if (data.containsKey('definition_preview')) {
+      context.handle(
+        _definitionPreviewMeta,
+        definitionPreview.isAcceptableOrUnknown(
+          data['definition_preview']!,
+          _definitionPreviewMeta,
+        ),
+      );
     }
     if (data.containsKey('definition')) {
       context.handle(
@@ -460,6 +487,10 @@ class $WordsTable extends eng.Words with TableInfo<$WordsTable, Word> {
         DriftSqlType.string,
         data['${effectivePrefix}word'],
       )!,
+      definitionPreview: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}definition_preview'],
+      ),
       definition: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}definition'],
@@ -480,11 +511,13 @@ class $WordsTable extends eng.Words with TableInfo<$WordsTable, Word> {
 class Word extends DataClass implements Insertable<Word> {
   final int id;
   final String word;
+  final String? definitionPreview;
   final String? definition;
   final DateTime createdAt;
   const Word({
     required this.id,
     required this.word,
+    this.definitionPreview,
     this.definition,
     required this.createdAt,
   });
@@ -493,6 +526,9 @@ class Word extends DataClass implements Insertable<Word> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['word'] = Variable<String>(word);
+    if (!nullToAbsent || definitionPreview != null) {
+      map['definition_preview'] = Variable<String>(definitionPreview);
+    }
     if (!nullToAbsent || definition != null) {
       map['definition'] = Variable<String>(definition);
     }
@@ -504,6 +540,9 @@ class Word extends DataClass implements Insertable<Word> {
     return WordsCompanion(
       id: Value(id),
       word: Value(word),
+      definitionPreview: definitionPreview == null && nullToAbsent
+          ? const Value.absent()
+          : Value(definitionPreview),
       definition: definition == null && nullToAbsent
           ? const Value.absent()
           : Value(definition),
@@ -519,6 +558,9 @@ class Word extends DataClass implements Insertable<Word> {
     return Word(
       id: serializer.fromJson<int>(json['id']),
       word: serializer.fromJson<String>(json['word']),
+      definitionPreview: serializer.fromJson<String?>(
+        json['definitionPreview'],
+      ),
       definition: serializer.fromJson<String?>(json['definition']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
@@ -529,6 +571,7 @@ class Word extends DataClass implements Insertable<Word> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'word': serializer.toJson<String>(word),
+      'definitionPreview': serializer.toJson<String?>(definitionPreview),
       'definition': serializer.toJson<String?>(definition),
       'createdAt': serializer.toJson<DateTime>(createdAt),
     };
@@ -537,11 +580,15 @@ class Word extends DataClass implements Insertable<Word> {
   Word copyWith({
     int? id,
     String? word,
+    Value<String?> definitionPreview = const Value.absent(),
     Value<String?> definition = const Value.absent(),
     DateTime? createdAt,
   }) => Word(
     id: id ?? this.id,
     word: word ?? this.word,
+    definitionPreview: definitionPreview.present
+        ? definitionPreview.value
+        : this.definitionPreview,
     definition: definition.present ? definition.value : this.definition,
     createdAt: createdAt ?? this.createdAt,
   );
@@ -549,6 +596,9 @@ class Word extends DataClass implements Insertable<Word> {
     return Word(
       id: data.id.present ? data.id.value : this.id,
       word: data.word.present ? data.word.value : this.word,
+      definitionPreview: data.definitionPreview.present
+          ? data.definitionPreview.value
+          : this.definitionPreview,
       definition: data.definition.present
           ? data.definition.value
           : this.definition,
@@ -561,6 +611,7 @@ class Word extends DataClass implements Insertable<Word> {
     return (StringBuffer('Word(')
           ..write('id: $id, ')
           ..write('word: $word, ')
+          ..write('definitionPreview: $definitionPreview, ')
           ..write('definition: $definition, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
@@ -568,13 +619,15 @@ class Word extends DataClass implements Insertable<Word> {
   }
 
   @override
-  int get hashCode => Object.hash(id, word, definition, createdAt);
+  int get hashCode =>
+      Object.hash(id, word, definitionPreview, definition, createdAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Word &&
           other.id == this.id &&
           other.word == this.word &&
+          other.definitionPreview == this.definitionPreview &&
           other.definition == this.definition &&
           other.createdAt == this.createdAt);
 }
@@ -582,29 +635,34 @@ class Word extends DataClass implements Insertable<Word> {
 class WordsCompanion extends UpdateCompanion<Word> {
   final Value<int> id;
   final Value<String> word;
+  final Value<String?> definitionPreview;
   final Value<String?> definition;
   final Value<DateTime> createdAt;
   const WordsCompanion({
     this.id = const Value.absent(),
     this.word = const Value.absent(),
+    this.definitionPreview = const Value.absent(),
     this.definition = const Value.absent(),
     this.createdAt = const Value.absent(),
   });
   WordsCompanion.insert({
     this.id = const Value.absent(),
     required String word,
+    this.definitionPreview = const Value.absent(),
     this.definition = const Value.absent(),
     this.createdAt = const Value.absent(),
   }) : word = Value(word);
   static Insertable<Word> custom({
     Expression<int>? id,
     Expression<String>? word,
+    Expression<String>? definitionPreview,
     Expression<String>? definition,
     Expression<DateTime>? createdAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (word != null) 'word': word,
+      if (definitionPreview != null) 'definition_preview': definitionPreview,
       if (definition != null) 'definition': definition,
       if (createdAt != null) 'created_at': createdAt,
     });
@@ -613,12 +671,14 @@ class WordsCompanion extends UpdateCompanion<Word> {
   WordsCompanion copyWith({
     Value<int>? id,
     Value<String>? word,
+    Value<String?>? definitionPreview,
     Value<String?>? definition,
     Value<DateTime>? createdAt,
   }) {
     return WordsCompanion(
       id: id ?? this.id,
       word: word ?? this.word,
+      definitionPreview: definitionPreview ?? this.definitionPreview,
       definition: definition ?? this.definition,
       createdAt: createdAt ?? this.createdAt,
     );
@@ -632,6 +692,9 @@ class WordsCompanion extends UpdateCompanion<Word> {
     }
     if (word.present) {
       map['word'] = Variable<String>(word.value);
+    }
+    if (definitionPreview.present) {
+      map['definition_preview'] = Variable<String>(definitionPreview.value);
     }
     if (definition.present) {
       map['definition'] = Variable<String>(definition.value);
@@ -647,6 +710,7 @@ class WordsCompanion extends UpdateCompanion<Word> {
     return (StringBuffer('WordsCompanion(')
           ..write('id: $id, ')
           ..write('word: $word, ')
+          ..write('definitionPreview: $definitionPreview, ')
           ..write('definition: $definition, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
@@ -1783,6 +1847,353 @@ class PhrasesTagLinkCompanion extends UpdateCompanion<PhrasesTagLinkData> {
           ..write('phraseID: $phraseID, ')
           ..write('tagID: $tagID, ')
           ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $PhraseLogsTable extends eng.PhraseLogs
+    with TableInfo<$PhraseLogsTable, PhraseLog> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PhraseLogsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _phraseIDMeta = const VerificationMeta(
+    'phraseID',
+  );
+  @override
+  late final GeneratedColumn<int> phraseID = GeneratedColumn<int>(
+    'phrase_i_d',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES phrases (id)',
+    ),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<eng.LogType, String> type =
+      GeneratedColumn<String>(
+        'type',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<eng.LogType>($PhraseLogsTable.$convertertype);
+  static const VerificationMeta _timestampMeta = const VerificationMeta(
+    'timestamp',
+  );
+  @override
+  late final GeneratedColumn<DateTime> timestamp = GeneratedColumn<DateTime>(
+    'timestamp',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, phraseID, type, timestamp, notes];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'phrase_logs';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<PhraseLog> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('phrase_i_d')) {
+      context.handle(
+        _phraseIDMeta,
+        phraseID.isAcceptableOrUnknown(data['phrase_i_d']!, _phraseIDMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_phraseIDMeta);
+    }
+    if (data.containsKey('timestamp')) {
+      context.handle(
+        _timestampMeta,
+        timestamp.isAcceptableOrUnknown(data['timestamp']!, _timestampMeta),
+      );
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  PhraseLog map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PhraseLog(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      phraseID: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}phrase_i_d'],
+      )!,
+      type: $PhraseLogsTable.$convertertype.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}type'],
+        )!,
+      ),
+      timestamp: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}timestamp'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+    );
+  }
+
+  @override
+  $PhraseLogsTable createAlias(String alias) {
+    return $PhraseLogsTable(attachedDatabase, alias);
+  }
+
+  static TypeConverter<eng.LogType, String> $convertertype =
+      const eng.LogTypeConverter();
+}
+
+class PhraseLog extends DataClass implements Insertable<PhraseLog> {
+  final int id;
+  final int phraseID;
+  final eng.LogType type;
+  final DateTime timestamp;
+  final String? notes;
+  const PhraseLog({
+    required this.id,
+    required this.phraseID,
+    required this.type,
+    required this.timestamp,
+    this.notes,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['phrase_i_d'] = Variable<int>(phraseID);
+    {
+      map['type'] = Variable<String>(
+        $PhraseLogsTable.$convertertype.toSql(type),
+      );
+    }
+    map['timestamp'] = Variable<DateTime>(timestamp);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    return map;
+  }
+
+  PhraseLogsCompanion toCompanion(bool nullToAbsent) {
+    return PhraseLogsCompanion(
+      id: Value(id),
+      phraseID: Value(phraseID),
+      type: Value(type),
+      timestamp: Value(timestamp),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+    );
+  }
+
+  factory PhraseLog.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PhraseLog(
+      id: serializer.fromJson<int>(json['id']),
+      phraseID: serializer.fromJson<int>(json['phraseID']),
+      type: serializer.fromJson<eng.LogType>(json['type']),
+      timestamp: serializer.fromJson<DateTime>(json['timestamp']),
+      notes: serializer.fromJson<String?>(json['notes']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'phraseID': serializer.toJson<int>(phraseID),
+      'type': serializer.toJson<eng.LogType>(type),
+      'timestamp': serializer.toJson<DateTime>(timestamp),
+      'notes': serializer.toJson<String?>(notes),
+    };
+  }
+
+  PhraseLog copyWith({
+    int? id,
+    int? phraseID,
+    eng.LogType? type,
+    DateTime? timestamp,
+    Value<String?> notes = const Value.absent(),
+  }) => PhraseLog(
+    id: id ?? this.id,
+    phraseID: phraseID ?? this.phraseID,
+    type: type ?? this.type,
+    timestamp: timestamp ?? this.timestamp,
+    notes: notes.present ? notes.value : this.notes,
+  );
+  PhraseLog copyWithCompanion(PhraseLogsCompanion data) {
+    return PhraseLog(
+      id: data.id.present ? data.id.value : this.id,
+      phraseID: data.phraseID.present ? data.phraseID.value : this.phraseID,
+      type: data.type.present ? data.type.value : this.type,
+      timestamp: data.timestamp.present ? data.timestamp.value : this.timestamp,
+      notes: data.notes.present ? data.notes.value : this.notes,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PhraseLog(')
+          ..write('id: $id, ')
+          ..write('phraseID: $phraseID, ')
+          ..write('type: $type, ')
+          ..write('timestamp: $timestamp, ')
+          ..write('notes: $notes')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, phraseID, type, timestamp, notes);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PhraseLog &&
+          other.id == this.id &&
+          other.phraseID == this.phraseID &&
+          other.type == this.type &&
+          other.timestamp == this.timestamp &&
+          other.notes == this.notes);
+}
+
+class PhraseLogsCompanion extends UpdateCompanion<PhraseLog> {
+  final Value<int> id;
+  final Value<int> phraseID;
+  final Value<eng.LogType> type;
+  final Value<DateTime> timestamp;
+  final Value<String?> notes;
+  const PhraseLogsCompanion({
+    this.id = const Value.absent(),
+    this.phraseID = const Value.absent(),
+    this.type = const Value.absent(),
+    this.timestamp = const Value.absent(),
+    this.notes = const Value.absent(),
+  });
+  PhraseLogsCompanion.insert({
+    this.id = const Value.absent(),
+    required int phraseID,
+    required eng.LogType type,
+    this.timestamp = const Value.absent(),
+    this.notes = const Value.absent(),
+  }) : phraseID = Value(phraseID),
+       type = Value(type);
+  static Insertable<PhraseLog> custom({
+    Expression<int>? id,
+    Expression<int>? phraseID,
+    Expression<String>? type,
+    Expression<DateTime>? timestamp,
+    Expression<String>? notes,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (phraseID != null) 'phrase_i_d': phraseID,
+      if (type != null) 'type': type,
+      if (timestamp != null) 'timestamp': timestamp,
+      if (notes != null) 'notes': notes,
+    });
+  }
+
+  PhraseLogsCompanion copyWith({
+    Value<int>? id,
+    Value<int>? phraseID,
+    Value<eng.LogType>? type,
+    Value<DateTime>? timestamp,
+    Value<String?>? notes,
+  }) {
+    return PhraseLogsCompanion(
+      id: id ?? this.id,
+      phraseID: phraseID ?? this.phraseID,
+      type: type ?? this.type,
+      timestamp: timestamp ?? this.timestamp,
+      notes: notes ?? this.notes,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (phraseID.present) {
+      map['phrase_i_d'] = Variable<int>(phraseID.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(
+        $PhraseLogsTable.$convertertype.toSql(type.value),
+      );
+    }
+    if (timestamp.present) {
+      map['timestamp'] = Variable<DateTime>(timestamp.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PhraseLogsCompanion(')
+          ..write('id: $id, ')
+          ..write('phraseID: $phraseID, ')
+          ..write('type: $type, ')
+          ..write('timestamp: $timestamp, ')
+          ..write('notes: $notes')
           ..write(')'))
         .toString();
   }
@@ -3866,6 +4277,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $WordTagLinkTable wordTagLink = $WordTagLinkTable(this);
   late final $PhrasesTable phrases = $PhrasesTable(this);
   late final $PhrasesTagLinkTable phrasesTagLink = $PhrasesTagLinkTable(this);
+  late final $PhraseLogsTable phraseLogs = $PhraseLogsTable(this);
   late final $KnowledgeTableTable knowledgeTable = $KnowledgeTableTable(this);
   late final $KnowledgeLogTableTable knowledgeLogTable =
       $KnowledgeLogTableTable(this);
@@ -3893,6 +4305,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     wordTagLink,
     phrases,
     phrasesTagLink,
+    phraseLogs,
     knowledgeTable,
     knowledgeLogTable,
     knowledgeTagLink,
@@ -4490,6 +4903,7 @@ typedef $$WordsTableCreateCompanionBuilder =
     WordsCompanion Function({
       Value<int> id,
       required String word,
+      Value<String?> definitionPreview,
       Value<String?> definition,
       Value<DateTime> createdAt,
     });
@@ -4497,6 +4911,7 @@ typedef $$WordsTableUpdateCompanionBuilder =
     WordsCompanion Function({
       Value<int> id,
       Value<String> word,
+      Value<String?> definitionPreview,
       Value<String?> definition,
       Value<DateTime> createdAt,
     });
@@ -4577,6 +4992,11 @@ class $$WordsTableFilterComposer extends Composer<_$AppDatabase, $WordsTable> {
 
   ColumnFilters<String> get word => $composableBuilder(
     column: $table.word,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get definitionPreview => $composableBuilder(
+    column: $table.definitionPreview,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4685,6 +5105,11 @@ class $$WordsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get definitionPreview => $composableBuilder(
+    column: $table.definitionPreview,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get definition => $composableBuilder(
     column: $table.definition,
     builder: (column) => ColumnOrderings(column),
@@ -4710,6 +5135,11 @@ class $$WordsTableAnnotationComposer
 
   GeneratedColumn<String> get word =>
       $composableBuilder(column: $table.word, builder: (column) => column);
+
+  GeneratedColumn<String> get definitionPreview => $composableBuilder(
+    column: $table.definitionPreview,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get definition => $composableBuilder(
     column: $table.definition,
@@ -4829,11 +5259,13 @@ class $$WordsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> word = const Value.absent(),
+                Value<String?> definitionPreview = const Value.absent(),
                 Value<String?> definition = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
               }) => WordsCompanion(
                 id: id,
                 word: word,
+                definitionPreview: definitionPreview,
                 definition: definition,
                 createdAt: createdAt,
               ),
@@ -4841,11 +5273,13 @@ class $$WordsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required String word,
+                Value<String?> definitionPreview = const Value.absent(),
                 Value<String?> definition = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
               }) => WordsCompanion.insert(
                 id: id,
                 word: word,
+                definitionPreview: definitionPreview,
                 definition: definition,
                 createdAt: createdAt,
               ),
@@ -5665,6 +6099,24 @@ final class $$PhrasesTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$PhraseLogsTable, List<PhraseLog>>
+  _phraseLogsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.phraseLogs,
+    aliasName: $_aliasNameGenerator(db.phrases.id, db.phraseLogs.phraseID),
+  );
+
+  $$PhraseLogsTableProcessedTableManager get phraseLogsRefs {
+    final manager = $$PhraseLogsTableTableManager(
+      $_db,
+      $_db.phraseLogs,
+    ).filter((f) => f.phraseID.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_phraseLogsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$PhrasesTableFilterComposer
@@ -5735,6 +6187,31 @@ class $$PhrasesTableFilterComposer
           }) => $$PhrasesTagLinkTableFilterComposer(
             $db: $db,
             $table: $db.phrasesTagLink,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> phraseLogsRefs(
+    Expression<bool> Function($$PhraseLogsTableFilterComposer f) f,
+  ) {
+    final $$PhraseLogsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.phraseLogs,
+      getReferencedColumn: (t) => t.phraseID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PhraseLogsTableFilterComposer(
+            $db: $db,
+            $table: $db.phraseLogs,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -5868,6 +6345,31 @@ class $$PhrasesTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> phraseLogsRefs<T extends Object>(
+    Expression<T> Function($$PhraseLogsTableAnnotationComposer a) f,
+  ) {
+    final $$PhraseLogsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.phraseLogs,
+      getReferencedColumn: (t) => t.phraseID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PhraseLogsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.phraseLogs,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$PhrasesTableTableManager
@@ -5883,7 +6385,11 @@ class $$PhrasesTableTableManager
           $$PhrasesTableUpdateCompanionBuilder,
           (Phrase, $$PhrasesTableReferences),
           Phrase,
-          PrefetchHooks Function({bool wordID, bool phrasesTagLinkRefs})
+          PrefetchHooks Function({
+            bool wordID,
+            bool phrasesTagLinkRefs,
+            bool phraseLogsRefs,
+          })
         > {
   $$PhrasesTableTableManager(_$AppDatabase db, $PhrasesTable table)
     : super(
@@ -5933,11 +6439,16 @@ class $$PhrasesTableTableManager
               )
               .toList(),
           prefetchHooksCallback:
-              ({wordID = false, phrasesTagLinkRefs = false}) {
+              ({
+                wordID = false,
+                phrasesTagLinkRefs = false,
+                phraseLogsRefs = false,
+              }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (phrasesTagLinkRefs) db.phrasesTagLink,
+                    if (phraseLogsRefs) db.phraseLogs,
                   ],
                   addJoins:
                       <
@@ -5994,6 +6505,27 @@ class $$PhrasesTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (phraseLogsRefs)
+                        await $_getPrefetchedData<
+                          Phrase,
+                          $PhrasesTable,
+                          PhraseLog
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PhrasesTableReferences
+                              ._phraseLogsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PhrasesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).phraseLogsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.phraseID == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -6014,7 +6546,11 @@ typedef $$PhrasesTableProcessedTableManager =
       $$PhrasesTableUpdateCompanionBuilder,
       (Phrase, $$PhrasesTableReferences),
       Phrase,
-      PrefetchHooks Function({bool wordID, bool phrasesTagLinkRefs})
+      PrefetchHooks Function({
+        bool wordID,
+        bool phrasesTagLinkRefs,
+        bool phraseLogsRefs,
+      })
     >;
 typedef $$PhrasesTagLinkTableCreateCompanionBuilder =
     PhrasesTagLinkCompanion Function({
@@ -6377,6 +6913,318 @@ typedef $$PhrasesTagLinkTableProcessedTableManager =
       (PhrasesTagLinkData, $$PhrasesTagLinkTableReferences),
       PhrasesTagLinkData,
       PrefetchHooks Function({bool phraseID, bool tagID})
+    >;
+typedef $$PhraseLogsTableCreateCompanionBuilder =
+    PhraseLogsCompanion Function({
+      Value<int> id,
+      required int phraseID,
+      required eng.LogType type,
+      Value<DateTime> timestamp,
+      Value<String?> notes,
+    });
+typedef $$PhraseLogsTableUpdateCompanionBuilder =
+    PhraseLogsCompanion Function({
+      Value<int> id,
+      Value<int> phraseID,
+      Value<eng.LogType> type,
+      Value<DateTime> timestamp,
+      Value<String?> notes,
+    });
+
+final class $$PhraseLogsTableReferences
+    extends BaseReferences<_$AppDatabase, $PhraseLogsTable, PhraseLog> {
+  $$PhraseLogsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $PhrasesTable _phraseIDTable(_$AppDatabase db) => db.phrases
+      .createAlias($_aliasNameGenerator(db.phraseLogs.phraseID, db.phrases.id));
+
+  $$PhrasesTableProcessedTableManager get phraseID {
+    final $_column = $_itemColumn<int>('phrase_i_d')!;
+
+    final manager = $$PhrasesTableTableManager(
+      $_db,
+      $_db.phrases,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_phraseIDTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$PhraseLogsTableFilterComposer
+    extends Composer<_$AppDatabase, $PhraseLogsTable> {
+  $$PhraseLogsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<eng.LogType, eng.LogType, String> get type =>
+      $composableBuilder(
+        column: $table.type,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
+  ColumnFilters<DateTime> get timestamp => $composableBuilder(
+    column: $table.timestamp,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$PhrasesTableFilterComposer get phraseID {
+    final $$PhrasesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.phraseID,
+      referencedTable: $db.phrases,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PhrasesTableFilterComposer(
+            $db: $db,
+            $table: $db.phrases,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$PhraseLogsTableOrderingComposer
+    extends Composer<_$AppDatabase, $PhraseLogsTable> {
+  $$PhraseLogsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get timestamp => $composableBuilder(
+    column: $table.timestamp,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$PhrasesTableOrderingComposer get phraseID {
+    final $$PhrasesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.phraseID,
+      referencedTable: $db.phrases,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PhrasesTableOrderingComposer(
+            $db: $db,
+            $table: $db.phrases,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$PhraseLogsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $PhraseLogsTable> {
+  $$PhraseLogsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<eng.LogType, String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get timestamp =>
+      $composableBuilder(column: $table.timestamp, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  $$PhrasesTableAnnotationComposer get phraseID {
+    final $$PhrasesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.phraseID,
+      referencedTable: $db.phrases,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PhrasesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.phrases,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$PhraseLogsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $PhraseLogsTable,
+          PhraseLog,
+          $$PhraseLogsTableFilterComposer,
+          $$PhraseLogsTableOrderingComposer,
+          $$PhraseLogsTableAnnotationComposer,
+          $$PhraseLogsTableCreateCompanionBuilder,
+          $$PhraseLogsTableUpdateCompanionBuilder,
+          (PhraseLog, $$PhraseLogsTableReferences),
+          PhraseLog,
+          PrefetchHooks Function({bool phraseID})
+        > {
+  $$PhraseLogsTableTableManager(_$AppDatabase db, $PhraseLogsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$PhraseLogsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PhraseLogsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PhraseLogsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> phraseID = const Value.absent(),
+                Value<eng.LogType> type = const Value.absent(),
+                Value<DateTime> timestamp = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+              }) => PhraseLogsCompanion(
+                id: id,
+                phraseID: phraseID,
+                type: type,
+                timestamp: timestamp,
+                notes: notes,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int phraseID,
+                required eng.LogType type,
+                Value<DateTime> timestamp = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+              }) => PhraseLogsCompanion.insert(
+                id: id,
+                phraseID: phraseID,
+                type: type,
+                timestamp: timestamp,
+                notes: notes,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$PhraseLogsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({phraseID = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (phraseID) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.phraseID,
+                                referencedTable: $$PhraseLogsTableReferences
+                                    ._phraseIDTable(db),
+                                referencedColumn: $$PhraseLogsTableReferences
+                                    ._phraseIDTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$PhraseLogsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $PhraseLogsTable,
+      PhraseLog,
+      $$PhraseLogsTableFilterComposer,
+      $$PhraseLogsTableOrderingComposer,
+      $$PhraseLogsTableAnnotationComposer,
+      $$PhraseLogsTableCreateCompanionBuilder,
+      $$PhraseLogsTableUpdateCompanionBuilder,
+      (PhraseLog, $$PhraseLogsTableReferences),
+      PhraseLog,
+      PrefetchHooks Function({bool phraseID})
     >;
 typedef $$KnowledgeTableTableCreateCompanionBuilder =
     KnowledgeTableCompanion Function({
@@ -8683,6 +9531,8 @@ class $AppDatabaseManager {
       $$PhrasesTableTableManager(_db, _db.phrases);
   $$PhrasesTagLinkTableTableManager get phrasesTagLink =>
       $$PhrasesTagLinkTableTableManager(_db, _db.phrasesTagLink);
+  $$PhraseLogsTableTableManager get phraseLogs =>
+      $$PhraseLogsTableTableManager(_db, _db.phraseLogs);
   $$KnowledgeTableTableTableManager get knowledgeTable =>
       $$KnowledgeTableTableTableManager(_db, _db.knowledgeTable);
   $$KnowledgeLogTableTableTableManager get knowledgeLogTable =>

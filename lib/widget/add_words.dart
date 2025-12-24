@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fucking_math/widget/backgrounds.dart';
 import 'package:provider/provider.dart';
 import 'package:fucking_math/utils/providers/english_proivder.dart';
 
@@ -13,6 +14,8 @@ class _AddWordFormState extends State<AddWordForm> {
   // 1. 局部状态：用于管理文本输入
   final _wordController = TextEditingController();
   final _definitionController = TextEditingController();
+  final _definitionPreController = TextEditingController();
+  final _noteController = TextEditingController();
 
   // 3. 局部状态：用于管理表单验证
   final _formKey = GlobalKey<FormState>();
@@ -22,6 +25,8 @@ class _AddWordFormState extends State<AddWordForm> {
     // 释放资源，防止内存泄漏
     _wordController.dispose();
     _definitionController.dispose();
+    _definitionPreController.dispose();
+    _noteController.dispose();
     super.dispose();
   }
 
@@ -34,19 +39,29 @@ class _AddWordFormState extends State<AddWordForm> {
 
     final provider = context.read<WordsProvider>();
     final word = _wordController.text.trim();
+    final definitionPre = _definitionPreController.text.trim();
     final definition = _definitionController.text.trim().isEmpty
         ? null
         : _definitionController.text.trim();
+    final note = _noteController.text.trim();
 
     // TODO: Complete tags feature
     const List<int>? tags = null;
 
     try {
-      await provider.addWord(word, definition: definition, tags: tags);
+      await provider.addWord(
+        word,
+        definition: definition,
+        definitionPre: definitionPre,
+        note: note,
+        tags: tags,
+      );
 
       // 成功后清空表单
       _wordController.clear();
       _definitionController.clear();
+      _definitionPreController.clear();
+      _noteController.clear();
 
       // 显示成功提示
       if (context.mounted) {
@@ -68,11 +83,12 @@ class _AddWordFormState extends State<AddWordForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
+    return BorderedContainerWithTopText(
+      labelText: "Single Words",
+      child: Form(
+        key: _formKey,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -86,9 +102,21 @@ class _AddWordFormState extends State<AddWordForm> {
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return '单词不能为空';
+                  } else if (value.contains(' ')) {
+                    return '单词不应该包含空格';
                   }
                   return null;
                 },
+              ),
+              const SizedBox(height: 16),
+
+              // 预览定义输入
+              TextFormField(
+                controller: _definitionPreController,
+                decoration: const InputDecoration(
+                  labelText: '简写定义 eg. (apple n. 苹果)',
+                  border: OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 16),
 
@@ -99,7 +127,17 @@ class _AddWordFormState extends State<AddWordForm> {
                   labelText: '定义 (Definition) (可选)',
                   border: OutlineInputBorder(),
                 ),
-                maxLines: 3,
+                maxLines: 3, // unlimited
+              ),
+              const SizedBox(height: 16),
+
+              // 备注输入
+              TextFormField(
+                controller: _noteController,
+                decoration: const InputDecoration(
+                  labelText: '备注 (Notes) (可选)',
+                  border: OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 16),
 
@@ -117,7 +155,7 @@ class _AddWordFormState extends State<AddWordForm> {
                 ),
               ),
               const SizedBox(height: 24),
-
+              Spacer(),
               Row(
                 spacing: 8.0,
 
