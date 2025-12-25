@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:fucking_math/db/app_database.dart';
 
 enum Subject {
   math,
@@ -32,7 +33,7 @@ class SubjectConverter extends TypeConverter<Subject, String> {
 
 typedef Word = ({
   String word,
-  int wordID,
+  int id,
   List<Tag> tags,
   String? definitionPreview,
   String? definition,
@@ -40,7 +41,15 @@ typedef Word = ({
 
 typedef Tag = ({
   String name,
+  int id,
   String? description,
   int? color,
   Subject? subject,
+});
+
+typedef Phrase = ({
+  String phrase,
+  int id,
+  int linkedWordID,
+  String? definition,
 });

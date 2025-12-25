@@ -119,6 +119,7 @@ class WordsRepository {
       final List<Tag> tags = dbTags.map((tag) {
         return (
           name: tag.tag,
+          id: tag.id,
           description: tag.description,
           color: tag.color,
           subject: null,
@@ -127,7 +128,7 @@ class WordsRepository {
 
       return (
         word: word.word,
-        wordID: word.id,
+        id: word.id,
         definition: word.definition,
         definitionPreview: word.definitionPreview,
         tags: tags,
@@ -143,6 +144,7 @@ class WordsRepository {
     return dbTags.map((tag) {
       return (
         name: tag.tag,
+        id: tag.id,
         description: tag.description,
         color: tag.color,
         subject: null,

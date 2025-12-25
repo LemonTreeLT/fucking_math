@@ -56,7 +56,7 @@ class Debug extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () async {
           List<int> wordsIDs = provider.words
-              .map((word) => word.wordID)
+              .map((word) => word.id)
               .toList();
           for (var id in wordsIDs) {
             await provider.deleteWord(id);
@@ -116,7 +116,7 @@ class Debug extends StatelessWidget {
           // 将标签名拼接成字符串
           final tagNames = item.tags.map((t) => t.name).join(', ');
           return ListTile(
-            title: Text('${item.word} (ID: ${item.wordID})'),
+            title: Text('${item.word} (ID: ${item.id})'),
             subtitle: Text(item.definition ?? 'No Definition'),
             trailing: Text('Tags: [$tagNames]'),
           );
