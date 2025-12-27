@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:fucking_math/db/app_dao.dart';
@@ -7,6 +5,7 @@ import 'package:fucking_math/db/tables_english.dart';
 import 'package:fucking_math/utils/db/exceptions.dart';
 import 'package:fucking_math/utils/types.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
+import 'package:fucking_math/utils/db/utils.dart';
 
 import 'package:fucking_math/db/app_database.dart' as db;
 
@@ -15,7 +14,7 @@ class WordsRepository {
   WordsRepository(this._dao);
 
   // 添加或者更新一个单词
-  Future<void> saveWord(
+  Future<Word> saveWord(
     String word, {
     String? definitionPreview,
     String? definition,
@@ -28,6 +27,7 @@ class WordsRepository {
     if (tags != null && tags.isNotEmpty) {
       await _associateTagsToWord(eword.id, tags);
     }
+    return await _buildCompleteWord(eword);
   }
 
   // 标记一次重复
@@ -49,7 +49,7 @@ class WordsRepository {
 
   // 获取单词的标签
   Future<List<Tag>> getWordTags(int wordId) async =>
-      (await _dao.getWordTags(wordId)).map((tag) => _dbTagToTag(tag)).toList();
+      (await _dao.getWordTags(wordId)).map((tag) => dbTagToTag(tag)).toList();
 
   // 删除单词
   Future<void> deleteWord(int wordId) async => await _dao.deleteWord(wordId);
@@ -119,42 +119,28 @@ class WordsRepository {
   }
 
   // 辅助函数: 添加日志
-  Future<void> _addLog(int wordId, LogType type, {String? note}) async {
-    await _dao.addWordLog(
-      db.WordLogsCompanion.insert(
-        wordID: wordId,
-        type: type,
-        notes: Value(note),
-      ),
-    );
-  }
+  Future<void> _addLog(int wordId, LogType type, {String? note}) async =>
+      await _dao.addWordLog(
+        db.WordLogsCompanion.insert(
+          wordID: wordId,
+          type: type,
+          notes: Value(note),
+        ),
+      );
 
   // 辅助函数: 构建完整的 Word 对象
   Future<Word> _buildCompleteWord(db.Word word) async {
     final dbTags = await _dao.getWordTags(word.id);
-    final appTags = dbTags.map(_dbTagToTag).toList();
+    final appTags = dbTags.map(dbTagToTag).toList();
     return _dbWordToWord(word, appTags);
   }
 
   // 辅助函数: 数据库 Word 转换为应用 Word
-  Word _dbWordToWord(db.Word dbWord, List<Tag> tags) {
-    return (
-      word: dbWord.word,
-      id: dbWord.id,
-      definitionPreview: dbWord.definitionPreview,
-      definition: dbWord.definition,
-      tags: tags,
-    );
-  }
-
-  // 辅助函数: 数据库 Tag 转换为应用 Tag
-  Tag _dbTagToTag(db.Tag dbTag) {
-    return (
-      name: dbTag.tag,
-      id: dbTag.id,
-      description: dbTag.description,
-      color: dbTag.color,
-      subject: dbTag.subject,
-    );
-  }
+  Word _dbWordToWord(db.Word dbWord, List<Tag> tags) => (
+    word: dbWord.word,
+    id: dbWord.id,
+    definitionPreview: dbWord.definitionPreview,
+    definition: dbWord.definition,
+    tags: tags,
+  );
 }

@@ -11,5 +11,21 @@ class TagOrWordNotFoundException implements Exception {
 
   @override
   String toString() =>
-      'TagOrWordNotFoundException: $message, tagID: $tagID, wordID: $wordId';
+      'Tag or word not found: $message, tagID: $tagID, wordID: $wordId';
+}
+
+class TagOrPhraseNotFoundException implements Exception {
+  final String message;
+  final int phraseID;
+  final int tagID;
+
+  TagOrPhraseNotFoundException(
+    this.message, {
+    required this.phraseID,
+    required this.tagID,
+  });
+
+  @override
+  String toString() =>
+      'Phrase or tag not found: $message, phraseID: $phraseID, tagID: $tagID';
 }

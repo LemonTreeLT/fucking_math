@@ -456,6 +456,10 @@ class PhrasesDao extends DatabaseAccessor<AppDatabase> with _$PhrasesDaoMixin {
     return result;
   }
 
+  // 使用 companion 更新短语释义
+  Future<int> updatePhraseWithCompanion(int id, PhrasesCompanion companion) =>
+      (update(phrases)..where((p) => p.id.equals(id))).write(companion);
+
   // 添加短语日志
   Future<int> addPhraseLog(PhraseLogsCompanion entry) =>
       into(phraseLogs).insert(entry);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fucking_math/db/app_database.dart';
-import 'package:fucking_math/utils/providers/english_proivder.dart';
+import 'package:fucking_math/utils/providers/phrase_proivder.dart';
+import 'package:fucking_math/utils/providers/word_proivder.dart';
 import 'package:provider/provider.dart';
 
 import 'pages/router.dart';
@@ -12,14 +13,14 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        Provider(
-          create: (_) => database,
-          dispose: (_, db) => db.close(),
+        Provider(create: (_) => database, dispose: (_, db) => db.close()),
+        ChangeNotifierProvider(
+          create: (context) =>
+              WordsProvider(context.read<AppDatabase>())..loadWords(),
         ),
         ChangeNotifierProvider(
-          create: (context) => WordsProvider(
-            context.read<AppDatabase>(),
-          ),
+          create: (context) =>
+              PhraseProivder(context.read<AppDatabase>())..loadPhrases(),
         ),
       ],
       child: const App(),

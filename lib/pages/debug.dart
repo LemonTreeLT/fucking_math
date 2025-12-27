@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fucking_math/utils/providers/english_proivder.dart';
+import 'package:fucking_math/utils/providers/word_proivder.dart';
 
 import 'package:fucking_math/utils/types.dart';
 import 'package:provider/provider.dart';
