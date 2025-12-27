@@ -14,6 +14,7 @@ class PhraseRepository {
     String phrase, {
     String? definition,
     String? note,
+    List<int>? tags,
   }) async {
     final ephrase = await _dao.getPhrase(phrase);
     if (ephrase != null) {
@@ -50,16 +51,33 @@ class PhraseRepository {
     );
   }
 
+  // 一次性获取全部短语
   Future<List<Phrase>> getAllPhrases() async {
-    return (await _dao.getAllPhrases())
+    final result = (await _dao.getAllPhrases())
         .map(
-          (pharse) => (
+          (pharse) async => (
             phrase: pharse.phrase,
             id: pharse.id,
             linkedWordID: pharse.wordID,
             definition: pharse.definition,
+            tags: (await _dao.getPhraseTags(pharse.id))
+                .map(
+                  (tag) => (
+                    name: tag.tag,
+                    id: tag.id,
+                    description: tag.description,
+                    color: tag.color,
+                    subject: tag.subject,
+                  ),
+                )
+                .toList(),
           ),
         )
         .toList();
+
+    return Future.wait(result);
   }
+
+  // 删除短语
+  Future<void> deletePhrase(int id) async => await _dao.deletePhrase(id);
 }

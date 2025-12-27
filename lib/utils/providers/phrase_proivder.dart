@@ -22,12 +22,48 @@ class PhraseProivder extends ChangeNotifier {
   void _setError(String errMsg) => _error = errMsg;
   void _setPhrase(List<Phrase> phrases) => _phrases = phrases;
 
-  Future<void> loadPhrases() async {
+  // 没有后顾之忧的调用你的方法吧
+  Future<void> _justDoIt(
+    Future<void> Function() action, {
+    String? errMsg,
+  }) async {
     _onLoading();
     _clearError();
     notifyListeners();
 
     try {
-      _setPhrase(await _rep.getAllPhrases());
-    } catch(e){}}
+      await action();
+    } catch (e) {
+      _setError("${errMsg ?? "操作失败"}: $e");
+    } finally {
+      _stopLoading();
+      notifyListeners();
+    }
+  }
+
+  // 将全部短语加载到 Provider 中
+  Future<void> loadPhrases() async =>
+      _justDoIt(() async => _setPhrase(await _rep.getAllPhrases()));
+
+  // 添加一个短语 | Warning: 调用后请手动调用加载方法
+  Future<void> addPhrases(
+    int linkedWordID,
+    String phrase, {
+    String? definition,
+    String? note,
+  }) async => _justDoIt(
+    () async => await _rep.savePhrase(
+      linkedWordID,
+      phrase,
+      definition: definition,
+      note: note,
+    ),
+  );
+
+  // 删除短语 | Warning: 调用后请手动调用加载方法
+  Future<void> deletePhrase(int id, {bool reload = false}) async =>
+      _justDoIt(() async => await _rep.deletePhrase(id));
+
+
+
 }

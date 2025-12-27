@@ -75,6 +75,10 @@ class WordsDao extends DatabaseAccessor<AppDatabase> with _$WordsDaoMixin {
   // 更新单词
   Future<bool> updateWord(Word word) => update(words).replace(word);
 
+  // 使用 companion 更新单词
+  Future<int> updateWordWithCompanion(int id, WordsCompanion companion) =>
+      (update(words)..where((w) => w.id.equals(id))).write(companion);
+
   // 删除单词
   Future<int> deleteWord(int id) {
     return (delete(words)..where((w) => w.id.equals(id))).go();
@@ -85,9 +89,8 @@ class WordsDao extends DatabaseAccessor<AppDatabase> with _$WordsDaoMixin {
       into(wordLogs).insert(entry);
 
   // 获取单词的所有日志
-  Future<List<WordLog>> getWordLogs(int wordId) {
-    return (select(wordLogs)..where((l) => l.wordID.equals(wordId))).get();
-  }
+  Future<List<WordLog>> getWordLogs(int wordId) =>
+      (select(wordLogs)..where((l) => l.wordID.equals(wordId))).get();
 
   // 获取单词的特定类型日志
   Future<List<WordLog>> getWordLogsByType(int wordId, eng.LogType type) {

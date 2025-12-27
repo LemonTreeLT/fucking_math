@@ -1,5 +1,4 @@
 import 'package:drift/drift.dart';
-import 'package:fucking_math/db/app_database.dart';
 
 enum Subject {
   math,
@@ -51,5 +50,6 @@ typedef Phrase = ({
   String phrase,
   int id,
   int linkedWordID,
+  List<Tag> tags,
   String? definition,
 });
