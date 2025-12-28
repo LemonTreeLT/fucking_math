@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fucking_math/db/app_database.dart';
 import 'package:fucking_math/utils/providers/phrase_proivder.dart';
-import 'package:fucking_math/utils/providers/word_proivder.dart';
+import 'package:fucking_math/utils/providers/words_proivder.dart';
 import 'package:provider/provider.dart';
 
 import 'pages/router.dart';

@@ -1,6 +1,6 @@
 // lib/widget/word_autocomplete_field.dart
 import 'package:flutter/material.dart';
-import 'package:fucking_math/utils/providers/word_proivder.dart';
+import 'package:fucking_math/utils/providers/words_proivder.dart';
 import 'package:fucking_math/utils/types.dart';
 import 'package:provider/provider.dart';
 

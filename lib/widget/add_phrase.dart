@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fucking_math/utils/providers/phrase_proivder.dart';
-import 'package:fucking_math/utils/providers/word_proivder.dart';
+import 'package:fucking_math/utils/providers/words_proivder.dart';
 import 'package:fucking_math/widget/backgrounds.dart';
 import 'package:fucking_math/widget/collection.dart';
 import 'package:fucking_math/utils/types.dart';
@@ -90,7 +90,7 @@ class _AddPhraseFormState extends State<AddPhraseFrom> {
   @override
   Widget build(BuildContext context) {
     return BorderedContainerWithTopText(
-      labelText: "Phrases (UNDONE)",
+      labelText: "Phrases",
       child: Form(
         key: _formKey,
         child: Padding(

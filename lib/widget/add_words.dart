@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fucking_math/widget/backgrounds.dart';
 import 'package:provider/provider.dart';
-import 'package:fucking_math/utils/providers/word_proivder.dart';
+import 'package:fucking_math/utils/providers/words_proivder.dart';
 
 class AddWordForm extends StatefulWidget {
   const AddWordForm({super.key});
