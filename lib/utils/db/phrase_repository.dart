@@ -117,7 +117,7 @@ class PhraseRepository {
       );
 
   // 辅助函数: 数据库 Phrase 转换为应用 Phrase
-  Phrase _dbPhraseToPhrase(db.Phrase dbPhrase, List<Tag> tags) => (
+  Phrase _dbPhraseToPhrase(db.Phrase dbPhrase, List<Tag> tags) => Phrase(
     id: dbPhrase.id,
     linkedWordID: dbPhrase.wordID,
     phrase: dbPhrase.phrase,

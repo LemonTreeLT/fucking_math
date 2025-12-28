@@ -10,11 +10,11 @@ class WordAutocompleteField extends StatelessWidget {
   final String? initialValue;
 
   const WordAutocompleteField({
-    Key? key,
+    super.key,
     required this.onWordSelected,
     this.controller,
     this.initialValue,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

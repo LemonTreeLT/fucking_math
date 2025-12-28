@@ -1,5 +1,7 @@
   // 没有后顾之忧的调用你的方法吧
 
+import 'package:flutter/foundation.dart';
+
 Future<void> justDoIt<T>(
     Future<T> Function() action, {
     String? errMsg,
@@ -19,6 +21,7 @@ Future<void> justDoIt<T>(
       onSuccess?.call(result);
     } catch (e) {
       setError?.call("${errMsg ?? "操作失败"}: $e");
+      if (kDebugMode) print('$e, msg: $errMsg, class: $T');
     } finally {
       onStopLoading?.call();
       notifyListeners?.call();

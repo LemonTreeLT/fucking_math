@@ -29,3 +29,11 @@ class TagOrPhraseNotFoundException implements Exception {
   String toString() =>
       'Phrase or tag not found: $message, phraseID: $phraseID, tagID: $tagID';
 }
+
+class AppDatabaseException implements Exception {
+  final String message;
+  AppDatabaseException(this.message);
+
+  @override
+  String toString() => message;
+}

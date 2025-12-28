@@ -72,8 +72,14 @@ class WordsRepository {
         definitionPreview: Value(defPreview),
       ),
     );
-
-    return _dao.getWordById(wordId) as db.Word;
+    final newWord = await _dao.getWordById(wordId);
+    if (newWord == null) {
+      // 这是一个严重的、不应发生的情况，必须抛出异常
+      throw AppDatabaseException(
+        'Database consistency error: Failed to retrieve word with id $wordId immediately after creation.',
+      );
+    }
+    return newWord;
   }
 
   // 辅助函数: 更新单词的定义和预览
@@ -132,15 +138,26 @@ class WordsRepository {
   Future<Word> _buildCompleteWord(db.Word word) async {
     final dbTags = await _dao.getWordTags(word.id);
     final appTags = dbTags.map(dbTagToTag).toList();
-    return _dbWordToWord(word, appTags);
+    final logs = await _dao.getWordLogs(word.id);
+    final note = logs.first.notes;
+    final repeat = logs.where((log) => log.type == LogType.repeat).length;
+
+    return _dbWordToWord(word, appTags, repeat: repeat, note: note);
   }
 
   // 辅助函数: 数据库 Word 转换为应用 Word
-  Word _dbWordToWord(db.Word dbWord, List<Tag> tags) => (
-    word: dbWord.word,
+  Word _dbWordToWord(
+    db.Word dbWord,
+    List<Tag> tags, {
+    int? repeat,
+    String? note,
+  }) => Word(
     id: dbWord.id,
-    definitionPreview: dbWord.definitionPreview,
+    word: dbWord.word,
     definition: dbWord.definition,
+    definitionPreview: dbWord.definitionPreview,
     tags: tags,
+    repeatCount: repeat ?? 0,
+    note: note,
   );
 }

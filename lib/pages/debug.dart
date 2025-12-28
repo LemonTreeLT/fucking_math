@@ -36,7 +36,6 @@ class _DebugState extends State<Debug> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
-              if (kDebugMode) print(context.read<WordsProvider>().words);
               context.read<WordsProvider>().loadWords();
               context.read<PhraseProivder>().loadPhrases();
             },
