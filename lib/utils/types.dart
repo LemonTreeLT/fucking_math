@@ -50,7 +50,6 @@ class Word {
   });
 }
 
-
 class Tag {
   final int id;
   final String name;
@@ -72,12 +71,15 @@ class Phrase {
   final int linkedWordID;
   final List<Tag> tags;
   final String? definition;
-  // 也可以有 note, repeatCount 等聚合属性
+  final int repeatCount;
+  final String? note;
   const Phrase({
     required this.id,
     required this.phrase,
     required this.linkedWordID,
     this.tags = const [],
     this.definition,
+    this.repeatCount = 1,
+    this.note,
   });
 }

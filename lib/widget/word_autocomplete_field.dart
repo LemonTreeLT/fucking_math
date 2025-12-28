@@ -5,30 +5,31 @@ import 'package:fucking_math/utils/types.dart';
 import 'package:provider/provider.dart';
 
 class WordAutocompleteField extends StatelessWidget {
+  // <--- 改回 StatelessWidget
   final Function(Word? selectedWord) onWordSelected;
-  final TextEditingController? controller;
   final String? initialValue;
-
   const WordAutocompleteField({
     super.key,
     required this.onWordSelected,
-    this.controller,
     this.initialValue,
   });
-
   @override
   Widget build(BuildContext context) {
-    // 确保 WordsProvider 可用
     final wordsProvider = context.watch<WordsProvider>();
-
+    final key = ValueKey<String?>(initialValue);
     return Autocomplete<Word>(
-      // 告诉 Autocomplete 如何将 Word 对象转为字符串显示在输入框里
+      key: key, // <-- 传递 Key
+      initialValue: TextEditingValue(text: initialValue ?? ''), // <-- 设置初始值
       displayStringForOption: (Word option) => option.word,
 
-      // 核心：根据用户输入构建选项列表
       optionsBuilder: (TextEditingValue textEditingValue) {
         final query = textEditingValue.text.toLowerCase();
         if (query.isEmpty) {
+          // 当输入框变为空时，通知父组件 selection 已清除
+          // 使用 addPostFrameCallback 防止在 build 期间调用 setState
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            onWordSelected(null);
+          });
           return const Iterable<Word>.empty();
         }
         return wordsProvider.words.where((Word word) {
@@ -36,32 +37,23 @@ class WordAutocompleteField extends StatelessWidget {
         });
       },
 
-      // 当用户从下拉列表中选择一项时调用
-      onSelected: (Word selection) {
-        onWordSelected(selection);
-      },
-
-      // 自定义输入框的外观
+      onSelected: onWordSelected, // 直接传递回调
       fieldViewBuilder:
           (
             BuildContext context,
-            TextEditingController fieldTextEditingController,
+            TextEditingController fieldTextEditingController, // <-- 使用这个！
             FocusNode fieldFocusNode,
             VoidCallback onFieldSubmitted,
           ) {
             return TextFormField(
-              // 使用传入的 controller 或它自带的
-              controller: controller ?? fieldTextEditingController,
+              controller: fieldTextEditingController, // <-- 重新用回它
               focusNode: fieldFocusNode,
               decoration: const InputDecoration(
                 labelText: '关联单词 (Linked Word)',
-                hintText: '搜索单词...',
+                hintText: '输入短语可自动匹配，或手动搜索',
                 border: OutlineInputBorder(),
               ),
-              // 添加一个校验器，确保用户最终选择了一个有效的单词
-              // 注意：这里的校验逻辑可能需要根据你的具体需求调整
               validator: (value) {
-                // 一个简单的校验：如果输入框有文字，但它不对应任何一个已知单词，则提示错误
                 if (value != null && value.isNotEmpty) {
                   final isMatch = wordsProvider.words.any(
                     (w) => w.word.toLowerCase() == value.toLowerCase(),
@@ -70,11 +62,10 @@ class WordAutocompleteField extends StatelessWidget {
                     return '请从列表中选择一个有效的单词';
                   }
                 }
-                return null; // 校验通过
+                return null;
               },
             );
           },
-
       // 自定义下拉列表的 UI
       optionsViewBuilder:
           (

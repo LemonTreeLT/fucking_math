@@ -22,35 +22,87 @@ class _AddPhraseFormState extends State<AddPhraseFrom> {
   final _linkedWordController = TextEditingController();
   // Controllers
 
+  static const Set<String> _ignoredtartWords = {
+    'be',
+    'am',
+    'is',
+    'are',
+    'was',
+    'were',
+    'do',
+    'does',
+    'did',
+    'to',
+    'a',
+    'an',
+    'the',
+    'in',
+    'on',
+    'at',
+    'for',
+    'with',
+    'by',
+    'i',
+    'you',
+    'he',
+    'she',
+    'it',
+    'we',
+    'they',
+  };
+
   final _formKey = GlobalKey<FormState>();
 
   Word? _selectedWord;
+  String? _autocompleteText;
 
   @override
   void initState() {
     super.initState();
-    _phraseInputController.addListener(_updateLinkedWord);
+    _phraseInputController.addListener(_updateLinkedWordSuggestion);
   }
 
-  void _updateLinkedWord() {
+  void _updateLinkedWordSuggestion() {
     final text = _phraseInputController.text.trim();
 
-    if (text.isEmpty) return;
+    // 如果短语框清空，也清空关联单词
+    if (text.isEmpty) {
+      setState(() {
+        _selectedWord = null;
+        _autocompleteText = null;
+      });
+      return;
+    }
 
-    final firstWord = text.split(' ').first.toLowerCase();
+    final words = text.split(' ').where((s) => s.isNotEmpty).toList();
+    if (words.isEmpty) return;
+
+    String targetWord;
+    targetWord = words.first.toLowerCase();
+
+    if (_ignoredtartWords.contains(words.first.toLowerCase()) &&
+        words.length > 1) {
+      targetWord = words[1].toLowerCase();
+    } else {
+      targetWord = words.first.toLowerCase();
+    }
 
     final wordsProvider = context.read<WordsProvider>();
     Word? match = wordsProvider.words.firstWhereOrNull(
-      (word) => word.word.toLowerCase() == firstWord,
+      (word) => word.word.toLowerCase().startsWith(targetWord),
     );
-
-    if (match != null && _selectedWord == null) {
-      _linkedWordController.text = match.word;
+    if (match != null) {
+      // 当找到匹配项时，更新两个状态
+      setState(() {
+        _selectedWord = match;
+        _autocompleteText = match.word; // 更新文本状态
+      });
     }
   }
 
   @override
   void dispose() {
+    _phraseInputController.removeListener(_updateLinkedWordSuggestion);
     _phraseInputController.dispose();
     _definitionInputController.dispose();
     _noteInputController.dispose();
@@ -111,15 +163,11 @@ class _AddPhraseFormState extends State<AddPhraseFrom> {
 
               // 选择关联单词
               WordAutocompleteField(
-                controller: _linkedWordController,
-                onWordSelected: (selectedWord) {
-                  setState(() {
-                    _selectedWord = selectedWord;
-                  });
-                  if (selectedWord != null) {
-                    _linkedWordController.text = selectedWord.word;
-                  }
-                },
+                initialValue: _autocompleteText,
+                onWordSelected: (selectedWord) => setState(() {
+                  _selectedWord = selectedWord;
+                  _autocompleteText = selectedWord?.word;
+                }),
               ),
               const SizedBox(height: 16),
 

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fucking_math/utils/providers/phrase_proivder.dart';
 import 'package:fucking_math/utils/providers/words_proivder.dart';
@@ -51,7 +50,10 @@ class _DebugState extends State<Debug> {
             const SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.0),
-                child: Text('Words 表数据', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                child: Text(
+                  'Words 表数据',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
             _buildWordsList(),
@@ -62,7 +64,10 @@ class _DebugState extends State<Debug> {
             const SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.0),
-                child: Text('Phrases 表数据', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                child: Text(
+                  'Phrases 表数据',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
             _buildPhrasesList(),
@@ -79,30 +84,36 @@ class _DebugState extends State<Debug> {
       builder: (context, provider, child) {
         // 1. 处理加载状态
         if (provider.isLoading && provider.words.isEmpty) {
-          return const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator()));
+          return const SliverToBoxAdapter(
+            child: Center(child: CircularProgressIndicator()),
+          );
         }
 
         // 2. 处理错误状态
         if (provider.error != null) {
           return SliverToBoxAdapter(
-            child: Center(child: Text('加载 Words 失败: ${provider.error}', style: const TextStyle(color: Colors.red))),
+            child: Center(
+              child: Text(
+                '加载 Words 失败: ${provider.error}',
+                style: const TextStyle(color: Colors.red),
+              ),
+            ),
           );
         }
 
         // 3. 处理列表为空的状态
         if (provider.words.isEmpty) {
-          return const SliverToBoxAdapter(child: Center(child: Text('Words 表中没有数据')));
+          return const SliverToBoxAdapter(
+            child: Center(child: Text('Words 表中没有数据')),
+          );
         }
-        
+
         // 4. 成功获取数据，构建列表
         return SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              final word = provider.words[index];
-              return _buildWordCard(word);
-            },
-            childCount: provider.words.length,
-          ),
+          delegate: SliverChildBuilderDelegate((context, index) {
+            final word = provider.words[index];
+            return _buildWordCard(word);
+          }, childCount: provider.words.length),
         );
       },
     );
@@ -115,30 +126,36 @@ class _DebugState extends State<Debug> {
       builder: (context, provider, child) {
         // 1. 处理加载状态
         if (provider.isLoading && provider.phrases.isEmpty) {
-          return const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator()));
+          return const SliverToBoxAdapter(
+            child: Center(child: CircularProgressIndicator()),
+          );
         }
 
         // 2. 处理错误状态
         if (provider.error != null) {
           return SliverToBoxAdapter(
-            child: Center(child: Text('加载 Phrases 失败: ${provider.error}', style: const TextStyle(color: Colors.red))),
+            child: Center(
+              child: Text(
+                '加载 Phrases 失败: ${provider.error}',
+                style: const TextStyle(color: Colors.red),
+              ),
+            ),
           );
         }
 
         // 3. 处理列表为空的状态
         if (provider.phrases.isEmpty) {
-          return const SliverToBoxAdapter(child: Center(child: Text('Phrases 表中没有数据')));
+          return const SliverToBoxAdapter(
+            child: Center(child: Text('Phrases 表中没有数据')),
+          );
         }
-        
+
         // 4. 成功获取数据，构建列表
         return SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              final phrase = provider.phrases[index];
-              return _buildPhraseCard(phrase);
-            },
-            childCount: provider.phrases.length,
-          ),
+          delegate: SliverChildBuilderDelegate((context, index) {
+            final phrase = provider.phrases[index];
+            return _buildPhraseCard(phrase);
+          }, childCount: provider.phrases.length),
         );
       },
     );
@@ -159,8 +176,14 @@ class _DebugState extends State<Debug> {
             ),
             const Divider(),
             _buildInfoRow('定义 (Definition):', word.definition ?? 'N/A'),
-            _buildInfoRow('预览 (Def. Preview):', word.definitionPreview ?? 'N/A'),
-            _buildInfoRow('标签 (Tags):', word.tags.map((t) => '${t.name}(${t.id})').join(', ')),
+            _buildInfoRow(
+              '预览 (Def. Preview):',
+              word.definitionPreview ?? 'N/A',
+            ),
+            _buildInfoRow(
+              '标签 (Tags):',
+              word.tags.map((t) => '${t.name}(${t.id})').join(', '),
+            ),
           ],
         ),
       ),
@@ -181,9 +204,15 @@ class _DebugState extends State<Debug> {
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             const Divider(),
-            _buildInfoRow('关联单词ID (Linked Word ID):', phrase.linkedWordID.toString()),
+            _buildInfoRow(
+              '关联单词ID (Linked Word ID):',
+              phrase.linkedWordID.toString(),
+            ),
             _buildInfoRow('定义 (Definition):', phrase.definition ?? 'N/A'),
-            _buildInfoRow('标签 (Tags):', phrase.tags.map((t) => '${t.name}(${t.id})').join(', ')),
+            _buildInfoRow(
+              '标签 (Tags):',
+              phrase.tags.map((t) => '${t.name}(${t.id})').join(', '),
+            ),
           ],
         ),
       ),
@@ -198,7 +227,13 @@ class _DebugState extends State<Debug> {
         text: TextSpan(
           style: DefaultTextStyle.of(context).style,
           children: <TextSpan>[
-            TextSpan(text: '$label ', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey)),
+            TextSpan(
+              text: '$label ',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.blueGrey,
+              ),
+            ),
             TextSpan(text: value),
           ],
         ),

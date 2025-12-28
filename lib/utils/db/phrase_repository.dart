@@ -117,18 +117,31 @@ class PhraseRepository {
       );
 
   // 辅助函数: 数据库 Phrase 转换为应用 Phrase
-  Phrase _dbPhraseToPhrase(db.Phrase dbPhrase, List<Tag> tags) => Phrase(
+  Phrase _dbPhraseToPhrase(
+    db.Phrase dbPhrase,
+    List<Tag> tags, {
+    String? note,
+    int? count,
+  }) => Phrase(
     id: dbPhrase.id,
     linkedWordID: dbPhrase.wordID,
     phrase: dbPhrase.phrase,
     definition: dbPhrase.definition,
     tags: tags,
+    note: note,
+    repeatCount: count ?? 1,
   );
 
   // 辅助函数: 构建完整的 Phrase 对象
-  Future<Phrase> _buildCompletePhrase(db.Phrase phrase) async =>
-      _dbPhraseToPhrase(
-        phrase,
-        (await _dao.getPhraseTags(phrase.id)).map(dbTagToTag).toList(),
-      );
+  Future<Phrase> _buildCompletePhrase(db.Phrase phrase) async {
+    final logs = await _dao.getPhraseLogs(phrase.id);
+    final count = logs.where((l) => l.type == LogType.repeat).length;
+    final note = logs.first.notes;
+    return _dbPhraseToPhrase(
+      phrase,
+      (await _dao.getPhraseTags(phrase.id)).map(dbTagToTag).toList(),
+      note: note,
+      count: count
+    );
+  }
 }
