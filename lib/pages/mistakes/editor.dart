@@ -5,6 +5,6 @@ class MistakesEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("Mistakes editor: 这个页面老子正在开发"));
+    return Center(child: Text("Mistakes editor: This page is in deving....."));
   }
 }

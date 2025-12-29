@@ -7,6 +7,6 @@ class MistakesHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("mistake home: 这个页面老子正在开发"));
+    return Center(child: Text("mistake home: This page is in deving....."));
   }
 }

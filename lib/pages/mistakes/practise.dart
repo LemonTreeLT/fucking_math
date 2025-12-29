@@ -5,6 +5,6 @@ class MistakesPractise extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("Practise: 这个页面老子正在开发"));
+    return Center(child: Text("Practise: This page is in deving....."));
   }
 }

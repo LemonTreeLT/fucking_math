@@ -6,6 +6,6 @@ class EnglishLearning extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Text('这个页面老子正在开发');
+    return Text('This page is in deving.....');
   }
 }

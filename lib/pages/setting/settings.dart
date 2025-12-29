@@ -5,5 +5,5 @@ class Settings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      Center(child: Text("Settings: 这个页面老子正在开发"));
+      Center(child: Text("Settings: This page is in deving....."));
 }

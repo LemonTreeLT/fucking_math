@@ -5,6 +5,6 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("这个页面老子正在开发"));
+    return Center(child: Text("This page is in deving....."));
   }
 }
