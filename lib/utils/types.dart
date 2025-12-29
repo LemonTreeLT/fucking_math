@@ -35,10 +35,10 @@ class Word {
   final int id;
   final String word;
   final List<Tag> tags;
-  final String? definitionPreview;
+  final String? definitionPreview; // 预览定义
   final String? definition;
-  final String? note; // 从最新的 log 中获取
-  final int repeatCount; // 从 logs 中计算
+  final String? note;
+  final int repeatCount; // 重复记录数
   const Word({
     required this.id,
     required this.word,
@@ -50,6 +50,7 @@ class Word {
   });
 }
 
+// 标签
 class Tag {
   final int id;
   final String name;

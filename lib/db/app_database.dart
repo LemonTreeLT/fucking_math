@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:fucking_math/db/_default_tags.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
@@ -64,4 +65,13 @@ class AppDatabase extends _$AppDatabase {
   KnowledgeDao get knowledgeDao => KnowledgeDao(this);
   @override
   MistakesDao get mistakesDao => MistakesDao(this);
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    // 初始化默认tag
+    onCreate: (m) async {
+      await m.createAll();
+      await batch((b) => b.insertAll(tags, getDefaultTagList()));
+    },
+  );
 }

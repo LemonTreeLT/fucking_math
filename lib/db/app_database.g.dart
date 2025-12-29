@@ -38,6 +38,7 @@ class $TagsTable extends tag.Tags with TableInfo<$TagsTable, Tag> {
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
   );
   static const VerificationMeta _colorMeta = const VerificationMeta('color');
   @override

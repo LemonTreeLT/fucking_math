@@ -7,10 +7,14 @@ import 'package:fucking_math/pages/home.dart';
 import 'package:fucking_math/pages/mistakes/editor.dart';
 import 'package:fucking_math/pages/mistakes/home.dart';
 import 'package:fucking_math/pages/mistakes/practise.dart';
+import 'package:fucking_math/pages/knowledge/_index.dart';
+import 'package:fucking_math/pages/setting/settings.dart';
+import 'package:fucking_math/pages/setting/tags_manager.dart';
 import 'package:go_router/go_router.dart';
 
 final _englishNavigatorKey = GlobalKey<NavigatorState>();
 final _mistakesNavigatorKey = GlobalKey<NavigatorState>();
+final _knowledgeNavigatorKey = GlobalKey<NavigatorState>();
 
 final List<RouterConfig> _routesConfig = [
   // 首页
@@ -45,7 +49,7 @@ final List<RouterConfig> _routesConfig = [
       ),
       RouterConfig(
         path: '/english/editor',
-        name: '编辑器',
+        name: '单词编辑器',
         builder: (context, state) => EnglishEditor(),
         // 这个子页面不在导航栏中直接显示
       ),
@@ -75,6 +79,48 @@ final List<RouterConfig> _routesConfig = [
       ),
     ],
   ),
+  // 知识点模块
+  RouterConfig(
+    path: '/knowledge_shell',
+    name: 'Knowledge Shell',
+    builder: (c, s) => Container(),
+    shellBuilder: (context, state, child) => KnowledgeShell(child: child),
+    navigatorKey: _knowledgeNavigatorKey,
+    routes: [
+      RouterConfig(
+        path: '/knowledge',
+        name: '复习知识点',
+        builder: (c, s) => const KnowledgeLearning(),
+        showInNav: true,
+        navLablel: "知识点",
+        navIcon: Icons.checklist,
+        navSelectedIcon: Icons.checklist_outlined,
+      ),
+      RouterConfig(
+        path: '/knowledge/editor',
+        name: '知识点编辑器',
+        builder: (c, s) => const KnowledgeEditor(),
+      ),
+    ],
+  ),
+  RouterConfig(
+    path: '/tags',
+    name: 'Tag Manager',
+    builder: (c, s) => const TagManager(),
+    showInNav: true,
+    navLablel: "Tags",
+    navIcon: Icons.tag,
+    navSelectedIcon: Icons.tag_outlined,
+  ),
+  RouterConfig(
+    path: '/setting',
+    name: 'Settings',
+    builder: (c, s) => const Settings(),
+    showInNav: true,
+    navLablel: 'Settings',
+    navIcon: Icons.settings,
+    navSelectedIcon: Icons.settings_outlined,
+  ),
   // 调试页面
   RouterConfig(
     path: '/debug',
@@ -82,8 +128,8 @@ final List<RouterConfig> _routesConfig = [
     builder: (context, state) => const Debug(),
     showInNav: true,
     navLablel: '调试',
-    navIcon: Icons.developer_mode_outlined,
-    navSelectedIcon: Icons.developer_mode,
+    navIcon: Icons.bug_report,
+    navSelectedIcon: Icons.bug_report_outlined,
   ),
 ];
 
