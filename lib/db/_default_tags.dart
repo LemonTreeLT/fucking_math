@@ -3,7 +3,7 @@ import 'package:fucking_math/db/app_database.dart';
 import 'package:fucking_math/utils/types.dart';
 
 final List<_T> _defaultTags = [
-  const _T("单词", "这是一个单词", 0xFF2196F3),
+  const _T("单词", "这是一个单词", 0xFF2196F, Subject.english),
   const _T("错题", "这是一道错题", 0xFFF44336),
 ];
 

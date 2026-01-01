@@ -43,6 +43,7 @@ dependencies:
   provider: ^6.1.5+1
   sqlite3: ^2.9.4
   collection: ^1.19.1
+  flutter_color_picker_plus: ^2.2.1
 
 dev_dependencies:
   flutter_test:

@@ -106,7 +106,7 @@ final List<RouterConfig> _routesConfig = [
   RouterConfig(
     path: '/tags',
     name: 'Tag Manager',
-    builder: (c, s) => const TagManager(),
+    builder: (c, s) => const TagsManager(),
     showInNav: true,
     navLablel: "Tags",
     navIcon: Icons.tag,

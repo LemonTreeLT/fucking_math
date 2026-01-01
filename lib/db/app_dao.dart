@@ -19,26 +19,34 @@ class TagsDao extends DatabaseAccessor<AppDatabase> with _$TagsDaoMixin {
   // 创建标签
   Future<int> createTag(TagsCompanion entry) => into(tags).insert(entry);
 
+  // 通过名称获取tag
+  Future<Tag?> getTag(String name) =>
+      (select(tags)
+            ..where((t) => t.tag.equals(name))
+            ..limit(1))
+          .getSingleOrNull();
+
+  // 通过 companion 更新 tag
+  Future<int> updateTagWithCompanion(int id, TagsCompanion companion) =>
+      (update(tags)..where((t) => t.id.equals(id))).write(companion);
+
   // 获取所有标签
   Future<List<Tag>> getAllTags() => select(tags).get();
 
   // 根据学科获取标签
-  Future<List<Tag>> getTagsBySubject(Subject? subject) {
-    return (select(tags)..where((t) => t.subject.equalsValue(subject))).get();
-  }
+  Future<List<Tag>> getTagsBySubject(Subject? subject) =>
+      (select(tags)..where((t) => t.subject.equalsValue(subject))).get();
 
   // 根据ID获取标签
-  Future<Tag?> getTagById(int id) {
-    return (select(tags)..where((t) => t.id.equals(id))).getSingleOrNull();
-  }
+  Future<Tag?> getTagById(int id) =>
+      (select(tags)..where((t) => t.id.equals(id))).getSingleOrNull();
 
   // 更新标签
   Future<bool> updateTag(Tag tag) => update(tags).replace(tag);
 
   // 删除标签
-  Future<int> deleteTag(int id) {
-    return (delete(tags)..where((t) => t.id.equals(id))).go();
-  }
+  Future<int> deleteTag(int id) =>
+      (delete(tags)..where((t) => t.id.equals(id))).go();
 }
 
 // =======================================================
@@ -93,11 +101,10 @@ class WordsDao extends DatabaseAccessor<AppDatabase> with _$WordsDaoMixin {
       (select(wordLogs)..where((l) => l.wordID.equals(wordId))).get();
 
   // 获取单词的特定类型日志
-  Future<List<WordLog>> getWordLogsByType(int wordId, eng.LogType type) {
-    return (select(
-      wordLogs,
-    )..where((l) => l.wordID.equals(wordId) & l.type.equalsValue(type))).get();
-  }
+  Future<List<WordLog>> getWordLogsByType(int wordId, eng.LogType type) =>
+      (select(wordLogs)
+            ..where((l) => l.wordID.equals(wordId) & l.type.equalsValue(type)))
+          .get();
 
   // 为单词添加标签
   Future<int> addTagToWord(int wordId, int tagId) {
