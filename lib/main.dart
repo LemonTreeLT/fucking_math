@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fucking_math/db/app_database.dart';
 import 'package:fucking_math/utils/providers/phrase_proivder.dart';
+import 'package:fucking_math/utils/providers/tags_proivder.dart';
 import 'package:fucking_math/utils/providers/words_proivder.dart';
 import 'package:provider/provider.dart';
 
@@ -21,6 +22,10 @@ void main() {
         ChangeNotifierProvider(
           create: (context) =>
               PhraseProivder(context.read<AppDatabase>())..loadPhrases(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) =>
+              TagProvider(context.read<AppDatabase>())..loadTags(),
         ),
       ],
       child: const App(),

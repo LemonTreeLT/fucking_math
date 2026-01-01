@@ -65,14 +65,22 @@ class TagProvider extends ChangeNotifier {
       subject: subject,
       color: color,
     ),
-    onSuccess: (savedTag) => _tags.upsert(savedTag, (t) => t.id == savedTag.id),
+    onSuccess: (savedTag) =>
+        _setTags(_tags.withUpsert(savedTag, (t) => t.id == savedTag.id)),
     errMsg: "保存标签失败",
+  );
+  
+  // --- 操作：更新标签 ---
+  Future<void> changeTag(Tag tag) async => _justDoIt<void>(
+    action: () => _rep.changeTagById(tag),
+    onSuccess: (_) => _setTags(_tags.withUpsert(tag, (t) => t.id == tag.id)),
+    errMsg: "更新标签失败",
   );
 
   // --- 操作：删除标签 ---
   Future<void> deleteTag(int tagID) async => _justDoIt<void>(
     action: () => _rep.deleteTag(tagID),
-    onSuccess: (_) => _tags.removeWhere((tag) => tag.id == tagID),
+    onSuccess: (_) => _setTags(_tags.where((tag) => tag.id != tagID).toList()),
     errMsg: "删除标签失败",
   );
 }

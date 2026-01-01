@@ -27,6 +27,18 @@ class TagRepository {
   // 通过 id 删除 tag
   Future<void> deleteTag(int id) async => await _dao.deleteTag(id);
 
+  // 通过 tag对象 更新 tag
+  Future<void> changeTagById(Tag tag) async =>
+      await _dao.updateTagWithCompanion(
+        tag.id,
+        db.TagsCompanion(
+          tag: Value(tag.name),
+          subject: Value(tag.subject),
+          color: Value(tag.color),
+          description: Value(tag.description),
+        ),
+      );
+
   // ------------ PUBLIC FUNCTIONS ABOVE ------------
 
   // 辅助函数: 更新备注&颜色
@@ -74,7 +86,7 @@ class TagRepository {
   Tag _dbTagToTag(db.Tag dbTag) => Tag(
     id: dbTag.id,
     name: dbTag.tag,
-    description: dbTag.tag,
+    description: dbTag.description,
     color: dbTag.color,
     subject: dbTag.subject,
   );

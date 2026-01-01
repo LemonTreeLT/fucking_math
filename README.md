@@ -20,11 +20,13 @@
         - [x] 仓库类
         - [x] Provider 类
         - [x] 录入部分 UI
-    - [ ] Tag 管理
+        - [ ] 重构 UI 代码 <-- We are here
+        - [ ] 整合 tag 功能
+    - [x] Tag 管理
         - [x] 仓库类
         - [x] Provider 类
-        - [ ] UI <-- We are here
-    - [ ] 错题
+        - [x] UI 
+    - [ ] 错题 
     - [ ] 知识点
 - [ ] 完成数据编辑修改删除 <-- MVP (v0.1.0)
 - [ ] 完成 AI 框架搭建
