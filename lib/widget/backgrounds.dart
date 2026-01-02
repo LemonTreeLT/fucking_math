@@ -1,24 +1,34 @@
 import 'package:flutter/material.dart';
 
+/// 带顶部标签的边框容器组件
+/// 标签文字会嵌入到顶部边框中，形成缺口效果
 class BorderedContainerWithTopText extends StatelessWidget {
-  // 1. 基础属性
+  // 常量定义
+  static const double _defaultGapPadding = 4.0;
+  static const double _defaultLabelLeftMargin = 16.0;
+  static const double _defaultContentPadding = 12.0;
+  static const double _defaultBorderWidth = 1.0;
+  static const double _defaultBorderRadius = 8.0;
+  static const double _defaultFontSize = 14.0;
+
+  // 基础属性
   final String labelText;
   final Widget child;
 
-  // 2. 布局属性
+  // 布局属性
   final double? width;
   final double? height;
   final EdgeInsetsGeometry? padding;
   final EdgeInsetsGeometry? margin;
 
-  // 3. 样式属性
+  // 样式属性
   final Color borderColor;
   final double borderWidth;
   final double borderRadius;
 
-  // 4. 文字样式
+  // 文字样式
   final TextStyle? labelStyle;
-  final double labelLeftMargin; // 文字距离左边的距离
+  final double labelLeftMargin;
 
   const BorderedContainerWithTopText({
     super.key,
@@ -29,81 +39,150 @@ class BorderedContainerWithTopText extends StatelessWidget {
     this.padding,
     this.margin,
     this.borderColor = Colors.grey,
-    this.borderWidth = 1.0,
-    this.borderRadius = 8.0,
+    this.borderWidth = _defaultBorderWidth,
+    this.borderRadius = _defaultBorderRadius,
     this.labelStyle,
-    this.labelLeftMargin = 16.0, // 默认文字离左边框 16px
+    this.labelLeftMargin = _defaultLabelLeftMargin,
   });
 
   @override
   Widget build(BuildContext context) {
-    // 1. 准备文字样式
-    final effectiveLabelStyle = labelStyle ??
-        TextStyle(
-          color: Theme.of(context).textTheme.bodyLarge?.color,
-          fontSize: 14.0,
-          fontWeight: FontWeight.bold,
-        );
-
-    // 2. 测量文字宽度 (为了告诉画笔哪里需要“留白”)
-    final TextPainter textPainter = TextPainter(
-      text: TextSpan(text: labelText, style: effectiveLabelStyle),
-      textDirection: Directionality.of(context),
-      maxLines: 1,
-    )..layout();
-
-    final double labelWidth = textPainter.size.width;
-    // 文字两边留一点点空隙，看起来不拥挤
-    final double gapPadding = 4.0; 
-    final double gapWidth = labelWidth + (gapPadding * 2);
-    
-    // 文字垂直居中于边框线，所以需要计算偏移
-    final double labelHeight = textPainter.size.height;
-    final double topOffset = labelHeight / 2;
+    final textMetrics = _measureLabelText(context);
+    final gapConfig = _calculateGapConfig(textMetrics);
 
     return Container(
       width: width,
       height: height,
       margin: margin,
       child: Stack(
-        // 如果有固定宽高则撑满，否则由子组件决定
-        fit: (width != null || height != null) ? StackFit.expand : StackFit.loose,
-        clipBehavior: Clip.none, // 允许文字稍微突出一点点（如果需要）
+        fit: _getStackFit(),
+        clipBehavior: Clip.none,
         children: [
-          // --- 层级 1: 自定义绘制的边框 ---
-          CustomPaint(
-            painter: _HollowBorderPainter(
-              borderColor: borderColor,
-              borderWidth: borderWidth,
-              borderRadius: borderRadius,
-              gapStart: labelLeftMargin - gapPadding, // 缺口开始位置
-              gapWidth: gapWidth,                     // 缺口宽度
-              topOffset: topOffset,                   // 边框整体下移半个文字高度
-            ),
-            child: Padding(
-              // 内容的 Padding 需要加上顶部偏移量
-              padding: (padding as EdgeInsets? ?? EdgeInsets.all(12.0)) + 
-                       EdgeInsets.only(top: topOffset),
-              child: child,
-            ),
-          ),
-
-          // --- 层级 2: 文字组件 ---
-          Positioned(
-            top: 0, // 紧贴最顶部
-            left: labelLeftMargin,
-            child: Text(
-              labelText,
-              style: effectiveLabelStyle,
-            ),
-          ),
+          _buildBorderedContent(textMetrics.topOffset, gapConfig),
+          _buildLabel(textMetrics.style),
         ],
+      ),
+    );
+  }
+
+  /// 测量标签文字尺寸
+  _TextMetrics _measureLabelText(BuildContext context) {
+    final defaultStyle = DefaultTextStyle.of(context).style;
+    final userStyle = labelStyle ??
+        TextStyle(
+          color: Theme.of(context).textTheme.bodyLarge?.color,
+          fontSize: _defaultFontSize,
+          fontWeight: FontWeight.bold,
+        );
+
+    final finalStyle = defaultStyle.merge(userStyle);
+    final maxWidth = _calculateMaxLabelWidth(context);
+
+    final textPainter = TextPainter(
+      text: TextSpan(text: labelText, style: finalStyle),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.of(context).textScaler,
+      maxLines: 1,
+    )..layout(maxWidth: maxWidth);
+
+    return _TextMetrics(
+      width: textPainter.size.width,
+      height: textPainter.size.height,
+      style: finalStyle,
+      topOffset: textPainter.size.height / 2,
+    );
+  }
+
+  /// 计算标签文字的最大宽度
+  double _calculateMaxLabelWidth(BuildContext context) {
+    final containerWidth = width ?? MediaQuery.of(context).size.width;
+    return containerWidth - labelLeftMargin - _defaultLabelLeftMargin;
+  }
+
+  /// 计算缺口配置
+  _GapConfig _calculateGapConfig(_TextMetrics metrics) {
+    final gapWidth = metrics.width + (_defaultGapPadding * 2);
+    final gapStart = labelLeftMargin - _defaultGapPadding;
+
+    return _GapConfig(
+      start: gapStart,
+      width: gapWidth,
+    );
+  }
+
+  /// 确定 Stack 的适配方式
+  StackFit _getStackFit() {
+    return (width != null || height != null) 
+        ? StackFit.expand 
+        : StackFit.loose;
+  }
+
+  /// 构建带边框的内容区域
+  Widget _buildBorderedContent(double topOffset, _GapConfig gapConfig) {
+    return CustomPaint(
+      painter: _HollowBorderPainter(
+        borderColor: borderColor,
+        borderWidth: borderWidth,
+        borderRadius: borderRadius,
+        gapStart: gapConfig.start,
+        gapWidth: gapConfig.width,
+        topOffset: topOffset,
+      ),
+      child: Padding(
+        padding: _calculateContentPadding(topOffset),
+        child: child,
+      ),
+    );
+  }
+
+  /// 计算内容区域的内边距
+  EdgeInsets _calculateContentPadding(double topOffset) {
+    final basePadding = padding as EdgeInsets? ?? 
+        const EdgeInsets.all(_defaultContentPadding);
+    return basePadding + EdgeInsets.only(top: topOffset);
+  }
+
+  /// 构建标签文字
+  Widget _buildLabel(TextStyle style) {
+    return Positioned(
+      top: 0,
+      left: labelLeftMargin,
+      child: Text(
+        labelText,
+        style: style,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }
 }
 
-// --- 核心逻辑: 会跳过缺口的画笔 ---
+/// 文字测量结果
+class _TextMetrics {
+  final double width;
+  final double height;
+  final TextStyle style;
+  final double topOffset;
+
+  const _TextMetrics({
+    required this.width,
+    required this.height,
+    required this.style,
+    required this.topOffset,
+  });
+}
+
+/// 缺口配置
+class _GapConfig {
+  final double start;
+  final double width;
+
+  const _GapConfig({
+    required this.start,
+    required this.width,
+  });
+}
+
+/// 自定义边框画笔 - 在顶部留出缺口以容纳标签
 class _HollowBorderPainter extends CustomPainter {
   final Color borderColor;
   final double borderWidth;
@@ -111,7 +190,8 @@ class _HollowBorderPainter extends CustomPainter {
   final double gapStart;
   final double gapWidth;
   final double topOffset;
-  _HollowBorderPainter({
+
+  const _HollowBorderPainter({
     required this.borderColor,
     required this.borderWidth,
     required this.borderRadius,
@@ -119,68 +199,92 @@ class _HollowBorderPainter extends CustomPainter {
     required this.gapWidth,
     required this.topOffset,
   });
+
   @override
   void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()
+    final paint = Paint()
       ..color = borderColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = borderWidth;
-    final Path path = Path();
-    // 边框的实际边界
-    final double top = topOffset;
-    final double bottom = size.height;
-    final double left = 0;
-    final double right = size.width;
-    final double radius = borderRadius;
-    // 计算缺口结束的位置 (文字右侧)
-    final double gapEnd = gapStart + gapWidth;
-    // === 开始绘制 ===
-    // 逻辑：从缺口的右边开始，顺时针画一圈，最后在缺口的左边结束。
-    
-    // 1. 移动起点到 [文字右侧]
-    path.moveTo(gapEnd, top);
-    // 2. 顶部线条 (右半段)：画到右上圆角开始处
-    path.lineTo(right - radius, top);
-    // 3. 右上角圆角
-    path.arcToPoint(
-      Offset(right, top + radius),
-      radius: Radius.circular(radius),
-    );
-    // 4. 右侧线条
-    path.lineTo(right, bottom - radius);
-    // 5. 右下角圆角
-    path.arcToPoint(
-      Offset(right - radius, bottom),
-      radius: Radius.circular(radius),
-    );
-    // 6. 底部线条
-    path.lineTo(left + radius, bottom);
-    // 7. 左下角圆角
-    path.arcToPoint(
-      Offset(left, bottom - radius),
-      radius: Radius.circular(radius),
-    );
-    // 8. 左侧线条
-    path.lineTo(left, top + radius);
-    // 9. 左上角圆角
-    path.arcToPoint(
-      Offset(left + radius, top),
-      radius: Radius.circular(radius),
-    );
-    // 10. 顶部线条 (左半段)：画到 [文字左侧] 结束
-    path.lineTo(gapStart, top);
-    // ⚠️ 重点：千万不要调用 path.close()
-    // 因为我们要的就是一个开口的形状，close() 会把终点(文字左侧)和起点(文字右侧)连起来，导致横穿文字。
+
+    final path = _createBorderPath(size);
     canvas.drawPath(path, paint);
   }
+
+  /// 创建带缺口的边框路径
+  Path _createBorderPath(Size size) {
+    final path = Path();
+    final bounds = _BorderBounds(
+      top: topOffset,
+      bottom: size.height,
+      left: 0,
+      right: size.width,
+      radius: borderRadius,
+    );
+
+    final gapEnd = gapStart + gapWidth;
+
+    // 从缺口右侧开始，顺时针绘制边框
+    path.moveTo(gapEnd, bounds.top);
+
+    // 顶部右段 + 右上角
+    path.lineTo(bounds.right - bounds.radius, bounds.top);
+    path.arcToPoint(
+      Offset(bounds.right, bounds.top + bounds.radius),
+      radius: Radius.circular(bounds.radius),
+    );
+
+    // 右侧 + 右下角
+    path.lineTo(bounds.right, bounds.bottom - bounds.radius);
+    path.arcToPoint(
+      Offset(bounds.right - bounds.radius, bounds.bottom),
+      radius: Radius.circular(bounds.radius),
+    );
+
+    // 底部 + 左下角
+    path.lineTo(bounds.left + bounds.radius, bounds.bottom);
+    path.arcToPoint(
+      Offset(bounds.left, bounds.bottom - bounds.radius),
+      radius: Radius.circular(bounds.radius),
+    );
+
+    // 左侧 + 左上角
+    path.lineTo(bounds.left, bounds.top + bounds.radius);
+    path.arcToPoint(
+      Offset(bounds.left + bounds.radius, bounds.top),
+      radius: Radius.circular(bounds.radius),
+    );
+
+    // 顶部左段到缺口左侧（不闭合路径，保留缺口）
+    path.lineTo(gapStart, bounds.top);
+
+    return path;
+  }
+
   @override
   bool shouldRepaint(covariant _HollowBorderPainter oldDelegate) {
-    return oldDelegate.gapWidth != gapWidth ||
-           oldDelegate.gapStart != gapStart ||
-           oldDelegate.borderColor != borderColor ||
-           oldDelegate.size != size; // 监听尺寸变化
+    return oldDelegate.borderColor != borderColor ||
+        oldDelegate.borderWidth != borderWidth ||
+        oldDelegate.borderRadius != borderRadius ||
+        oldDelegate.gapStart != gapStart ||
+        oldDelegate.gapWidth != gapWidth ||
+        oldDelegate.topOffset != topOffset;
   }
-  
-  // 这是一个好习惯，在尺寸可能变化时通知重绘
-  Size? size;
+}
+
+/// 边框边界信息
+class _BorderBounds {
+  final double top;
+  final double bottom;
+  final double left;
+  final double right;
+  final double radius;
+
+  const _BorderBounds({
+    required this.top,
+    required this.bottom,
+    required this.left,
+    required this.right,
+    required this.radius,
+  });
 }

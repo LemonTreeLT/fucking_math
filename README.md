@@ -8,6 +8,10 @@
 
 > [Warning] 当前版本处于非常早的开发版，故不提供构建，自行构建需要注意在 v0.1.0 之前不会提供数据库更新的方法
 
+![标签页面](./docs/imgs/tag_manager_preview.png)
+![单词编辑器](./docs/imgs/words_editor_preview.png)
+
+
 ## 开发线路
 
 当前版本: v0.0.(commit数)
@@ -20,8 +24,8 @@
         - [x] 仓库类
         - [x] Provider 类
         - [x] 录入部分 UI
-        - [ ] 重构 UI 代码 <-- We are here
-        - [ ] 整合 tag 功能
+        - [x] 重构 UI 代码
+        - [ ] 整合 tag 功能 <-- We are here
     - [x] Tag 管理
         - [x] 仓库类
         - [x] Provider 类

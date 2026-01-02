@@ -3,6 +3,7 @@ import 'package:fucking_math/utils/providers/phrase_proivder.dart';
 import 'package:fucking_math/utils/providers/words_proivder.dart';
 import 'package:fucking_math/widget/backgrounds.dart';
 import 'package:fucking_math/widget/collection.dart';
+import 'package:fucking_math/widget/ui_constants.dart';
 import 'package:fucking_math/utils/types.dart';
 import 'package:fucking_math/widget/word_autocomplete_field.dart';
 import 'package:provider/provider.dart';
@@ -16,88 +17,30 @@ class AddPhraseFrom extends StatefulWidget {
 }
 
 class _AddPhraseFormState extends State<AddPhraseFrom> {
+  // 控制器
   final _phraseInputController = TextEditingController();
   final _definitionInputController = TextEditingController();
   final _noteInputController = TextEditingController();
   final _linkedWordController = TextEditingController();
-  // Controllers
-
-  static const Set<String> _ignoredtartWords = {
-    'be',
-    'am',
-    'is',
-    'are',
-    'was',
-    'were',
-    'do',
-    'does',
-    'did',
-    'to',
-    'a',
-    'an',
-    'the',
-    'in',
-    'on',
-    'at',
-    'for',
-    'with',
-    'by',
-    'i',
-    'you',
-    'he',
-    'she',
-    'it',
-    'we',
-    'they',
-  };
-
   final _formKey = GlobalKey<FormState>();
 
+  // 状态
   Word? _selectedWord;
   String? _autocompleteText;
+
+  // 常量
+  static const _ignoredStartWords = {
+    'be', 'am', 'is', 'are', 'was', 'were',
+    'do', 'does', 'did',
+    'to', 'a', 'an', 'the',
+    'in', 'on', 'at', 'for', 'with', 'by',
+    'i', 'you', 'he', 'she', 'it', 'we', 'they', // 多行集合
+  };
 
   @override
   void initState() {
     super.initState();
     _phraseInputController.addListener(_updateLinkedWordSuggestion);
-  }
-
-  void _updateLinkedWordSuggestion() {
-    final text = _phraseInputController.text.trim();
-
-    // 如果短语框清空，也清空关联单词
-    if (text.isEmpty) {
-      setState(() {
-        _selectedWord = null;
-        _autocompleteText = null;
-      });
-      return;
-    }
-
-    final words = text.split(' ').where((s) => s.isNotEmpty).toList();
-    if (words.isEmpty) return;
-
-    String targetWord;
-    targetWord = words.first.toLowerCase();
-
-    if (_ignoredtartWords.contains(words.first.toLowerCase()) &&
-        words.length > 1) {
-      targetWord = words[1].toLowerCase();
-    } else {
-      targetWord = words.first.toLowerCase();
-    }
-
-    final wordsProvider = context.read<WordsProvider>();
-    Word? match = wordsProvider.words.firstWhereOrNull(
-      (word) => word.word.toLowerCase().startsWith(targetWord),
-    );
-    if (match != null) {
-      // 当找到匹配项时，更新两个状态
-      setState(() {
-        _selectedWord = match;
-        _autocompleteText = match.word; // 更新文本状态
-      });
-    }
   }
 
   @override
@@ -110,7 +53,56 @@ class _AddPhraseFormState extends State<AddPhraseFrom> {
     super.dispose();
   }
 
-  void _submitForm() async {
+  // 验证短语输入
+  String? _validatePhrase(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return '短语不能为空';
+    }
+    return null;
+  }
+
+  // 更新关联单词建议
+  void _updateLinkedWordSuggestion() {
+    final text = _phraseInputController.text.trim();
+
+    if (text.isEmpty) {
+      setState(() {
+        _selectedWord = null;
+        _autocompleteText = null;
+      });
+      return;
+    }
+
+    final words = text.split(' ').where((s) => s.isNotEmpty).toList();
+    if (words.isEmpty) return;
+
+    final targetWord = _findTargetWord(words);
+    final wordsProvider = context.read<WordsProvider>();
+    final match = wordsProvider.words.firstWhereOrNull(
+      (word) => word.word.toLowerCase().startsWith(targetWord),
+    );
+
+    if (match != null) {
+      setState(() {
+        _selectedWord = match;
+        _autocompleteText = match.word;
+      });
+    }
+  }
+
+  // 查找目标单词（跳过忽略词）
+  String _findTargetWord(List<String> words) {
+    if (words.isEmpty) return '';
+
+    final firstWord = words.first.toLowerCase();
+    if (_ignoredStartWords.contains(firstWord) && words.length > 1) {
+      return words[1].toLowerCase();
+    }
+    return firstWord;
+  }
+
+  // 提交表单
+  Future<void> _submitForm() async {
     if (_selectedWord == null) {
       ScaffoldMessenger.of(
         context,
@@ -118,25 +110,41 @@ class _AddPhraseFormState extends State<AddPhraseFrom> {
       return;
     }
 
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
 
+    final provider = context.read<PhraseProivder>();
     final phrase = _phraseInputController.text.trim();
     final definition = _definitionInputController.text.trim();
     final note = _noteInputController.text.trim();
 
-    // TODO: 实现tag添加逻辑
-    final List<Tag> tags = [];
-
-    final provider = context.read<PhraseProivder>();
     await provider.addPhrases(
       _selectedWord!.id,
       phrase,
       definition: definition.isEmpty ? null : definition,
       note: note.isEmpty ? null : note,
-      tags: tags.map((tag) => tag.id).toList(),
+      tags: null, // TODO: Complete tags feature
     );
+
+    // Provider内部已处理错误，只需要在成功时清空表单
+    if (provider.error == null) {
+      _clearForm();
+    }
+  }
+
+  // 清空表单
+  void _clearForm() {
+    _phraseInputController.clear();
+    _definitionInputController.clear();
+    _noteInputController.clear();
+    setState(() {
+      _selectedWord = null;
+      _autocompleteText = null;
+    });
+  }
+
+  // AI 生成定义（待实现）
+  void _generateDefinition() {
+    // TODO: implement ai definition generation
   }
 
   @override
@@ -146,22 +154,16 @@ class _AddPhraseFormState extends State<AddPhraseFrom> {
       child: Form(
         key: _formKey,
         child: Padding(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // 短语输入
               textInputer(
-                _phraseInputController,
-                '短语 (Phrase)',
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) return '输入不能为空';
-                  return null;
-                },
+                controller: _phraseInputController,
+                labelText: '短语 (Phrase)',
+                validator: _validatePhrase,
               ),
-              const SizedBox(height: 16),
-
-              // 选择关联单词
+              boxH16,
               WordAutocompleteField(
                 initialValue: _autocompleteText,
                 onWordSelected: (selectedWord) => setState(() {
@@ -169,57 +171,60 @@ class _AddPhraseFormState extends State<AddPhraseFrom> {
                   _autocompleteText = selectedWord?.word;
                 }),
               ),
-              const SizedBox(height: 16),
-
-              // 定义输入
+              boxH16,
               textInputer(
-                _definitionInputController,
-                '定义 (Definition)',
+                controller: _definitionInputController,
+                labelText: '定义 (Definition) (可选)',
                 maxLines: 3,
               ),
-              const SizedBox(height: 16),
-
-              // 备注输入
-              textInputer(_noteInputController, '备注 (Notes)'),
-              const SizedBox(height: 16),
-
-              // 标签选择区域
-              // TODO: 实现标签选择功能
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Text(
-                  '标签选择区域 (Tags) - 待扩展',
-                  style: TextStyle(color: Colors.grey),
-                ),
+              boxH16,
+              textInputer(
+                controller: _noteInputController,
+                labelText: '备注 (Notes) (可选)',
               ),
-
-              // 按钮区域
-              Spacer(),
-              Row(
-                spacing: 8,
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: _submitForm,
-                    icon: Icon(Icons.add),
-                    label: Text("Add Phrase"),
-                  ),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      // TODO: ai生成定义逻辑
-                    },
-                    icon: Icon(Icons.translate),
-                    label: Text("Generate Definition"),
-                  ),
-                ],
-              ),
+              boxH16,
+              _buildTagsPlaceholder(),
+              const Spacer(),
+              _buildActionButtons(),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  // 标签占位区域
+  Widget _buildTagsPlaceholder() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border.all(color: grey),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text('标签选择区域 (Tags) - 待扩展', style: TextStyle(color: grey)),
+    );
+  }
+
+  // 操作按钮区域
+  Widget _buildActionButtons() {
+    return Consumer<PhraseProivder>(
+      builder: (context, provider, child) {
+        return Row(
+          spacing: 8.0,
+          children: [
+            ElevatedButton.icon(
+              onPressed: provider.isLoading ? null : _submitForm,
+              icon: const Icon(Icons.add),
+              label: const Text('添 加 短 语'),
+            ),
+            ElevatedButton.icon(
+              onPressed: provider.isLoading ? null : _generateDefinition,
+              icon: const Icon(Icons.translate),
+              label: const Text("ai 生成释义"),
+            ),
+          ],
+        );
+      },
     );
   }
 }

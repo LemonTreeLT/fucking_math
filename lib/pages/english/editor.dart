@@ -11,7 +11,7 @@ class EnglishEditor extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       child: Row(
         spacing: 20,
-        children: [
+        children: const [
           Expanded(child: AddWordForm()),
           Expanded(child: AddPhraseFrom()),
         ],

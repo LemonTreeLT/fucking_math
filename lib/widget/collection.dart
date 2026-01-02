@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-Widget textInputer(
-  TextEditingController controller,
-  String labelText, {
+Widget textInputer({
+  required TextEditingController controller,
+  required String labelText,
   String? Function(String?)? validator,
-  int maxLines = 1,
+  int? maxLines = 1,
 }) {
   return TextFormField(
     controller: controller,

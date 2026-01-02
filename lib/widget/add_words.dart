@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fucking_math/widget/backgrounds.dart';
+import 'package:fucking_math/widget/collection.dart';
+import 'package:fucking_math/widget/ui_constants.dart';
 import 'package:provider/provider.dart';
 import 'package:fucking_math/utils/providers/words_proivder.dart';
 
@@ -11,18 +13,14 @@ class AddWordForm extends StatefulWidget {
 }
 
 class _AddWordFormState extends State<AddWordForm> {
-  // 1. 局部状态：用于管理文本输入
   final _wordController = TextEditingController();
   final _definitionController = TextEditingController();
   final _definitionPreController = TextEditingController();
   final _noteController = TextEditingController();
-
-  // 3. 局部状态：用于管理表单验证
   final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
-    // 释放资源，防止内存泄漏
     _wordController.dispose();
     _definitionController.dispose();
     _definitionPreController.dispose();
@@ -30,12 +28,18 @@ class _AddWordFormState extends State<AddWordForm> {
     super.dispose();
   }
 
-  // --- 提交逻辑 ---
-  void _submitForm() async {
-    // 验证表单
-    if (!_formKey.currentState!.validate()) {
-      return;
+  String? _validateWord(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return '单词不能为空';
     }
+    if (value.contains(' ')) {
+      return '单词不应该包含空格';
+    }
+    return null;
+  }
+
+  Future<void> _submitForm() async {
+    if (!_formKey.currentState!.validate()) return;
 
     final provider = context.read<WordsProvider>();
     final word = _wordController.text.trim();
@@ -45,40 +49,27 @@ class _AddWordFormState extends State<AddWordForm> {
         : _definitionController.text.trim();
     final note = _noteController.text.trim();
 
-    // TODO: Complete tags feature
-    const List<int>? tags = null;
+    await provider.addWord(
+      word,
+      definition: definition,
+      definitionPre: definitionPre,
+      note: note,
+      tags: null, // TODO: Complete tags feature
+    );
 
-    try {
-      await provider.addWord(
-        word,
-        definition: definition,
-        definitionPre: definitionPre,
-        note: note,
-        tags: tags,
-      );
+    // Provider内部已处理错误，只需要在成功时清空表单
+    if (provider.error == null) _clearForm();
+  }
 
-      // 成功后清空表单
-      _wordController.clear();
-      _definitionController.clear();
-      _definitionPreController.clear();
-      _noteController.clear();
+  void _clearForm() {
+    _wordController.clear();
+    _definitionController.clear();
+    _definitionPreController.clear();
+    _noteController.clear();
+  }
 
-      // 显示成功提示
-      if (context.mounted) {
-        ScaffoldMessenger.of(
-          // ignore: use_build_context_synchronously
-          context,
-        ).showSnackBar(SnackBar(content: Text('单词 "$word" 添加成功!')));
-      }
-    } catch (e) {
-      // 错误信息会由 provider 内部处理和打印
-      if (context.mounted) {
-        ScaffoldMessenger.of(
-          // ignore: use_build_context_synchronously
-          context,
-        ).showSnackBar(SnackBar(content: Text('添加失败: ${provider.error}')));
-      }
-    }
+  void _generateDefinition() {
+    // TODO: implement ai definition generation
   }
 
   @override
@@ -91,94 +82,69 @@ class _AddWordFormState extends State<AddWordForm> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              // --- 1. 单词输入 ---
-              TextFormField(
+            children: [
+              textInputer(
                 controller: _wordController,
-                decoration: const InputDecoration(
-                  labelText: '单词 (Word)',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return '单词不能为空';
-                  } else if (value.contains(' ')) {
-                    return '单词不应该包含空格';
-                  }
-                  return null;
-                },
+                labelText: '单词 (Word)',
+                validator: _validateWord,
               ),
-              const SizedBox(height: 16),
-
-              // 预览定义输入
-              TextFormField(
+              boxH16,
+              textInputer(
                 controller: _definitionPreController,
-                decoration: const InputDecoration(
-                  labelText: '简写定义 eg. (apple n. 苹果)',
-                  border: OutlineInputBorder(),
-                ),
+                labelText: '简写定义 eg. (apple n. 苹果)',
               ),
-              const SizedBox(height: 16),
-
-              // --- 2. 定义输入 ---
-              TextFormField(
+              boxH16,
+              textInputer(
                 controller: _definitionController,
-                decoration: const InputDecoration(
-                  labelText: '定义 (Definition) (可选)',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 3, // unlimited
+                labelText: '定义 (Definition) (可选)',
+                maxLines: 3,
               ),
-              const SizedBox(height: 16),
-
-              // 备注输入
-              TextFormField(
+              boxH16,
+              textInputer(
                 controller: _noteController,
-                decoration: const InputDecoration(
-                  labelText: '备注 (Notes) (可选)',
-                  border: OutlineInputBorder(),
-                ),
+                labelText: '备注 (Notes) (可选)',
               ),
-              const SizedBox(height: 16),
-
-              // --- 3. 标签 (Tags) 预留扩展区域 ---
-              // 暂时用一个 Container 占位
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Text(
-                  '标签选择区域 (Tags) - 待扩展',
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ),
-
-              Spacer(),
-              Row(
-                spacing: 8.0,
-
-                children: [
-                  // --- 5. 提交按钮 ---
-                  ElevatedButton.icon(
-                    onPressed: _submitForm,
-                    icon: const Icon(Icons.add),
-                    label: const Text('添 加 单 词'),
-                  ),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      // TODO: implement ai definition generation.
-                    },
-                    icon: const Icon(Icons.translate),
-                    label: const Text("ai 生成释义"),
-                  ),
-                ],
-              ),
+              boxH16,
+              _buildTagsPlaceholder(),
+              const Spacer(),
+              _buildActionButtons(),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTagsPlaceholder() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border.all(color: grey),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text('标签选择区域 (Tags) - 待扩展', style: TextStyle(color: grey)),
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Consumer<WordsProvider>(
+      builder: (context, provider, child) {
+        return Row(
+          spacing: 8.0,
+          children: [
+            ElevatedButton.icon(
+              onPressed: provider.isLoading ? null : _submitForm,
+              icon: const Icon(Icons.add),
+              label: const Text('添 加 单 词'),
+            ),
+            ElevatedButton.icon(
+              onPressed: provider.isLoading ? null : _generateDefinition,
+              icon: const Icon(Icons.translate),
+              label: const Text("ai 生成释义"),
+            ),
+          ],
+        );
+      },
     );
   }
 }

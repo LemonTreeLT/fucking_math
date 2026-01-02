@@ -5,11 +5,7 @@ import 'package:fucking_math/utils/types.dart';
 import 'package:fucking_math/widget/backgrounds.dart';
 import 'package:fucking_math/widget/tag_badge.dart';
 import 'package:provider/provider.dart';
-
-final boxW16 = const SizedBox(width: 16);
-final boxH16 = const SizedBox(height: 16);
-final border = const OutlineInputBorder();
-final grey = Colors.grey.shade800;
+import 'package:fucking_math/widget/ui_constants.dart';
 
 class TagsManager extends StatefulWidget {
   const TagsManager({super.key});
