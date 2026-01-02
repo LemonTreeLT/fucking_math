@@ -164,40 +164,6 @@ class _TagsDetailedForm extends StatefulWidget {
   State<StatefulWidget> createState() => _TagsDetailedFormState();
 }
 
-// 平铺展示 Tag
-class _TagsDisplayArea extends StatelessWidget {
-  const _TagsDisplayArea({required this.onTagSelect});
-
-  final ValueChanged<Tag> onTagSelect;
-
-  @override
-  Widget build(BuildContext context) => BorderedContainerWithTopText(
-    width: double.infinity,
-    height: double.infinity,
-    labelText: "标签展示",
-    child: Padding(
-      padding: EdgeInsets.all(16),
-      child: SingleChildScrollView(
-        child: Wrap(
-          crossAxisAlignment: WrapCrossAlignment.start,
-          runSpacing: 8,
-          spacing: 8,
-          children: context
-              .select((TagProvider p) => p.tags)
-              .map(
-                (t) => InkWell(
-                  borderRadius: BorderRadius.circular(90),
-                  onTap: () => onTagSelect(t),
-                  child: TagBadge(tag: t),
-                ),
-              )
-              .toList(),
-        ),
-      ),
-    ),
-  );
-}
-
 class TagHeader extends StatelessWidget {
   final Tag tag;
   const TagHeader({super.key, required this.tag});
@@ -280,6 +246,40 @@ class TagHeader extends StatelessWidget {
       ),
     );
   }
+}
+
+// 平铺展示 Tag
+class _TagsDisplayArea extends StatelessWidget {
+  const _TagsDisplayArea({required this.onTagSelect});
+
+  final ValueChanged<Tag> onTagSelect;
+
+  @override
+  Widget build(BuildContext context) => BorderedContainerWithTopText(
+    width: double.infinity,
+    height: double.infinity,
+    labelText: "标签展示",
+    child: Padding(
+      padding: EdgeInsets.all(16),
+      child: SingleChildScrollView(
+        child: Wrap(
+          crossAxisAlignment: WrapCrossAlignment.start,
+          runSpacing: 8,
+          spacing: 8,
+          children: context
+              .select((TagProvider p) => p.tags)
+              .map(
+                (t) => InkWell(
+                  borderRadius: BorderRadius.circular(90),
+                  onTap: () => onTagSelect(t),
+                  child: TagBadge(tag: t),
+                ),
+              )
+              .toList(),
+        ),
+      ),
+    ),
+  );
 }
 
 // 添加 Tag 组件

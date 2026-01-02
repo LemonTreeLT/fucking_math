@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fucking_math/widget/backgrounds.dart';
 import 'package:fucking_math/widget/collection.dart';
 import 'package:fucking_math/widget/ui_constants.dart';
+import 'package:fucking_math/widget/tag_selection.dart';
 import 'package:provider/provider.dart';
 import 'package:fucking_math/utils/providers/words_proivder.dart';
 
@@ -18,6 +19,8 @@ class _AddWordFormState extends State<AddWordForm> {
   final _definitionPreController = TextEditingController();
   final _noteController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  
+  Set<int> _selectedTagIds = {}; // ✅ 添加标签状态
 
   @override
   void dispose() {
@@ -54,10 +57,9 @@ class _AddWordFormState extends State<AddWordForm> {
       definition: definition,
       definitionPre: definitionPre,
       note: note,
-      tags: null, // TODO: Complete tags feature
+      tags: _selectedTagIds.isEmpty ? null : _selectedTagIds.toList(), // ✅ 传递标签
     );
 
-    // Provider内部已处理错误，只需要在成功时清空表单
     if (provider.error == null) _clearForm();
   }
 
@@ -66,6 +68,9 @@ class _AddWordFormState extends State<AddWordForm> {
     _definitionController.clear();
     _definitionPreController.clear();
     _noteController.clear();
+    setState(() {
+      _selectedTagIds.clear(); // ✅ 清空标签选择
+    });
   }
 
   void _generateDefinition() {
@@ -105,24 +110,18 @@ class _AddWordFormState extends State<AddWordForm> {
                 labelText: '备注 (Notes) (可选)',
               ),
               boxH16,
-              _buildTagsPlaceholder(),
+              TagSelectionArea( // ✅ 使用共享组件
+                selectedTagIds: _selectedTagIds,
+                onSelectionChanged: (newSelection) {
+                  setState(() => _selectedTagIds = newSelection);
+                },
+              ),
               const Spacer(),
               _buildActionButtons(),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildTagsPlaceholder() {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        border: Border.all(color: grey),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text('标签选择区域 (Tags) - 待扩展', style: TextStyle(color: grey)),
     );
   }
 

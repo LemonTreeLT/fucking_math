@@ -25,7 +25,8 @@
         - [x] Provider 类
         - [x] 录入部分 UI
         - [x] 重构 UI 代码
-        - [ ] 整合 tag 功能 <-- We are here
+        - [x] 整合 tag 功能
+        - [ ] 单词编辑 <-- We are here
     - [x] Tag 管理
         - [x] 仓库类
         - [x] Provider 类

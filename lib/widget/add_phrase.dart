@@ -3,6 +3,7 @@ import 'package:fucking_math/utils/providers/phrase_proivder.dart';
 import 'package:fucking_math/utils/providers/words_proivder.dart';
 import 'package:fucking_math/widget/backgrounds.dart';
 import 'package:fucking_math/widget/collection.dart';
+import 'package:fucking_math/widget/tag_selection.dart';
 import 'package:fucking_math/widget/ui_constants.dart';
 import 'package:fucking_math/utils/types.dart';
 import 'package:fucking_math/widget/word_autocomplete_field.dart';
@@ -17,24 +18,22 @@ class AddPhraseFrom extends StatefulWidget {
 }
 
 class _AddPhraseFormState extends State<AddPhraseFrom> {
-  // 控制器
   final _phraseInputController = TextEditingController();
   final _definitionInputController = TextEditingController();
   final _noteInputController = TextEditingController();
   final _linkedWordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  // 状态
   Word? _selectedWord;
   String? _autocompleteText;
+  Set<int> _selectedTagIds = {};
 
-  // 常量
   static const _ignoredStartWords = {
     'be', 'am', 'is', 'are', 'was', 'were',
     'do', 'does', 'did',
     'to', 'a', 'an', 'the',
     'in', 'on', 'at', 'for', 'with', 'by',
-    'i', 'you', 'he', 'she', 'it', 'we', 'they', // 多行集合
+    'i', 'you', 'he', 'she', 'it', 'we', 'they',
   };
 
   @override
@@ -53,7 +52,6 @@ class _AddPhraseFormState extends State<AddPhraseFrom> {
     super.dispose();
   }
 
-  // 验证短语输入
   String? _validatePhrase(String? value) {
     if (value == null || value.trim().isEmpty) {
       return '短语不能为空';
@@ -61,7 +59,6 @@ class _AddPhraseFormState extends State<AddPhraseFrom> {
     return null;
   }
 
-  // 更新关联单词建议
   void _updateLinkedWordSuggestion() {
     final text = _phraseInputController.text.trim();
 
@@ -90,7 +87,6 @@ class _AddPhraseFormState extends State<AddPhraseFrom> {
     }
   }
 
-  // 查找目标单词（跳过忽略词）
   String _findTargetWord(List<String> words) {
     if (words.isEmpty) return '';
 
@@ -101,7 +97,6 @@ class _AddPhraseFormState extends State<AddPhraseFrom> {
     return firstWord;
   }
 
-  // 提交表单
   Future<void> _submitForm() async {
     if (_selectedWord == null) {
       ScaffoldMessenger.of(
@@ -122,16 +117,14 @@ class _AddPhraseFormState extends State<AddPhraseFrom> {
       phrase,
       definition: definition.isEmpty ? null : definition,
       note: note.isEmpty ? null : note,
-      tags: null, // TODO: Complete tags feature
+      tags: _selectedTagIds.isEmpty ? null : _selectedTagIds.toList(),
     );
 
-    // Provider内部已处理错误，只需要在成功时清空表单
     if (provider.error == null) {
       _clearForm();
     }
   }
 
-  // 清空表单
   void _clearForm() {
     _phraseInputController.clear();
     _definitionInputController.clear();
@@ -139,10 +132,10 @@ class _AddPhraseFormState extends State<AddPhraseFrom> {
     setState(() {
       _selectedWord = null;
       _autocompleteText = null;
+      _selectedTagIds.clear();
     });
   }
 
-  // AI 生成定义（待实现）
   void _generateDefinition() {
     // TODO: implement ai definition generation
   }
@@ -183,7 +176,12 @@ class _AddPhraseFormState extends State<AddPhraseFrom> {
                 labelText: '备注 (Notes) (可选)',
               ),
               boxH16,
-              _buildTagsPlaceholder(),
+              TagSelectionArea( // ✅ 使用共享组件
+                selectedTagIds: _selectedTagIds,
+                onSelectionChanged: (newSelection) {
+                  setState(() => _selectedTagIds = newSelection);
+                },
+              ),
               const Spacer(),
               _buildActionButtons(),
             ],
@@ -193,19 +191,6 @@ class _AddPhraseFormState extends State<AddPhraseFrom> {
     );
   }
 
-  // 标签占位区域
-  Widget _buildTagsPlaceholder() {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        border: Border.all(color: grey),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text('标签选择区域 (Tags) - 待扩展', style: TextStyle(color: grey)),
-    );
-  }
-
-  // 操作按钮区域
   Widget _buildActionButtons() {
     return Consumer<PhraseProivder>(
       builder: (context, provider, child) {
