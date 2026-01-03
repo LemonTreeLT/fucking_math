@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:fucking_math/utils/providers/tags_proivder.dart';
+import 'package:fucking_math/providers/tags_proivder.dart';
 import 'package:fucking_math/utils/types.dart';
-import 'package:fucking_math/widget/tag_badge.dart';
+import 'package:fucking_math/widget/common/tag_badge.dart';
 import 'package:provider/provider.dart';
 import 'package:collection/collection.dart';
 
-/// 标签选择组件 - 可在多个表单中复用
 class TagSelectionArea extends StatefulWidget {
   final Set<int> selectedTagIds;
   final ValueChanged<Set<int>> onSelectionChanged;

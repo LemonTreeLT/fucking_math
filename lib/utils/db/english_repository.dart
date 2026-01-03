@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:fucking_math/db/app_dao.dart';
-import 'package:fucking_math/db/tables_english.dart';
+import 'package:fucking_math/db/tables/tables_english.dart';
 import 'package:fucking_math/utils/db/exceptions.dart';
 import 'package:fucking_math/utils/types.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;

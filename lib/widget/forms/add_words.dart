@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:fucking_math/widget/backgrounds.dart';
-import 'package:fucking_math/widget/collection.dart';
+import 'package:fucking_math/widget/common/backgrounds.dart';
+import 'package:fucking_math/widget/forms/action_button.dart';
+import 'package:fucking_math/widget/forms/form_builders.dart';
 import 'package:fucking_math/widget/ui_constants.dart';
-import 'package:fucking_math/widget/tag_selection.dart';
+import 'package:fucking_math/widget/common/tag_selection.dart';
 import 'package:provider/provider.dart';
-import 'package:fucking_math/utils/providers/words_proivder.dart';
+import 'package:fucking_math/providers/words_proivder.dart';
 
 class AddWordForm extends StatefulWidget {
   const AddWordForm({super.key});
-
   @override
   State<AddWordForm> createState() => _AddWordFormState();
 }
@@ -19,9 +19,8 @@ class _AddWordFormState extends State<AddWordForm> {
   final _definitionPreController = TextEditingController();
   final _noteController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  
-  Set<int> _selectedTagIds = {}; // ✅ 添加标签状态
 
+  Set<int> _selectedTagIds = {};
   @override
   void dispose() {
     _wordController.dispose();
@@ -32,18 +31,13 @@ class _AddWordFormState extends State<AddWordForm> {
   }
 
   String? _validateWord(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return '单词不能为空';
-    }
-    if (value.contains(' ')) {
-      return '单词不应该包含空格';
-    }
+    if (value == null || value.trim().isEmpty) return '单词不能为空';
+    if (value.contains(' ')) return '单词不应该包含空格';
     return null;
   }
 
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
-
     final provider = context.read<WordsProvider>();
     final word = _wordController.text.trim();
     final definitionPre = _definitionPreController.text.trim();
@@ -51,32 +45,27 @@ class _AddWordFormState extends State<AddWordForm> {
         ? null
         : _definitionController.text.trim();
     final note = _noteController.text.trim();
-
     await provider.addWord(
       word,
       definition: definition,
       definitionPre: definitionPre,
       note: note,
-      tags: _selectedTagIds.isEmpty ? null : _selectedTagIds.toList(), // ✅ 传递标签
+      tags: _selectedTagIds.isEmpty ? null : _selectedTagIds.toList(),
     );
-
     if (provider.error == null) _clearForm();
   }
-
+  
   void _clearForm() {
     _wordController.clear();
     _definitionController.clear();
     _definitionPreController.clear();
     _noteController.clear();
-    setState(() {
-      _selectedTagIds.clear(); // ✅ 清空标签选择
-    });
+    setState(() => _selectedTagIds.clear());
   }
 
   void _generateDefinition() {
     // TODO: implement ai definition generation
   }
-
   @override
   Widget build(BuildContext context) {
     return BorderedContainerWithTopText(
@@ -88,62 +77,50 @@ class _AddWordFormState extends State<AddWordForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              textInputer(
+              FormBuilders.textField(
                 controller: _wordController,
                 labelText: '单词 (Word)',
                 validator: _validateWord,
               ),
               boxH16,
-              textInputer(
+              FormBuilders.textField(
                 controller: _definitionPreController,
                 labelText: '简写定义 eg. (apple n. 苹果)',
               ),
               boxH16,
-              textInputer(
+              FormBuilders.textField(
                 controller: _definitionController,
                 labelText: '定义 (Definition) (可选)',
                 maxLines: 3,
               ),
               boxH16,
-              textInputer(
+              FormBuilders.textField(
                 controller: _noteController,
                 labelText: '备注 (Notes) (可选)',
               ),
               boxH16,
-              TagSelectionArea( // ✅ 使用共享组件
+              TagSelectionArea(
                 selectedTagIds: _selectedTagIds,
                 onSelectionChanged: (newSelection) {
                   setState(() => _selectedTagIds = newSelection);
                 },
               ),
               const Spacer(),
-              _buildActionButtons(),
+              Consumer<WordsProvider>(
+                builder: (context, provider, child) {
+                  return FormActionButtons(
+                    isLoading: provider.isLoading,
+                    onSubmit: _submitForm,
+                    onGenerate: _generateDefinition,
+                    submitLabel: '添 加 单 词',
+                    generateLabel: 'AI 生成释义',
+                  );
+                },
+              ),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildActionButtons() {
-    return Consumer<WordsProvider>(
-      builder: (context, provider, child) {
-        return Row(
-          spacing: 8.0,
-          children: [
-            ElevatedButton.icon(
-              onPressed: provider.isLoading ? null : _submitForm,
-              icon: const Icon(Icons.add),
-              label: const Text('添 加 单 词'),
-            ),
-            ElevatedButton.icon(
-              onPressed: provider.isLoading ? null : _generateDefinition,
-              icon: const Icon(Icons.translate),
-              label: const Text("ai 生成释义"),
-            ),
-          ],
-        );
-      },
     );
   }
 }

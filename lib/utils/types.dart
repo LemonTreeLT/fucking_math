@@ -25,9 +25,7 @@ class SubjectConverter extends TypeConverter<Subject, String> {
   }
 
   @override
-  String toSql(Subject value) {
-    return value.name;
-  }
+  String toSql(Subject value) => value.name;
 }
 
 // 单词

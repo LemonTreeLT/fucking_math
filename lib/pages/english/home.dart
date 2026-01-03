@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:fucking_math/utils/providers/phrase_proivder.dart';
+import 'package:fucking_math/providers/phrase_proivder.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:fucking_math/utils/providers/words_proivder.dart';
+import 'package:fucking_math/providers/words_proivder.dart';
 
 class EnglishShell extends StatefulWidget {
   const EnglishShell({super.key, required this.child});

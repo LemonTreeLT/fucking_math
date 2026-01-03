@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fucking_math/widget/add_phrase.dart';
-import 'package:fucking_math/widget/add_words.dart';
+import 'package:fucking_math/widget/forms/add_phrase.dart';
+import 'package:fucking_math/widget/forms/add_words.dart';
 
 class EnglishEditor extends StatelessWidget {
   const EnglishEditor({super.key});
@@ -13,7 +13,7 @@ class EnglishEditor extends StatelessWidget {
         spacing: 20,
         children: const [
           Expanded(child: AddWordForm()),
-          Expanded(child: AddPhraseFrom()),
+          Expanded(child: AddPhraseForm()),
         ],
       ),
     );

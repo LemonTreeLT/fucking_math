@@ -1,51 +1,49 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_color_picker_plus/flutter_color_picker_plus.dart';
-import 'package:fucking_math/utils/providers/tags_proivder.dart';
+import 'package:fucking_math/providers/tags_proivder.dart';
 import 'package:fucking_math/utils/types.dart';
-import 'package:fucking_math/widget/backgrounds.dart';
-import 'package:fucking_math/widget/tag_badge.dart';
+import 'package:fucking_math/widget/common/backgrounds.dart';
+import 'package:fucking_math/widget/common/tag_badge.dart';
+import 'package:fucking_math/widget/forms/form_builders.dart';
 import 'package:provider/provider.dart';
 import 'package:fucking_math/widget/ui_constants.dart';
 
 class TagsManager extends StatefulWidget {
   const TagsManager({super.key});
+
   @override
   State<TagsManager> createState() => _TagsManagerState();
 }
 
 class _TagsManagerState extends State<TagsManager> {
-  // 本地状态：当前选中的 Tag
   Tag? _selectedTag;
+
   @override
-  Widget build(BuildContext context) =>
-      Scaffold(appBar: _buildAppbar(), body: _buildMainScreen());
-
-  AppBar _buildAppbar() => AppBar(title: Text("Tags Manager"));
-
-  Widget _buildMainScreen() => Padding(
-    padding: EdgeInsets.all(16),
-    child: Row(
-      children: [
-        Expanded(
-          child: Column(
-            children: [
-              // 传入回调函数
-              Expanded(
-                child: _TagsDisplayArea(
-                  onTagSelect: (tag) => setState(() => _selectedTag = tag),
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: const Text("Tags Manager")),
+    body: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              children: [
+                Expanded(
+                  child: _TagsDisplayArea(
+                    onTagSelect: (tag) => setState(() => _selectedTag = tag),
+                  ),
                 ),
-              ),
-              boxH16,
-              Expanded(flex: 2, child: _TagsAddingForm()),
-            ],
+                boxH16,
+                const Expanded(flex: 2, child: _TagsAddingForm()),
+              ],
+            ),
           ),
-        ),
-        boxW16,
-        // 传入当前选中的 Tag
-        Expanded(child: _buildDetailedScreen()),
-      ],
+          boxW16,
+          Expanded(child: _buildDetailedScreen()),
+        ],
+      ),
     ),
   );
+
   Widget _buildDetailedScreen() {
     if (_selectedTag == null) {
       return BorderedContainerWithTopText(
@@ -55,105 +53,11 @@ class _TagsManagerState extends State<TagsManager> {
         ),
       );
     }
-    // 关键：使用 ValueKey，当 id 变化时强制刷新右侧 Form 的状态
     return _TagsDetailedForm(
       key: ValueKey(_selectedTag!.id),
       tag: _selectedTag!,
     );
   }
-}
-
-// 详细与编辑
-class _TagsDetailedFormState extends State<_TagsDetailedForm> {
-  TagProvider get _provider => context.read();
-  Tag get _tag => widget.tag;
-
-  @override
-  void initState() {
-    super.initState();
-    _nameDisplayController = TextEditingController(text: _tag.name);
-    _descriptionDisplayController = TextEditingController(
-      text: _tag.description,
-    );
-    _selectedSubject = _tag.subject;
-    _selectedColor = _tag.color != null ? Color(_tag.color!) : null;
-  }
-
-  @override
-  void dispose() {
-    _nameDisplayController.dispose();
-    _descriptionDisplayController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => BorderedContainerWithTopText(
-    labelText: "详情与编辑",
-    child: Padding(
-      padding: EdgeInsets.all(16),
-      child: Form(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TagHeader(tag: _tag),
-            const SizedBox(height: 24),
-            _buildNameDisplay(),
-            boxH16,
-            _buildDescriptionDisplay(),
-            boxH16,
-            _buildSubjectSelector(),
-            boxH16,
-            _buildColorDisplay(),
-            const Spacer(),
-            _buildSubmitButton(),
-          ],
-        ),
-      ),
-    ),
-  );
-
-  // 构建名称展示区
-  late TextEditingController _nameDisplayController;
-  Widget _buildNameDisplay() =>
-      _composeTextDisplayAndEditor(_nameDisplayController, "输入 Tag 名称", "名称");
-
-  // 构建描述展示区
-  late TextEditingController _descriptionDisplayController;
-  Widget _buildDescriptionDisplay() =>
-      _composeTextDisplayAndEditor(_descriptionDisplayController, "输入描述", "描述");
-
-  // 构建学科下来菜单
-  Subject? _selectedSubject;
-  Widget _buildSubjectSelector() => _composeEnumDropdown(
-    "学科",
-    UniqueKey(),
-    _tag.subject,
-    Subject.values,
-    (t) => setState(() => _selectedSubject = t),
-  );
-
-  // 构建取色板
-  Color? _selectedColor;
-  Widget _buildColorDisplay() => _composeColorPicker(
-    context,
-    (t) => setState(() => _selectedColor = t),
-    _selectedColor ?? grey,
-  );
-
-  // 构建提交按钮
-  Widget _buildSubmitButton() => ElevatedButton.icon(
-    onPressed: () => _provider.changeTag(
-      Tag(
-        id: _tag.id,
-        name: _nameDisplayController.text.trim(),
-        description: _descriptionDisplayController.text.trim(),
-        subject: _selectedSubject,
-        color: _selectedColor?.toARGB32(),
-      ),
-    ),
-    label: const Text("保 存"),
-    icon: Icon(Icons.save),
-  );
 }
 
 class _TagsDetailedForm extends StatefulWidget {
@@ -164,28 +68,106 @@ class _TagsDetailedForm extends StatefulWidget {
   State<StatefulWidget> createState() => _TagsDetailedFormState();
 }
 
+class _TagsDetailedFormState extends State<_TagsDetailedForm> {
+  late TextEditingController _nameController;
+  late TextEditingController _descriptionController;
+  Subject? _selectedSubject;
+  Color? _selectedColor;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.tag.name);
+    _descriptionController = TextEditingController(
+      text: widget.tag.description,
+    );
+    _selectedSubject = widget.tag.subject;
+    _selectedColor = widget.tag.color != null ? Color(widget.tag.color!) : null;
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => BorderedContainerWithTopText(
+    labelText: "详情与编辑",
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Form(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TagHeader(tag: widget.tag),
+            const SizedBox(height: 24),
+            FormBuilders.textField(
+              controller: _nameController,
+              labelText: '名称',
+              hintText: '输入 Tag 名称',
+            ),
+            boxH16,
+            FormBuilders.textField(
+              controller: _descriptionController,
+              labelText: '描述',
+              hintText: '输入描述',
+            ),
+            boxH16,
+            FormBuilders.enumDropdown<Subject>(
+              key: UniqueKey(),
+              label: '学科',
+              items: Subject.values,
+              initialValue: widget.tag.subject,
+              onChanged: (t) => setState(() => _selectedSubject = t),
+            ),
+            boxH16,
+            FormBuilders.colorPicker(
+              context: context,
+              currentColor: _selectedColor ?? grey,
+              onColorChanged: (c) => setState(() => _selectedColor = c),
+            ),
+            const Spacer(),
+            ElevatedButton.icon(
+              onPressed: () => context.read<TagProvider>().changeTag(
+                Tag(
+                  id: widget.tag.id,
+                  name: _nameController.text.trim(),
+                  description: _descriptionController.text.trim(),
+                  subject: _selectedSubject,
+                  color: _selectedColor?.toARGB32(),
+                ),
+              ),
+              label: const Text("保 存"),
+              icon: const Icon(Icons.save),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
 class TagHeader extends StatelessWidget {
   final Tag tag;
   const TagHeader({super.key, required this.tag});
+
   @override
   Widget build(BuildContext context) {
-    // 颜色处理：如果 tag 没有颜色，使用灰色
     final tagColor = tag.color != null
         ? Color(tag.color!)
         : Colors.grey.shade800;
-    // 关键组件：IntrinsicHeight
-    // 它强制 Row 的高度等于其最高子元素的高度（这里是左侧的文本列）
+
     return IntrinsicHeight(
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch, // 关键：让右侧子元素纵向拉伸以填满高度
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // --- 左侧：主标题 + 副标题 ---
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center, // 文本垂直居中分布
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // 主标题
                 Text(
                   "# ${tag.name}",
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -194,8 +176,7 @@ class TagHeader extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4), // 间距
-                // 副标题
+                const SizedBox(height: 4),
                 Text(
                   tag.description?.isNotEmpty == true
                       ? tag.description!
@@ -209,27 +190,21 @@ class TagHeader extends StatelessWidget {
               ],
             ),
           ),
-
-          const SizedBox(width: 16), // 左右间距
-          // --- 右侧：圆角方形 ---
-          // AspectRatio 设为 1，保证它是个正方形
-          // 由于外层 Row 是 stretch，它的高度已经被锁死为左侧文本的高度
-          // 所以 AspectRatio 会根据高度自动计算宽度，形成正方形
+          const SizedBox(width: 16),
           AspectRatio(
             aspectRatio: 1.0,
             child: Container(
               decoration: BoxDecoration(
                 color: tagColor,
-                borderRadius: BorderRadius.circular(8), // 圆角
+                borderRadius: BorderRadius.circular(8),
                 boxShadow: [
                   BoxShadow(
-                    color: tagColor.withAlpha(76),
+                    color: tagColor,
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
                 ],
               ),
-              // 可以在里面放个 Icon 或者 tag 首字母，不需要可以留空
               child: Center(
                 child: Text(
                   tag.name.substring(0, 1).toUpperCase(),
@@ -248,10 +223,8 @@ class TagHeader extends StatelessWidget {
   }
 }
 
-// 平铺展示 Tag
 class _TagsDisplayArea extends StatelessWidget {
   const _TagsDisplayArea({required this.onTagSelect});
-
   final ValueChanged<Tag> onTagSelect;
 
   @override
@@ -260,7 +233,7 @@ class _TagsDisplayArea extends StatelessWidget {
     height: double.infinity,
     labelText: "标签展示",
     child: Padding(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: SingleChildScrollView(
         child: Wrap(
           crossAxisAlignment: WrapCrossAlignment.start,
@@ -282,7 +255,6 @@ class _TagsDisplayArea extends StatelessWidget {
   );
 }
 
-// 添加 Tag 组件
 class _TagsAddingForm extends StatefulWidget {
   const _TagsAddingForm();
 
@@ -291,7 +263,36 @@ class _TagsAddingForm extends StatefulWidget {
 }
 
 class _TagsAddingFormState extends State<_TagsAddingForm> {
-  TagProvider get _provider => context.read();
+  final _nameController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  Subject? _selectedSubject;
+  Color _selectedColor = grey;
+  Key _subjectKey = UniqueKey();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    context.read<TagProvider>().saveTag(
+      _nameController.text.trim(),
+      description: _descriptionController.text.trim(),
+      color: _selectedColor.toARGB32(),
+      subject: _selectedSubject,
+    );
+
+    setState(() {
+      _nameController.clear();
+      _descriptionController.clear();
+      _selectedColor = grey;
+      _subjectKey = UniqueKey();
+    });
+
+    FocusScope.of(context).unfocus();
+  }
 
   @override
   Widget build(BuildContext context) => BorderedContainerWithTopText(
@@ -302,173 +303,38 @@ class _TagsAddingFormState extends State<_TagsAddingForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildNameInputer(),
+            FormBuilders.textField(
+              controller: _nameController,
+              labelText: 'Tag name',
+            ),
             boxH16,
-            _buildDescriptionInputer(),
+            FormBuilders.textField(
+              controller: _descriptionController,
+              labelText: 'Description',
+            ),
             boxH16,
-            _buildSubjectSelector(),
+            FormBuilders.enumDropdown<Subject>(
+              key: _subjectKey,
+              label: '选择学科',
+              items: Subject.values,
+              initialValue: null,
+              onChanged: (t) => _selectedSubject = t,
+            ),
             boxH16,
-            _buildColorPicker(),
+            FormBuilders.colorPicker(
+              context: context,
+              currentColor: _selectedColor,
+              onColorChanged: (c) => setState(() => _selectedColor = c),
+            ),
             const Spacer(),
-            _buildAddingButton(),
+            ElevatedButton.icon(
+              onPressed: _submit,
+              label: const Text("添加标签"),
+              icon: const Icon(Icons.add),
+            ),
           ],
         ),
       ),
-    ),
-  );
-
-  // 表单内容辅助构建
-  final _nameInputer = TextEditingController();
-  Widget _buildNameInputer() => _composeTextInputer(_nameInputer, "Tag name");
-
-  final _descriptionInputer = TextEditingController();
-  Widget _buildDescriptionInputer() =>
-      _composeTextInputer(_descriptionInputer, "Description");
-
-  // 下拉菜单构建
-  Subject? _selectedSubject;
-  Key _addingSelectSubjectKey = UniqueKey();
-  Widget _buildSubjectSelector() => _composeEnumDropdown(
-    "选择学科",
-    _addingSelectSubjectKey,
-    null,
-    Subject.values,
-    (t) => _selectedSubject = t,
-  );
-
-  // 取色器构建
-  Color _selectedColor = grey;
-  Widget _buildColorPicker() => _composeColorPicker(
-    context,
-    (c) => setState(() => _selectedColor = c),
-    _selectedColor,
-  );
-
-  // 提交按钮构建
-  Widget _buildAddingButton() => ElevatedButton.icon(
-    onPressed: _submit,
-    label: const Text("添加标签"),
-    icon: const Icon(Icons.add),
-  );
-
-  @override
-  void dispose() {
-    _nameInputer.dispose();
-    _descriptionInputer.dispose();
-    super.dispose();
-  }
-
-  void _submit() {
-    _provider.saveTag(
-      _nameInputer.text.trim(),
-      description: _descriptionInputer.text.trim(),
-      color: _selectedColor.toARGB32(),
-      subject: _selectedSubject,
-    );
-    setState(() {
-      _nameInputer.clear();
-      _descriptionInputer.clear();
-      _selectedColor = grey;
-      _addingSelectSubjectKey = UniqueKey();
-    });
-    FocusScope.of(context).unfocus();
-  }
-}
-
-// 辅助方法
-Widget _composeTextInputer(TextEditingController controller, String text) =>
-    TextFormField(
-      controller: controller,
-      decoration: InputDecoration(labelText: text, border: border),
-    );
-
-Widget _composeTextDisplayAndEditor(
-  TextEditingController c,
-  String source,
-  String label,
-) => TextFormField(
-  decoration: InputDecoration(
-    hintText: source,
-    border: border,
-    label: Text(label),
-  ),
-  controller: c,
-);
-
-Widget _composeEnumDropdown(
-  String label,
-  Key updateKey,
-  Subject? initValue,
-  List<Subject> items,
-  Function(Subject?) onChanged,
-) => DropdownButtonFormField<Subject?>(
-  key: updateKey,
-  initialValue: initValue,
-  onChanged: onChanged,
-  decoration: InputDecoration(labelText: label, border: border),
-  items: [
-    const DropdownMenuItem(value: null, child: Text("None")),
-    ...items.map((e) => DropdownMenuItem(value: e, child: Text(e.name))),
-  ],
-);
-
-Widget _composeColorPicker(
-  BuildContext context,
-  Function(Color c) updateColor,
-  Color colorPreivew,
-) => InkWell(
-  onTap: () async => await _pickColor(context, updateColor, colorPreivew),
-  child: Container(
-    height: 50,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(6),
-      border: Border.all(color: Colors.grey),
-    ),
-    child: Row(
-      children: [
-        boxW16,
-        const Text('点击编辑颜色'),
-        const Spacer(),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: colorPreivew,
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-        ),
-      ],
-    ),
-  ),
-);
-
-Future<void> _pickColor(
-  BuildContext context,
-  Function(Color) onColorChanged,
-  Color initialColor,
-) async {
-  Color pickedColor = initialColor;
-  return showDialog<void>(
-    context: context,
-    builder: (BuildContext context) => AlertDialog(
-      title: const Text('选择颜色'),
-      content: SingleChildScrollView(
-        child: ColorPicker(
-          pickerColor: pickedColor,
-          onColorChanged: (color) => pickedColor = color,
-        ),
-      ),
-      actions: <Widget>[
-        ElevatedButton(
-          child: const Text('确定'),
-          onPressed: () {
-            onColorChanged(pickedColor);
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
     ),
   );
 }

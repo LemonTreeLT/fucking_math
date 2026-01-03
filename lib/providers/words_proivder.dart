@@ -3,7 +3,7 @@ import 'package:fucking_math/db/app_database.dart' as db;
 import 'package:fucking_math/db/app_dao.dart';
 import 'package:fucking_math/utils/db/english_repository.dart';
 
-import 'package:fucking_math/utils/providers/utils.dart'; 
+import 'package:fucking_math/providers/utils.dart'; 
 import 'package:fucking_math/utils/types.dart';
 
 class WordsProvider extends ChangeNotifier {

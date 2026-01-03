@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:fucking_math/db/tables_tags.dart';
+import 'package:fucking_math/db/tables/tables_tags.dart';
 import 'package:fucking_math/utils/types.dart';
 
 // Warning: This sturcture is designed more for math mistakes, may need adjustments for other subjects.

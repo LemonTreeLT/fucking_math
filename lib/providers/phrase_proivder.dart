@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:fucking_math/db/app_dao.dart' show PhrasesDao;
 import 'package:fucking_math/db/app_database.dart' as db show AppDatabase;
 import 'package:fucking_math/utils/db/phrase_repository.dart';
-import 'package:fucking_math/utils/providers/utils.dart';
+import 'package:fucking_math/providers/utils.dart';
 import 'package:fucking_math/utils/types.dart';
 
 class PhraseProivder extends ChangeNotifier {

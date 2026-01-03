@@ -6,7 +6,7 @@ import 'package:fucking_math/db/app_dao.dart';
 import 'package:fucking_math/extensions/list.dart';
 import 'package:fucking_math/utils/db/tag_repository.dart';
 
-import 'package:fucking_math/utils/providers/utils.dart';
+import 'package:fucking_math/providers/utils.dart';
 import 'package:fucking_math/utils/types.dart';
 
 class TagProvider extends ChangeNotifier {
