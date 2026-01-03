@@ -7,10 +7,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
 // --- 引入所有表格定义 ---
-import 'package:fucking_math/db/tables/tables_english.dart' as eng;
-import 'package:fucking_math/db/tables/tables_knowledge.dart' as know;
-import 'package:fucking_math/db/tables/tables_mistakes.dart' as mist;
-import 'package:fucking_math/db/tables/tables_tags.dart' as tag;
+import 'package:fucking_math/db/tables/tables_english.dart';
+import 'package:fucking_math/db/tables/tables_knowledge.dart';
+import 'package:fucking_math/db/tables/tables_mistakes.dart' ;
+import 'package:fucking_math/db/tables/tables_tags.dart';
 
 import 'package:fucking_math/utils/types.dart';
 import 'app_dao.dart';
@@ -26,19 +26,19 @@ part 'app_database.g.dart';
 
 @DriftDatabase(
   tables: [
-    tag.Tags,
-    eng.Words,
-    eng.WordLogs,
-    eng.WordTagLink,
-    eng.Phrases,
-    eng.PhrasesTagLink,
-    eng.PhraseLogs,
-    know.KnowledgeTable,
-    know.KnowledgeLogTable,
-    know.KnowledgeTagLink,
-    mist.Mistakes,
-    mist.MistakesTagLink,
-    mist.MistakeLogs,
+    Tags,
+    Words,
+    WordLogs,
+    WordTagLink,
+    Phrases,
+    PhrasesTagLink,
+    PhraseLogs,
+    KnowledgeTable,
+    KnowledgeLogTable,
+    KnowledgeTagLink,
+    Mistakes,
+    MistakesTagLink,
+    MistakeLogs,
   ],
   daos: [TagsDao, WordsDao, KnowledgeDao, MistakesDao, PhrasesDao],
 )

@@ -82,3 +82,24 @@ class Phrase {
     this.note,
   });
 }
+
+class Knowledge {
+  final int id;
+  final Subject subject;
+  final String head;
+  final String body;
+  final List<Tag> tags;
+  final int editCount;
+  final String? note;
+  final DateTime createdAt;
+  Knowledge({
+    required this.id,
+    required this.subject,
+    required this.head,
+    required this.body,
+    required this.tags,
+    required this.editCount,
+    this.note,
+    required this.createdAt,
+  });
+}

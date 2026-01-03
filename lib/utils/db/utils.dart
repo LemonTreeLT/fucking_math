@@ -9,3 +9,21 @@ Tag dbTagToTag(db.Tag dbTag) => Tag(
   color: dbTag.color,
   subject: dbTag.subject,
 );
+
+Knowledge dbKnowledgeToKnowledge(
+  db.KnowledgeTableData dbKnowledge,
+  List<Tag> tags, {
+  int? editCount,
+  String? note,
+}) =>
+    Knowledge(
+      id: dbKnowledge.id,
+      subject: dbKnowledge.subject,
+      head: dbKnowledge.head,
+      body: dbKnowledge.body,
+      tags: tags,
+      editCount: editCount ?? 0,
+      note: note,
+      createdAt: dbKnowledge.createdAt,
+    );
+

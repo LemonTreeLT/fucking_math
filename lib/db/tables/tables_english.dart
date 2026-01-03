@@ -13,7 +13,7 @@ class Words extends Table {
 class WordLogs extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get wordID => integer().references(Words, #id)(); // 关联单词ID
-  TextColumn get type => text().map(const LogTypeConverter())(); // 日志类型
+  TextColumn get type => text().map(const EnglishLogTypeConverter())(); // 日志类型
   DateTimeColumn get timestamp =>
       dateTime().withDefault(currentDateAndTime)(); // 时间戳
   TextColumn get notes => text().nullable()(); // 备注，可选
@@ -47,28 +47,28 @@ class PhrasesTagLink extends Table {
 class PhraseLogs extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get phraseID => integer().references(Phrases, #id)(); // 关联短语ID
-  TextColumn get type => text().map(const LogTypeConverter())(); // 日志类型
+  TextColumn get type => text().map(const EnglishLogTypeConverter())(); // 日志类型
   DateTimeColumn get timestamp =>
       dateTime().withDefault(currentDateAndTime)(); // 时间戳
   TextColumn get notes => text().nullable()(); // 备注，可选
 }
 
-enum LogType { view, test, repeat }
+enum EnglishLogType { view, test, repeat }
 
-class LogTypeConverter extends TypeConverter<LogType, String> {
-  const LogTypeConverter();
+class EnglishLogTypeConverter extends TypeConverter<EnglishLogType, String> {
+  const EnglishLogTypeConverter();
 
   @override
-  LogType fromSql(String fromDb) {
+  EnglishLogType fromSql(String fromDb) {
     try {
-      return LogType.values.byName(fromDb);
+      return EnglishLogType.values.byName(fromDb);
     } catch (e) {
       throw ArgumentError('Invalid LogType index: $fromDb');
     }
   }
 
   @override
-  String toSql(LogType value) {
+  String toSql(EnglishLogType value) {
     return value.name;
   }
 }

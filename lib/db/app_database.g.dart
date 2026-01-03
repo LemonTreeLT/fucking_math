@@ -3,7 +3,7 @@
 part of 'app_database.dart';
 
 // ignore_for_file: type=lint
-class $TagsTable extends tag.Tags with TableInfo<$TagsTable, Tag> {
+class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -356,7 +356,7 @@ class TagsCompanion extends UpdateCompanion<Tag> {
   }
 }
 
-class $WordsTable extends eng.Words with TableInfo<$WordsTable, Word> {
+class $WordsTable extends Words with TableInfo<$WordsTable, Word> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -719,8 +719,7 @@ class WordsCompanion extends UpdateCompanion<Word> {
   }
 }
 
-class $WordLogsTable extends eng.WordLogs
-    with TableInfo<$WordLogsTable, WordLog> {
+class $WordLogsTable extends WordLogs with TableInfo<$WordLogsTable, WordLog> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -751,14 +750,14 @@ class $WordLogsTable extends eng.WordLogs
     ),
   );
   @override
-  late final GeneratedColumnWithTypeConverter<eng.LogType, String> type =
+  late final GeneratedColumnWithTypeConverter<EnglishLogType, String> type =
       GeneratedColumn<String>(
         'type',
         aliasedName,
         false,
         type: DriftSqlType.string,
         requiredDuringInsert: true,
-      ).withConverter<eng.LogType>($WordLogsTable.$convertertype);
+      ).withConverter<EnglishLogType>($WordLogsTable.$convertertype);
   static const VerificationMeta _timestampMeta = const VerificationMeta(
     'timestamp',
   );
@@ -856,14 +855,14 @@ class $WordLogsTable extends eng.WordLogs
     return $WordLogsTable(attachedDatabase, alias);
   }
 
-  static TypeConverter<eng.LogType, String> $convertertype =
-      const eng.LogTypeConverter();
+  static TypeConverter<EnglishLogType, String> $convertertype =
+      const EnglishLogTypeConverter();
 }
 
 class WordLog extends DataClass implements Insertable<WordLog> {
   final int id;
   final int wordID;
-  final eng.LogType type;
+  final EnglishLogType type;
   final DateTime timestamp;
   final String? notes;
   const WordLog({
@@ -908,7 +907,7 @@ class WordLog extends DataClass implements Insertable<WordLog> {
     return WordLog(
       id: serializer.fromJson<int>(json['id']),
       wordID: serializer.fromJson<int>(json['wordID']),
-      type: serializer.fromJson<eng.LogType>(json['type']),
+      type: serializer.fromJson<EnglishLogType>(json['type']),
       timestamp: serializer.fromJson<DateTime>(json['timestamp']),
       notes: serializer.fromJson<String?>(json['notes']),
     );
@@ -919,7 +918,7 @@ class WordLog extends DataClass implements Insertable<WordLog> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'wordID': serializer.toJson<int>(wordID),
-      'type': serializer.toJson<eng.LogType>(type),
+      'type': serializer.toJson<EnglishLogType>(type),
       'timestamp': serializer.toJson<DateTime>(timestamp),
       'notes': serializer.toJson<String?>(notes),
     };
@@ -928,7 +927,7 @@ class WordLog extends DataClass implements Insertable<WordLog> {
   WordLog copyWith({
     int? id,
     int? wordID,
-    eng.LogType? type,
+    EnglishLogType? type,
     DateTime? timestamp,
     Value<String?> notes = const Value.absent(),
   }) => WordLog(
@@ -976,7 +975,7 @@ class WordLog extends DataClass implements Insertable<WordLog> {
 class WordLogsCompanion extends UpdateCompanion<WordLog> {
   final Value<int> id;
   final Value<int> wordID;
-  final Value<eng.LogType> type;
+  final Value<EnglishLogType> type;
   final Value<DateTime> timestamp;
   final Value<String?> notes;
   const WordLogsCompanion({
@@ -989,7 +988,7 @@ class WordLogsCompanion extends UpdateCompanion<WordLog> {
   WordLogsCompanion.insert({
     this.id = const Value.absent(),
     required int wordID,
-    required eng.LogType type,
+    required EnglishLogType type,
     this.timestamp = const Value.absent(),
     this.notes = const Value.absent(),
   }) : wordID = Value(wordID),
@@ -1013,7 +1012,7 @@ class WordLogsCompanion extends UpdateCompanion<WordLog> {
   WordLogsCompanion copyWith({
     Value<int>? id,
     Value<int>? wordID,
-    Value<eng.LogType>? type,
+    Value<EnglishLogType>? type,
     Value<DateTime>? timestamp,
     Value<String?>? notes,
   }) {
@@ -1062,7 +1061,7 @@ class WordLogsCompanion extends UpdateCompanion<WordLog> {
   }
 }
 
-class $WordTagLinkTable extends eng.WordTagLink
+class $WordTagLinkTable extends WordTagLink
     with TableInfo<$WordTagLinkTable, WordTagLinkData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -1278,7 +1277,7 @@ class WordTagLinkCompanion extends UpdateCompanion<WordTagLinkData> {
   }
 }
 
-class $PhrasesTable extends eng.Phrases with TableInfo<$PhrasesTable, Phrase> {
+class $PhrasesTable extends Phrases with TableInfo<$PhrasesTable, Phrase> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -1630,7 +1629,7 @@ class PhrasesCompanion extends UpdateCompanion<Phrase> {
   }
 }
 
-class $PhrasesTagLinkTable extends eng.PhrasesTagLink
+class $PhrasesTagLinkTable extends PhrasesTagLink
     with TableInfo<$PhrasesTagLinkTable, PhrasesTagLinkData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -1853,7 +1852,7 @@ class PhrasesTagLinkCompanion extends UpdateCompanion<PhrasesTagLinkData> {
   }
 }
 
-class $PhraseLogsTable extends eng.PhraseLogs
+class $PhraseLogsTable extends PhraseLogs
     with TableInfo<$PhraseLogsTable, PhraseLog> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -1887,14 +1886,14 @@ class $PhraseLogsTable extends eng.PhraseLogs
     ),
   );
   @override
-  late final GeneratedColumnWithTypeConverter<eng.LogType, String> type =
+  late final GeneratedColumnWithTypeConverter<EnglishLogType, String> type =
       GeneratedColumn<String>(
         'type',
         aliasedName,
         false,
         type: DriftSqlType.string,
         requiredDuringInsert: true,
-      ).withConverter<eng.LogType>($PhraseLogsTable.$convertertype);
+      ).withConverter<EnglishLogType>($PhraseLogsTable.$convertertype);
   static const VerificationMeta _timestampMeta = const VerificationMeta(
     'timestamp',
   );
@@ -1992,14 +1991,14 @@ class $PhraseLogsTable extends eng.PhraseLogs
     return $PhraseLogsTable(attachedDatabase, alias);
   }
 
-  static TypeConverter<eng.LogType, String> $convertertype =
-      const eng.LogTypeConverter();
+  static TypeConverter<EnglishLogType, String> $convertertype =
+      const EnglishLogTypeConverter();
 }
 
 class PhraseLog extends DataClass implements Insertable<PhraseLog> {
   final int id;
   final int phraseID;
-  final eng.LogType type;
+  final EnglishLogType type;
   final DateTime timestamp;
   final String? notes;
   const PhraseLog({
@@ -2046,7 +2045,7 @@ class PhraseLog extends DataClass implements Insertable<PhraseLog> {
     return PhraseLog(
       id: serializer.fromJson<int>(json['id']),
       phraseID: serializer.fromJson<int>(json['phraseID']),
-      type: serializer.fromJson<eng.LogType>(json['type']),
+      type: serializer.fromJson<EnglishLogType>(json['type']),
       timestamp: serializer.fromJson<DateTime>(json['timestamp']),
       notes: serializer.fromJson<String?>(json['notes']),
     );
@@ -2057,7 +2056,7 @@ class PhraseLog extends DataClass implements Insertable<PhraseLog> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'phraseID': serializer.toJson<int>(phraseID),
-      'type': serializer.toJson<eng.LogType>(type),
+      'type': serializer.toJson<EnglishLogType>(type),
       'timestamp': serializer.toJson<DateTime>(timestamp),
       'notes': serializer.toJson<String?>(notes),
     };
@@ -2066,7 +2065,7 @@ class PhraseLog extends DataClass implements Insertable<PhraseLog> {
   PhraseLog copyWith({
     int? id,
     int? phraseID,
-    eng.LogType? type,
+    EnglishLogType? type,
     DateTime? timestamp,
     Value<String?> notes = const Value.absent(),
   }) => PhraseLog(
@@ -2114,7 +2113,7 @@ class PhraseLog extends DataClass implements Insertable<PhraseLog> {
 class PhraseLogsCompanion extends UpdateCompanion<PhraseLog> {
   final Value<int> id;
   final Value<int> phraseID;
-  final Value<eng.LogType> type;
+  final Value<EnglishLogType> type;
   final Value<DateTime> timestamp;
   final Value<String?> notes;
   const PhraseLogsCompanion({
@@ -2127,7 +2126,7 @@ class PhraseLogsCompanion extends UpdateCompanion<PhraseLog> {
   PhraseLogsCompanion.insert({
     this.id = const Value.absent(),
     required int phraseID,
-    required eng.LogType type,
+    required EnglishLogType type,
     this.timestamp = const Value.absent(),
     this.notes = const Value.absent(),
   }) : phraseID = Value(phraseID),
@@ -2151,7 +2150,7 @@ class PhraseLogsCompanion extends UpdateCompanion<PhraseLog> {
   PhraseLogsCompanion copyWith({
     Value<int>? id,
     Value<int>? phraseID,
-    Value<eng.LogType>? type,
+    Value<EnglishLogType>? type,
     Value<DateTime>? timestamp,
     Value<String?>? notes,
   }) {
@@ -2200,7 +2199,7 @@ class PhraseLogsCompanion extends UpdateCompanion<PhraseLog> {
   }
 }
 
-class $KnowledgeTableTable extends know.KnowledgeTable
+class $KnowledgeTableTable extends KnowledgeTable
     with TableInfo<$KnowledgeTableTable, KnowledgeTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -2542,7 +2541,7 @@ class KnowledgeTableCompanion extends UpdateCompanion<KnowledgeTableData> {
   }
 }
 
-class $KnowledgeLogTableTable extends know.KnowledgeLogTable
+class $KnowledgeLogTableTable extends KnowledgeLogTable
     with TableInfo<$KnowledgeLogTableTable, KnowledgeLogTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -2586,14 +2585,14 @@ class $KnowledgeLogTableTable extends know.KnowledgeLogTable
     defaultValue: currentDateAndTime,
   );
   @override
-  late final GeneratedColumnWithTypeConverter<eng.LogType, String> type =
+  late final GeneratedColumnWithTypeConverter<KnowledgeLogType, String> type =
       GeneratedColumn<String>(
         'type',
         aliasedName,
         false,
         type: DriftSqlType.string,
         requiredDuringInsert: true,
-      ).withConverter<eng.LogType>($KnowledgeLogTableTable.$convertertype);
+      ).withConverter<KnowledgeLogType>($KnowledgeLogTableTable.$convertertype);
   static const VerificationMeta _notesMeta = const VerificationMeta('notes');
   @override
   late final GeneratedColumn<String> notes = GeneratedColumn<String>(
@@ -2682,8 +2681,8 @@ class $KnowledgeLogTableTable extends know.KnowledgeLogTable
     return $KnowledgeLogTableTable(attachedDatabase, alias);
   }
 
-  static TypeConverter<eng.LogType, String> $convertertype =
-      const eng.LogTypeConverter();
+  static TypeConverter<KnowledgeLogType, String> $convertertype =
+      const KnowledgeLogTypeConverter();
 }
 
 class KnowledgeLogTableData extends DataClass
@@ -2691,7 +2690,7 @@ class KnowledgeLogTableData extends DataClass
   final int id;
   final int knowledgeID;
   final DateTime time;
-  final eng.LogType type;
+  final KnowledgeLogType type;
   final String? notes;
   const KnowledgeLogTableData({
     required this.id,
@@ -2738,7 +2737,7 @@ class KnowledgeLogTableData extends DataClass
       id: serializer.fromJson<int>(json['id']),
       knowledgeID: serializer.fromJson<int>(json['knowledgeID']),
       time: serializer.fromJson<DateTime>(json['time']),
-      type: serializer.fromJson<eng.LogType>(json['type']),
+      type: serializer.fromJson<KnowledgeLogType>(json['type']),
       notes: serializer.fromJson<String?>(json['notes']),
     );
   }
@@ -2749,7 +2748,7 @@ class KnowledgeLogTableData extends DataClass
       'id': serializer.toJson<int>(id),
       'knowledgeID': serializer.toJson<int>(knowledgeID),
       'time': serializer.toJson<DateTime>(time),
-      'type': serializer.toJson<eng.LogType>(type),
+      'type': serializer.toJson<KnowledgeLogType>(type),
       'notes': serializer.toJson<String?>(notes),
     };
   }
@@ -2758,7 +2757,7 @@ class KnowledgeLogTableData extends DataClass
     int? id,
     int? knowledgeID,
     DateTime? time,
-    eng.LogType? type,
+    KnowledgeLogType? type,
     Value<String?> notes = const Value.absent(),
   }) => KnowledgeLogTableData(
     id: id ?? this.id,
@@ -2809,7 +2808,7 @@ class KnowledgeLogTableCompanion
   final Value<int> id;
   final Value<int> knowledgeID;
   final Value<DateTime> time;
-  final Value<eng.LogType> type;
+  final Value<KnowledgeLogType> type;
   final Value<String?> notes;
   const KnowledgeLogTableCompanion({
     this.id = const Value.absent(),
@@ -2822,7 +2821,7 @@ class KnowledgeLogTableCompanion
     this.id = const Value.absent(),
     required int knowledgeID,
     this.time = const Value.absent(),
-    required eng.LogType type,
+    required KnowledgeLogType type,
     this.notes = const Value.absent(),
   }) : knowledgeID = Value(knowledgeID),
        type = Value(type);
@@ -2846,7 +2845,7 @@ class KnowledgeLogTableCompanion
     Value<int>? id,
     Value<int>? knowledgeID,
     Value<DateTime>? time,
-    Value<eng.LogType>? type,
+    Value<KnowledgeLogType>? type,
     Value<String?>? notes,
   }) {
     return KnowledgeLogTableCompanion(
@@ -2894,7 +2893,7 @@ class KnowledgeLogTableCompanion
   }
 }
 
-class $KnowledgeTagLinkTable extends know.KnowledgeTagLink
+class $KnowledgeTagLinkTable extends KnowledgeTagLink
     with TableInfo<$KnowledgeTagLinkTable, KnowledgeTagLinkData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -3122,8 +3121,7 @@ class KnowledgeTagLinkCompanion extends UpdateCompanion<KnowledgeTagLinkData> {
   }
 }
 
-class $MistakesTable extends mist.Mistakes
-    with TableInfo<$MistakesTable, Mistake> {
+class $MistakesTable extends Mistakes with TableInfo<$MistakesTable, Mistake> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -3699,7 +3697,7 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
   }
 }
 
-class $MistakesTagLinkTable extends mist.MistakesTagLink
+class $MistakesTagLinkTable extends MistakesTagLink
     with TableInfo<$MistakesTagLinkTable, MistakesTagLinkData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -3922,7 +3920,7 @@ class MistakesTagLinkCompanion extends UpdateCompanion<MistakesTagLinkData> {
   }
 }
 
-class $MistakeLogsTable extends mist.MistakeLogs
+class $MistakeLogsTable extends MistakeLogs
     with TableInfo<$MistakeLogsTable, MistakeLog> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -3956,14 +3954,14 @@ class $MistakeLogsTable extends mist.MistakeLogs
     ),
   );
   @override
-  late final GeneratedColumnWithTypeConverter<mist.MistakeLogType, String>
-  type = GeneratedColumn<String>(
-    'type',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  ).withConverter<mist.MistakeLogType>($MistakeLogsTable.$convertertype);
+  late final GeneratedColumnWithTypeConverter<MistakeLogType, String> type =
+      GeneratedColumn<String>(
+        'type',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<MistakeLogType>($MistakeLogsTable.$convertertype);
   static const VerificationMeta _timestampMeta = const VerificationMeta(
     'timestamp',
   );
@@ -4061,14 +4059,14 @@ class $MistakeLogsTable extends mist.MistakeLogs
     return $MistakeLogsTable(attachedDatabase, alias);
   }
 
-  static TypeConverter<mist.MistakeLogType, String> $convertertype =
-      const mist.MistakeLogTypeConverter();
+  static TypeConverter<MistakeLogType, String> $convertertype =
+      const MistakeLogTypeConverter();
 }
 
 class MistakeLog extends DataClass implements Insertable<MistakeLog> {
   final int id;
   final int mistakeID;
-  final mist.MistakeLogType type;
+  final MistakeLogType type;
   final DateTime timestamp;
   final String? notes;
   const MistakeLog({
@@ -4115,7 +4113,7 @@ class MistakeLog extends DataClass implements Insertable<MistakeLog> {
     return MistakeLog(
       id: serializer.fromJson<int>(json['id']),
       mistakeID: serializer.fromJson<int>(json['mistakeID']),
-      type: serializer.fromJson<mist.MistakeLogType>(json['type']),
+      type: serializer.fromJson<MistakeLogType>(json['type']),
       timestamp: serializer.fromJson<DateTime>(json['timestamp']),
       notes: serializer.fromJson<String?>(json['notes']),
     );
@@ -4126,7 +4124,7 @@ class MistakeLog extends DataClass implements Insertable<MistakeLog> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'mistakeID': serializer.toJson<int>(mistakeID),
-      'type': serializer.toJson<mist.MistakeLogType>(type),
+      'type': serializer.toJson<MistakeLogType>(type),
       'timestamp': serializer.toJson<DateTime>(timestamp),
       'notes': serializer.toJson<String?>(notes),
     };
@@ -4135,7 +4133,7 @@ class MistakeLog extends DataClass implements Insertable<MistakeLog> {
   MistakeLog copyWith({
     int? id,
     int? mistakeID,
-    mist.MistakeLogType? type,
+    MistakeLogType? type,
     DateTime? timestamp,
     Value<String?> notes = const Value.absent(),
   }) => MistakeLog(
@@ -4183,7 +4181,7 @@ class MistakeLog extends DataClass implements Insertable<MistakeLog> {
 class MistakeLogsCompanion extends UpdateCompanion<MistakeLog> {
   final Value<int> id;
   final Value<int> mistakeID;
-  final Value<mist.MistakeLogType> type;
+  final Value<MistakeLogType> type;
   final Value<DateTime> timestamp;
   final Value<String?> notes;
   const MistakeLogsCompanion({
@@ -4196,7 +4194,7 @@ class MistakeLogsCompanion extends UpdateCompanion<MistakeLog> {
   MistakeLogsCompanion.insert({
     this.id = const Value.absent(),
     required int mistakeID,
-    required mist.MistakeLogType type,
+    required MistakeLogType type,
     this.timestamp = const Value.absent(),
     this.notes = const Value.absent(),
   }) : mistakeID = Value(mistakeID),
@@ -4220,7 +4218,7 @@ class MistakeLogsCompanion extends UpdateCompanion<MistakeLog> {
   MistakeLogsCompanion copyWith({
     Value<int>? id,
     Value<int>? mistakeID,
-    Value<mist.MistakeLogType>? type,
+    Value<MistakeLogType>? type,
     Value<DateTime>? timestamp,
     Value<String?>? notes,
   }) {
@@ -5387,7 +5385,7 @@ typedef $$WordLogsTableCreateCompanionBuilder =
     WordLogsCompanion Function({
       Value<int> id,
       required int wordID,
-      required eng.LogType type,
+      required EnglishLogType type,
       Value<DateTime> timestamp,
       Value<String?> notes,
     });
@@ -5395,7 +5393,7 @@ typedef $$WordLogsTableUpdateCompanionBuilder =
     WordLogsCompanion Function({
       Value<int> id,
       Value<int> wordID,
-      Value<eng.LogType> type,
+      Value<EnglishLogType> type,
       Value<DateTime> timestamp,
       Value<String?> notes,
     });
@@ -5437,11 +5435,11 @@ class $$WordLogsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnWithTypeConverterFilters<eng.LogType, eng.LogType, String> get type =>
-      $composableBuilder(
-        column: $table.type,
-        builder: (column) => ColumnWithTypeConverterFilters(column),
-      );
+  ColumnWithTypeConverterFilters<EnglishLogType, EnglishLogType, String>
+  get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
 
   ColumnFilters<DateTime> get timestamp => $composableBuilder(
     column: $table.timestamp,
@@ -5542,7 +5540,7 @@ class $$WordLogsTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumnWithTypeConverter<eng.LogType, String> get type =>
+  GeneratedColumnWithTypeConverter<EnglishLogType, String> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
 
   GeneratedColumn<DateTime> get timestamp =>
@@ -5605,7 +5603,7 @@ class $$WordLogsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<int> wordID = const Value.absent(),
-                Value<eng.LogType> type = const Value.absent(),
+                Value<EnglishLogType> type = const Value.absent(),
                 Value<DateTime> timestamp = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
               }) => WordLogsCompanion(
@@ -5619,7 +5617,7 @@ class $$WordLogsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required int wordID,
-                required eng.LogType type,
+                required EnglishLogType type,
                 Value<DateTime> timestamp = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
               }) => WordLogsCompanion.insert(
@@ -6919,7 +6917,7 @@ typedef $$PhraseLogsTableCreateCompanionBuilder =
     PhraseLogsCompanion Function({
       Value<int> id,
       required int phraseID,
-      required eng.LogType type,
+      required EnglishLogType type,
       Value<DateTime> timestamp,
       Value<String?> notes,
     });
@@ -6927,7 +6925,7 @@ typedef $$PhraseLogsTableUpdateCompanionBuilder =
     PhraseLogsCompanion Function({
       Value<int> id,
       Value<int> phraseID,
-      Value<eng.LogType> type,
+      Value<EnglishLogType> type,
       Value<DateTime> timestamp,
       Value<String?> notes,
     });
@@ -6968,11 +6966,11 @@ class $$PhraseLogsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnWithTypeConverterFilters<eng.LogType, eng.LogType, String> get type =>
-      $composableBuilder(
-        column: $table.type,
-        builder: (column) => ColumnWithTypeConverterFilters(column),
-      );
+  ColumnWithTypeConverterFilters<EnglishLogType, EnglishLogType, String>
+  get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
 
   ColumnFilters<DateTime> get timestamp => $composableBuilder(
     column: $table.timestamp,
@@ -7073,7 +7071,7 @@ class $$PhraseLogsTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumnWithTypeConverter<eng.LogType, String> get type =>
+  GeneratedColumnWithTypeConverter<EnglishLogType, String> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
 
   GeneratedColumn<DateTime> get timestamp =>
@@ -7136,7 +7134,7 @@ class $$PhraseLogsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<int> phraseID = const Value.absent(),
-                Value<eng.LogType> type = const Value.absent(),
+                Value<EnglishLogType> type = const Value.absent(),
                 Value<DateTime> timestamp = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
               }) => PhraseLogsCompanion(
@@ -7150,7 +7148,7 @@ class $$PhraseLogsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required int phraseID,
-                required eng.LogType type,
+                required EnglishLogType type,
                 Value<DateTime> timestamp = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
               }) => PhraseLogsCompanion.insert(
@@ -7655,7 +7653,7 @@ typedef $$KnowledgeLogTableTableCreateCompanionBuilder =
       Value<int> id,
       required int knowledgeID,
       Value<DateTime> time,
-      required eng.LogType type,
+      required KnowledgeLogType type,
       Value<String?> notes,
     });
 typedef $$KnowledgeLogTableTableUpdateCompanionBuilder =
@@ -7663,7 +7661,7 @@ typedef $$KnowledgeLogTableTableUpdateCompanionBuilder =
       Value<int> id,
       Value<int> knowledgeID,
       Value<DateTime> time,
-      Value<eng.LogType> type,
+      Value<KnowledgeLogType> type,
       Value<String?> notes,
     });
 
@@ -7722,11 +7720,11 @@ class $$KnowledgeLogTableTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnWithTypeConverterFilters<eng.LogType, eng.LogType, String> get type =>
-      $composableBuilder(
-        column: $table.type,
-        builder: (column) => ColumnWithTypeConverterFilters(column),
-      );
+  ColumnWithTypeConverterFilters<KnowledgeLogType, KnowledgeLogType, String>
+  get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
 
   ColumnFilters<String> get notes => $composableBuilder(
     column: $table.notes,
@@ -7825,7 +7823,7 @@ class $$KnowledgeLogTableTableAnnotationComposer
   GeneratedColumn<DateTime> get time =>
       $composableBuilder(column: $table.time, builder: (column) => column);
 
-  GeneratedColumnWithTypeConverter<eng.LogType, String> get type =>
+  GeneratedColumnWithTypeConverter<KnowledgeLogType, String> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
 
   GeneratedColumn<String> get notes =>
@@ -7891,7 +7889,7 @@ class $$KnowledgeLogTableTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<int> knowledgeID = const Value.absent(),
                 Value<DateTime> time = const Value.absent(),
-                Value<eng.LogType> type = const Value.absent(),
+                Value<KnowledgeLogType> type = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
               }) => KnowledgeLogTableCompanion(
                 id: id,
@@ -7905,7 +7903,7 @@ class $$KnowledgeLogTableTableTableManager
                 Value<int> id = const Value.absent(),
                 required int knowledgeID,
                 Value<DateTime> time = const Value.absent(),
-                required eng.LogType type,
+                required KnowledgeLogType type,
                 Value<String?> notes = const Value.absent(),
               }) => KnowledgeLogTableCompanion.insert(
                 id: id,
@@ -9203,7 +9201,7 @@ typedef $$MistakeLogsTableCreateCompanionBuilder =
     MistakeLogsCompanion Function({
       Value<int> id,
       required int mistakeID,
-      required mist.MistakeLogType type,
+      required MistakeLogType type,
       Value<DateTime> timestamp,
       Value<String?> notes,
     });
@@ -9211,7 +9209,7 @@ typedef $$MistakeLogsTableUpdateCompanionBuilder =
     MistakeLogsCompanion Function({
       Value<int> id,
       Value<int> mistakeID,
-      Value<mist.MistakeLogType> type,
+      Value<MistakeLogType> type,
       Value<DateTime> timestamp,
       Value<String?> notes,
     });
@@ -9254,11 +9252,7 @@ class $$MistakeLogsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnWithTypeConverterFilters<
-    mist.MistakeLogType,
-    mist.MistakeLogType,
-    String
-  >
+  ColumnWithTypeConverterFilters<MistakeLogType, MistakeLogType, String>
   get type => $composableBuilder(
     column: $table.type,
     builder: (column) => ColumnWithTypeConverterFilters(column),
@@ -9363,7 +9357,7 @@ class $$MistakeLogsTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumnWithTypeConverter<mist.MistakeLogType, String> get type =>
+  GeneratedColumnWithTypeConverter<MistakeLogType, String> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
 
   GeneratedColumn<DateTime> get timestamp =>
@@ -9426,7 +9420,7 @@ class $$MistakeLogsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<int> mistakeID = const Value.absent(),
-                Value<mist.MistakeLogType> type = const Value.absent(),
+                Value<MistakeLogType> type = const Value.absent(),
                 Value<DateTime> timestamp = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
               }) => MistakeLogsCompanion(
@@ -9440,7 +9434,7 @@ class $$MistakeLogsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required int mistakeID,
-                required mist.MistakeLogType type,
+                required MistakeLogType type,
                 Value<DateTime> timestamp = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
               }) => MistakeLogsCompanion.insert(

@@ -32,15 +32,15 @@ class WordsRepository {
 
   // 标记一次重复
   Future<void> markWordRepeat(int wordId, {String? note}) async =>
-      await _addLog(wordId, LogType.repeat, note: note);
+      await _addLog(wordId, EnglishLogType.repeat, note: note);
 
   // 标记一次复习
   Future<void> markWordReview(int wordId, {String? note}) async =>
-      await _addLog(wordId, LogType.view, note: note);
+      await _addLog(wordId, EnglishLogType.view, note: note);
 
   // 标记一次测试
   Future<void> markWordTest(int wordId, {String? note}) async =>
-      await _addLog(wordId, LogType.test, note: note);
+      await _addLog(wordId, EnglishLogType.test, note: note);
 
   // 获取所有单词
   Future<List<Word>> getAllWords() async => Future.wait(
@@ -125,7 +125,7 @@ class WordsRepository {
   }
 
   // 辅助函数: 添加日志
-  Future<void> _addLog(int wordId, LogType type, {String? note}) async =>
+  Future<void> _addLog(int wordId, EnglishLogType type, {String? note}) async =>
       await _dao.addWordLog(
         db.WordLogsCompanion.insert(
           wordID: wordId,
@@ -140,7 +140,7 @@ class WordsRepository {
     final appTags = dbTags.map(dbTagToTag).toList();
     final logs = await _dao.getWordLogs(word.id);
     final note = logs.first.notes;
-    final repeat = logs.where((log) => log.type == LogType.repeat).length;
+    final repeat = logs.where((log) => log.type == EnglishLogType.repeat).length;
 
     return _dbWordToWord(word, appTags, repeat: repeat, note: note);
   }

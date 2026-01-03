@@ -30,9 +30,10 @@
         - [x] 仓库类
         - [x] Provider 类
         - [x] UI 
+    - [x] 重构部分代码
     - [ ] 错题  
-        - [ ] 仓库类 <-- We are here
-        - [ ] Provider 类
+        - [x] 仓库类 
+        - [ ] Provider 类 <-- We are here
         - [ ] 录入部分 UI
     - [ ] 知识点
 - [ ] 完成数据编辑修改删除 <-- MVP (v0.1.0)

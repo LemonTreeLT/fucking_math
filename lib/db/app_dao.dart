@@ -101,7 +101,7 @@ class WordsDao extends DatabaseAccessor<AppDatabase> with _$WordsDaoMixin {
       (select(wordLogs)..where((l) => l.wordID.equals(wordId))).get();
 
   // 获取单词的特定类型日志
-  Future<List<WordLog>> getWordLogsByType(int wordId, eng.LogType type) =>
+  Future<List<WordLog>> getWordLogsByType(int wordId, eng.EnglishLogType type) =>
       (select(wordLogs)
             ..where((l) => l.wordID.equals(wordId) & l.type.equalsValue(type)))
           .get();
@@ -479,7 +479,7 @@ class PhrasesDao extends DatabaseAccessor<AppDatabase> with _$PhrasesDaoMixin {
   }
 
   // 获取短语的特定类型日志
-  Future<List<PhraseLog>> getPhraseLogsByType(int phraseId, eng.LogType type) {
+  Future<List<PhraseLog>> getPhraseLogsByType(int phraseId, eng.EnglishLogType type) {
     return (select(
           phraseLogs,
         )..where((l) => l.phraseID.equals(phraseId) & l.type.equalsValue(type)))

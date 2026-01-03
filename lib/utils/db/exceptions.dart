@@ -37,3 +37,20 @@ class AppDatabaseException implements Exception {
   @override
   String toString() => message;
 }
+
+class TagOrKnowledgeNotFoundException implements Exception {
+  final String message;
+  final int tagID;
+  final int knowledgeId;
+
+  TagOrKnowledgeNotFoundException(
+    this.message, {
+    required this.tagID,
+    required this.knowledgeId,
+  });
+
+  @override
+  String toString() =>
+      'Tag or knowledge not found: $message, tagID: $tagID, knowledgeId: $knowledgeId';
+}
+

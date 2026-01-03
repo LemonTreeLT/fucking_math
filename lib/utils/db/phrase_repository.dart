@@ -31,15 +31,15 @@ class PhraseRepository {
 
   // 标记一次重复
   Future<void> markPhraseRepeat(int phraseId, {String? note}) async =>
-      await _addLog(phraseId, LogType.repeat, note: note);
+      await _addLog(phraseId, EnglishLogType.repeat, note: note);
 
   // 标记一次复习
   Future<void> markPhraseReview(int phraseId, {String? note}) async =>
-      await _addLog(phraseId, LogType.view, note: note);
+      await _addLog(phraseId, EnglishLogType.view, note: note);
 
   // 标记一次测试
   Future<void> markPhraseTest(int phraseId, {String? note}) async =>
-      await _addLog(phraseId, LogType.test, note: note);
+      await _addLog(phraseId, EnglishLogType.test, note: note);
 
   // 一次性获取全部短语
   Future<List<Phrase>> getAllPhrases() async => Future.wait(
@@ -107,7 +107,7 @@ class PhraseRepository {
   }
 
   // 辅助函数: 添加日志
-  Future<void> _addLog(int phraseId, LogType type, {String? note}) async =>
+  Future<void> _addLog(int phraseId, EnglishLogType type, {String? note}) async =>
       await _dao.addPhraseLog(
         db.PhraseLogsCompanion.insert(
           phraseID: phraseId,
@@ -135,7 +135,7 @@ class PhraseRepository {
   // 辅助函数: 构建完整的 Phrase 对象
   Future<Phrase> _buildCompletePhrase(db.Phrase phrase) async {
     final logs = await _dao.getPhraseLogs(phrase.id);
-    final count = logs.where((l) => l.type == LogType.repeat).length;
+    final count = logs.where((l) => l.type == EnglishLogType.repeat).length;
     final note = logs.first.notes;
     return _dbPhraseToPhrase(
       phrase,

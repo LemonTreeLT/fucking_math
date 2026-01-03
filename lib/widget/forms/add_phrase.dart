@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fucking_math/providers/phrase_proivder.dart';
 import 'package:fucking_math/providers/words_proivder.dart';
+import 'package:fucking_math/utils/mixin/form_helper.dart';
+import 'package:fucking_math/utils/mixin/provider_error_handle.dart';
 import 'package:fucking_math/widget/common/backgrounds.dart';
 import 'package:fucking_math/widget/common/tag_selection.dart';
 import 'package:fucking_math/widget/forms/action_button.dart';
@@ -17,7 +19,8 @@ class AddPhraseForm extends StatefulWidget {
   State<AddPhraseForm> createState() => _AddPhraseFormState();
 }
 
-class _AddPhraseFormState extends State<AddPhraseForm> {
+class _AddPhraseFormState extends State<AddPhraseForm>
+    with FormClearable<AddPhraseForm>, ProviderErrorHandler<AddPhraseForm> {
   final _phraseInputController = TextEditingController();
   final _definitionInputController = TextEditingController();
   final _noteInputController = TextEditingController();
@@ -36,6 +39,25 @@ class _AddPhraseFormState extends State<AddPhraseForm> {
   void initState() {
     super.initState();
     _phraseInputController.addListener(_updateLinkedWordSuggestion);
+  }
+
+  @override
+  List<TextEditingController> get controllers => [
+        _phraseInputController,
+        _definitionInputController,
+        _noteInputController,
+      ];
+
+  @override
+  Set<int> get tagSelection => _selectedTagIds;
+
+  @override
+  void clearForm() {
+    super.clearForm();
+    setState(() {
+      _selectedWord = null;
+      _autocompleteText = null;
+    });
   }
 
   @override
@@ -105,19 +127,8 @@ class _AddPhraseFormState extends State<AddPhraseForm> {
       tags: _selectedTagIds.isEmpty ? null : _selectedTagIds.toList(),
     );
     if (provider.error == null) {
-      _clearForm();
+      clearForm();
     }
-  }
-
-  void _clearForm() {
-    _phraseInputController.clear();
-    _definitionInputController.clear();
-    _noteInputController.clear();
-    setState(() {
-      _selectedWord = null;
-      _autocompleteText = null;
-      _selectedTagIds.clear();
-    });
   }
 
   void _generateDefinition() {
@@ -169,6 +180,7 @@ class _AddPhraseFormState extends State<AddPhraseForm> {
               const Spacer(),
               Consumer<PhraseProivder>(
                 builder: (context, provider, child) {
+                  handleProviderError(provider.error);
                   return FormActionButtons(
                     isLoading: provider.isLoading,
                     onSubmit: _submitForm,

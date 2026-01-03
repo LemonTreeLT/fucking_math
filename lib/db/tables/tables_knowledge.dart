@@ -14,7 +14,7 @@ class KnowledgeLogTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get knowledgeID => integer().references(KnowledgeTable, #id)();
   DateTimeColumn get time => dateTime().withDefault(currentDateAndTime)();
-  TextColumn get type => text().map(const LogTypeConverter())();
+  TextColumn get type => text().map(const KnowledgeLogTypeConverter())();
   TextColumn get notes => text().nullable()();
 }
 
@@ -26,22 +26,22 @@ class KnowledgeTagLink extends Table {
   Set<Column> get primaryKey => {knowledgeID, tagID};
 }
 
-enum LogType { edit }
+enum KnowledgeLogType { edit, retry }
 
-class LogTypeConverter extends TypeConverter<LogType, String> {
-  const LogTypeConverter();
+class KnowledgeLogTypeConverter extends TypeConverter<KnowledgeLogType, String> {
+  const KnowledgeLogTypeConverter();
 
   @override
-  LogType fromSql(String fromDb) {
+  KnowledgeLogType fromSql(String fromDb) {
     try {
-      return LogType.values.byName(fromDb);
+      return KnowledgeLogType.values.byName(fromDb);
     } catch (e) {
       throw ArgumentError('Invalid LogType index: $fromDb');
     }
   }
 
   @override
-  String toSql(LogType value) {
+  String toSql(KnowledgeLogType value) {
     return value.name;
   }
 }

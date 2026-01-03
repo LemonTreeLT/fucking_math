@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fucking_math/utils/mixin/form_helper.dart';
+import 'package:fucking_math/utils/mixin/provider_error_handle.dart';
 import 'package:fucking_math/widget/common/backgrounds.dart';
 import 'package:fucking_math/widget/forms/action_button.dart';
 import 'package:fucking_math/widget/forms/form_builders.dart';
@@ -13,7 +15,8 @@ class AddWordForm extends StatefulWidget {
   State<AddWordForm> createState() => _AddWordFormState();
 }
 
-class _AddWordFormState extends State<AddWordForm> {
+class _AddWordFormState extends State<AddWordForm>
+    with FormClearable<AddWordForm>, ProviderErrorHandler<AddWordForm> {
   final _wordController = TextEditingController();
   final _definitionController = TextEditingController();
   final _definitionPreController = TextEditingController();
@@ -21,6 +24,17 @@ class _AddWordFormState extends State<AddWordForm> {
   final _formKey = GlobalKey<FormState>();
 
   Set<int> _selectedTagIds = {};
+  @override
+  List<TextEditingController> get controllers => [
+        _wordController,
+        _definitionController,
+        _definitionPreController,
+        _noteController
+      ];
+
+  @override
+  Set<int> get tagSelection => _selectedTagIds;
+
   @override
   void dispose() {
     _wordController.dispose();
@@ -52,15 +66,7 @@ class _AddWordFormState extends State<AddWordForm> {
       note: note,
       tags: _selectedTagIds.isEmpty ? null : _selectedTagIds.toList(),
     );
-    if (provider.error == null) _clearForm();
-  }
-  
-  void _clearForm() {
-    _wordController.clear();
-    _definitionController.clear();
-    _definitionPreController.clear();
-    _noteController.clear();
-    setState(() => _selectedTagIds.clear());
+    if (provider.error == null) clearForm();
   }
 
   void _generateDefinition() {
@@ -108,6 +114,7 @@ class _AddWordFormState extends State<AddWordForm> {
               const Spacer(),
               Consumer<WordsProvider>(
                 builder: (context, provider, child) {
+                  handleProviderError(provider.error);
                   return FormActionButtons(
                     isLoading: provider.isLoading,
                     onSubmit: _submitForm,
