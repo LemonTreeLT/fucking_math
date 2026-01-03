@@ -18,7 +18,7 @@ class _DebugState extends State<Debug> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // 保持原有的高效加载逻辑
       context.read<WordsProvider>().loadWords();
-      context.read<PhraseProivder>().loadPhrases();
+      context.read<PhraseProvider>().loadPhrases();
     });
   }
 
@@ -37,7 +37,7 @@ class _DebugState extends State<Debug> {
             icon: const Icon(Icons.refresh),
             onPressed: () {
               context.read<WordsProvider>().loadWords();
-              context.read<PhraseProivder>().loadPhrases();
+              context.read<PhraseProvider>().loadPhrases();
             },
           ),
         ],
@@ -88,7 +88,7 @@ class _DebugState extends State<Debug> {
   Widget _buildWordsList() {
     return Consumer<WordsProvider>(
       builder: (context, provider, child) {
-        if (provider.isLoading && provider.words.isEmpty) {
+        if (provider.isLoading && provider.getItems.isEmpty) {
           return const SliverToBoxAdapter(
               child: Center(child: CircularProgressIndicator()));
         }
@@ -103,14 +103,14 @@ class _DebugState extends State<Debug> {
             ),
           );
         }
-        if (provider.words.isEmpty) {
+        if (provider.getItems.isEmpty) {
           return const SliverToBoxAdapter(
               child: Center(child: Text('Words 表中没有数据')));
         }
         return SliverList.builder(
-          itemCount: provider.words.length,
+          itemCount: provider.getItems.length,
           itemBuilder: (context, index) {
-            final word = provider.words[index];
+            final word = provider.getItems[index];
             return _buildWordCard(context, word); // 传递 context
           },
         );
@@ -120,9 +120,9 @@ class _DebugState extends State<Debug> {
 
   // 构建 Phrases 列表的 Sliver
   Widget _buildPhrasesList() {
-    return Consumer<PhraseProivder>(
+    return Consumer<PhraseProvider>(
       builder: (context, provider, child) {
-        if (provider.isLoading && provider.phrases.isEmpty) {
+        if (provider.isLoading && provider.getItems.isEmpty) {
           return const SliverToBoxAdapter(
               child: Center(child: CircularProgressIndicator()));
         }
@@ -136,14 +136,14 @@ class _DebugState extends State<Debug> {
             ),
           );
         }
-        if (provider.phrases.isEmpty) {
+        if (provider.getItems.isEmpty) {
           return const SliverToBoxAdapter(
               child: Center(child: Text('Phrases 表中没有数据')));
         }
         return SliverList.builder(
-          itemCount: provider.phrases.length,
+          itemCount: provider.getItems.length,
           itemBuilder: (context, index) {
-            final phrase = provider.phrases[index];
+            final phrase = provider.getItems[index];
             return _buildPhraseCard(context, phrase); // 传递 context
           },
         );

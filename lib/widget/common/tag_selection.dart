@@ -48,8 +48,8 @@ class _TagSelectionAreaState extends State<TagSelectionArea> {
   Widget build(BuildContext context) {
     return Consumer<TagProvider>(
       builder: (context, tagProvider, child) {
-        final selectedTags = _getSelectedTags(tagProvider.tags);
-        final availableTags = _getAvailableTags(tagProvider.tags);
+        final selectedTags = _getSelectedTags(tagProvider.getItems);
+        final availableTags = _getAvailableTags(tagProvider.getItems);
 
         return MenuAnchor(
           controller: _menuController,
@@ -82,7 +82,7 @@ class _TagSelectionAreaState extends State<TagSelectionArea> {
                       onCreateTag: (name) async {
                         await tagProvider.saveTag(name);
                         if (tagProvider.error == null) {
-                          final newTag = tagProvider.tags.firstWhereOrNull(
+                          final newTag = tagProvider.getItems.firstWhereOrNull(
                             (tag) => tag.name == name,
                           );
                           if (newTag != null) {
@@ -111,10 +111,7 @@ class _TagSelectionAreaState extends State<TagSelectionArea> {
                       children: [
                         Icon(Icons.add, size: 16, color: Colors.grey),
                         const SizedBox(width: 8),
-                        Text(
-                          '点击选择标签',
-                          style: TextStyle(color: Colors.grey),
-                        ),
+                        Text('点击选择标签', style: TextStyle(color: Colors.grey)),
                       ],
                     )
                   : SingleChildScrollView(
@@ -179,11 +176,11 @@ class _NewTagButtonState extends State<NewTagButton> {
           decoration: InputDecoration(
             hintText: '输入标签名',
             isDense: true,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 5,
             ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
           ),
           style: const TextStyle(fontSize: 12),
           onSubmitted: (_) => _submit(),
@@ -205,9 +202,7 @@ class _NewTagButtonState extends State<NewTagButton> {
         decoration: BoxDecoration(
           color: theme.colorScheme.secondaryContainer,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: theme.colorScheme.outline,
-          ),
+          border: Border.all(color: theme.colorScheme.outline),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

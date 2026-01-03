@@ -87,7 +87,7 @@ class _AddPhraseFormState extends State<AddPhraseForm>
     if (words.isEmpty) return;
     final targetWord = _findTargetWord(words);
     final wordsProvider = context.read<WordsProvider>();
-    final match = wordsProvider.words.firstWhereOrNull(
+    final match = wordsProvider.getItems.firstWhereOrNull(
       (word) => word.word.toLowerCase().startsWith(targetWord),
     );
     if (match != null) {
@@ -115,7 +115,7 @@ class _AddPhraseFormState extends State<AddPhraseForm>
       return;
     }
     if (!_formKey.currentState!.validate()) return;
-    final provider = context.read<PhraseProivder>();
+    final provider = context.read<PhraseProvider>();
     final phrase = _phraseInputController.text.trim();
     final definition = _definitionInputController.text.trim();
     final note = _noteInputController.text.trim();
@@ -178,7 +178,7 @@ class _AddPhraseFormState extends State<AddPhraseForm>
                 },
               ),
               const Spacer(),
-              Consumer<PhraseProivder>(
+              Consumer<PhraseProvider>(
                 builder: (context, provider, child) {
                   handleProviderError(provider.error);
                   return FormActionButtons(

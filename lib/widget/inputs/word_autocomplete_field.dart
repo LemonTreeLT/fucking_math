@@ -32,7 +32,7 @@ class WordAutocompleteField extends StatelessWidget {
           });
           return const Iterable<Word>.empty();
         }
-        return wordsProvider.words.where((Word word) {
+        return wordsProvider.getItems.where((Word word) {
           return word.word.toLowerCase().startsWith(query);
         });
       },
@@ -55,7 +55,7 @@ class WordAutocompleteField extends StatelessWidget {
               ),
               validator: (value) {
                 if (value != null && value.isNotEmpty) {
-                  final isMatch = wordsProvider.words.any(
+                  final isMatch = wordsProvider.getItems.any(
                     (w) => w.word.toLowerCase() == value.toLowerCase(),
                   );
                   if (!isMatch) {

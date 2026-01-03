@@ -1,48 +1,17 @@
-import 'package:flutter/foundation.dart';
 import 'package:fucking_math/db/app_dao.dart' show PhrasesDao;
-import 'package:fucking_math/db/app_database.dart' as db show AppDatabase;
+import 'package:fucking_math/db/app_database.dart' show AppDatabase;
+import 'package:fucking_math/extensions/list.dart';
+import 'package:fucking_math/providers/base_proivder.dart';
 import 'package:fucking_math/utils/db/phrase_repository.dart';
-import 'package:fucking_math/providers/utils.dart';
 import 'package:fucking_math/utils/types.dart';
 
-class PhraseProivder extends ChangeNotifier {
-  PhraseProivder(db.AppDatabase db) : _rep = PhraseRepository(PhrasesDao(db));
-
-  final PhraseRepository _rep;
-  bool _isLoading = false;
-  String? _error;
-  List<Phrase> _phrases = [];
-
-  bool get isLoading => _isLoading;
-  String? get error => _error;
-  List<Phrase> get phrases => _phrases;
-
-  void _onLoading() => _isLoading = true;
-  void _stopLoading() => _isLoading = false;
-  void _clearError() => _error = null;
-  void _setError(String errMsg) => _error = errMsg;
-  void _setPhrase(List<Phrase> phrases) => _phrases = phrases;
-
-  // 没有后顾之忧的调用你的方法吧
-  Future<void> _justDoIt<T>({
-    required Future<T> Function() action,
-    String? errMsg,
-    void Function(T result)? onSuccess,
-  }) => justDoIt<T>(
-    action,
-    errMsg: errMsg,
-    onLoading: _onLoading,
-    onStopLoading: _stopLoading,
-    clearError: _clearError,
-    setError: _setError,
-    notifyListeners: notifyListeners,
-    onSuccess: onSuccess,
-  );
+class PhraseProvider extends BaseRepositoryProvider<Phrase, PhraseRepository> {
+  PhraseProvider(AppDatabase db) : super(PhraseRepository(PhrasesDao(db)));
 
   // 将全部短语加载到 Provider 中
-  Future<void> loadPhrases() async => _justDoIt(
-    action: () async => await _rep.getAllPhrases(),
-    onSuccess: (result) => _setPhrase(result),
+  Future<void> loadPhrases() async => justDoIt(
+    action: () async => await rep.getAllPhrases(),
+    onSucces: (result) => setItems(result),
   );
 
   // 添加一个短语
@@ -52,20 +21,21 @@ class PhraseProivder extends ChangeNotifier {
     String? definition,
     String? note,
     List<int>? tags,
-  }) async => _justDoIt(
-    action: () async => await _rep.savePhrase(
+  }) async => justDoIt(
+    action: () async => await rep.savePhrase(
       linkedWordID,
       phrase,
       definition: definition,
       note: note,
       tags: tags,
     ),
-    onSuccess: (result) => _phrases.add(result),
+    onSucces: (result) =>
+        setItems(items.withUpsert(result, (t) => t.id == result.id)),
   );
 
   // 删除短语
-  Future<void> deletePhrase(int id) async => _justDoIt(
-    action: () async => await _rep.deletePhrase(id),
-    onSuccess: (result) => _phrases.removeWhere((p) => p.id == id),
+  Future<void> deletePhrase(int id) async => justDoIt(
+    action: () async => await rep.deletePhrase(id),
+    onSucces: (result) => items.removeWhere((p) => p.id == id),
   );
 }

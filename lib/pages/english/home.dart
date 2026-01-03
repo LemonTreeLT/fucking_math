@@ -77,7 +77,7 @@ class _EnglishShellState extends State<EnglishShell> {
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Center(
                 child: Text(
-                  '共 ${provider.words.length} 词',
+                  '共 ${provider.getItems.length} 词',
                   style: const TextStyle(fontSize: 14),
                 ),
               ),
@@ -85,13 +85,13 @@ class _EnglishShellState extends State<EnglishShell> {
           },
         ),
         
-        Consumer<PhraseProivder>(
+        Consumer<PhraseProvider>(
           builder: (context, provider, child) {
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Center(
                 child: Text(
-                  '${provider.phrases.length} 短语',
+                  '${provider.getItems.length} 短语',
                   style: const TextStyle(fontSize: 14),
                 ),
               ),

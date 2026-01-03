@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fucking_math/db/app_database.dart';
+import 'package:fucking_math/providers/knowledge_proivder.dart';
 import 'package:fucking_math/providers/phrase_proivder.dart';
 import 'package:fucking_math/providers/tags_proivder.dart';
 import 'package:fucking_math/providers/words_proivder.dart';
@@ -16,16 +17,16 @@ void main() {
       providers: [
         Provider(create: (_) => database, dispose: (_, db) => db.close()),
         ChangeNotifierProvider(
-          create: (context) =>
-              WordsProvider(context.read<AppDatabase>())..loadWords(),
+          create: (context) => WordsProvider(context.read())..loadWords(),
         ),
         ChangeNotifierProvider(
-          create: (context) =>
-              PhraseProivder(context.read<AppDatabase>())..loadPhrases(),
+          create: (context) => PhraseProvider(context.read())..loadPhrases(),
         ),
         ChangeNotifierProvider(
-          create: (context) =>
-              TagProvider(context.read<AppDatabase>())..loadTags(),
+          create: (context) => TagProvider(context.read())..loadTags(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => KnowledgeProvider(context.read()),
         ),
       ],
       child: const App(),

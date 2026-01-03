@@ -33,8 +33,9 @@
     - [x] 重构部分代码
     - [ ] 错题  
         - [x] 仓库类 
-        - [ ] Provider 类 <-- We are here
-        - [ ] 录入部分 UI
+        - [x] Provider 类
+        - [x] 重构 provider 结构
+        - [ ] 录入部分 UI <-- We are here
     - [ ] 知识点
 - [ ] 完成数据编辑修改删除 <-- MVP (v0.1.0)
     - [ ] 英语

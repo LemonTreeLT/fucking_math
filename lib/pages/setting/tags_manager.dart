@@ -240,7 +240,7 @@ class _TagsDisplayArea extends StatelessWidget {
           runSpacing: 8,
           spacing: 8,
           children: context
-              .select((TagProvider p) => p.tags)
+              .select((TagProvider p) => p.getItems)
               .map(
                 (t) => InkWell(
                   borderRadius: BorderRadius.circular(90),
