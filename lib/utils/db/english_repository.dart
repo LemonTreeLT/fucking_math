@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:fucking_math/db/app_dao.dart';
+import 'package:fucking_math/db/daos/word.dart';
 import 'package:fucking_math/db/tables/tables_english.dart';
 import 'package:fucking_math/utils/db/exceptions.dart';
 import 'package:fucking_math/utils/types.dart';
@@ -140,7 +140,9 @@ class WordsRepository {
     final appTags = dbTags.map(dbTagToTag).toList();
     final logs = await _dao.getWordLogs(word.id);
     final note = logs.first.notes;
-    final repeat = logs.where((log) => log.type == EnglishLogType.repeat).length;
+    final repeat = logs
+        .where((log) => log.type == EnglishLogType.repeat)
+        .length;
 
     return _dbWordToWord(word, appTags, repeat: repeat, note: note);
   }

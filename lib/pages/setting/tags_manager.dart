@@ -129,18 +129,40 @@ class _TagsDetailedFormState extends State<_TagsDetailedForm> {
               onColorChanged: (c) => setState(() => _selectedColor = c),
             ),
             const Spacer(),
-            ElevatedButton.icon(
-              onPressed: () => context.read<TagProvider>().changeTag(
-                Tag(
-                  id: widget.tag.id,
-                  name: _nameController.text.trim(),
-                  description: _descriptionController.text.trim(),
-                  subject: _selectedSubject,
-                  color: _selectedColor?.toARGB32(),
+            Row(
+              spacing: 8,
+              children: [
+                const Spacer(),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    final TagProvider provider = context.read();
+                    final unsavedTag = Tag(
+                      id: widget.tag.id,
+                      name: _nameController.text.trim(),
+                      description: _descriptionController.text.trim(),
+                      subject: _selectedSubject,
+                      color: _selectedColor?.toARGB32(),
+                    );
+
+                    if (!provider.getItems.any((t) => t.id == widget.tag.id)) {
+                      provider.saveTag(
+                        unsavedTag.name,
+                        description: unsavedTag.description,
+                        subject: unsavedTag.subject,
+                        color: unsavedTag.color,
+                      );
+                    } else {
+                      provider.changeTag(unsavedTag);
+                    }
+                  },
+                  label: const Text("保 存"),
+                  icon: const Icon(Icons.save),
                 ),
-              ),
-              label: const Text("保 存"),
-              icon: const Icon(Icons.save),
+                FormBuilders.deleteObject(
+                  delete: () =>
+                      context.read<TagProvider>().deleteTag(widget.tag.id),
+                ),
+              ],
             ),
           ],
         ),

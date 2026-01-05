@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:fucking_math/db/app_dao.dart';
 import 'package:fucking_math/db/app_database.dart' as db;
+import 'package:fucking_math/db/daos/phrase.dart' show PhrasesDao;
 import 'package:fucking_math/db/tables/tables_english.dart';
 import 'package:fucking_math/utils/db/exceptions.dart';
 import 'package:fucking_math/utils/db/utils.dart';
@@ -107,14 +107,17 @@ class PhraseRepository {
   }
 
   // 辅助函数: 添加日志
-  Future<void> _addLog(int phraseId, EnglishLogType type, {String? note}) async =>
-      await _dao.addPhraseLog(
-        db.PhraseLogsCompanion.insert(
-          phraseID: phraseId,
-          type: type,
-          notes: Value(note),
-        ),
-      );
+  Future<void> _addLog(
+    int phraseId,
+    EnglishLogType type, {
+    String? note,
+  }) async => await _dao.addPhraseLog(
+    db.PhraseLogsCompanion.insert(
+      phraseID: phraseId,
+      type: type,
+      notes: Value(note),
+    ),
+  );
 
   // 辅助函数: 数据库 Phrase 转换为应用 Phrase
   Phrase _dbPhraseToPhrase(
@@ -141,7 +144,7 @@ class PhraseRepository {
       phrase,
       (await _dao.getPhraseTags(phrase.id)).map(dbTagToTag).toList(),
       note: note,
-      count: count
+      count: count,
     );
   }
 }

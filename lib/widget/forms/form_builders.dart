@@ -112,4 +112,82 @@ class FormBuilders {
       ),
     );
   }
+
+  static Widget deleteObject({
+  required void Function() delete, 
+  String labelText = "删除"
+}) {
+  return _DeleteButton(
+    onDelete: delete,
+    labelText: labelText,
+  );
 }
+}
+
+class _DeleteButton extends StatefulWidget {
+  final void Function() onDelete;
+  final String labelText;
+
+  const _DeleteButton({
+    required this.onDelete,
+    required this.labelText,
+  });
+
+  @override
+  State<_DeleteButton> createState() => _DeleteButtonState();
+}
+
+class _DeleteButtonState extends State<_DeleteButton> {
+  final MenuController _menuController = MenuController();
+
+  @override
+  Widget build(BuildContext context) {
+    return MenuAnchor(
+      controller: _menuController,
+      menuChildren: [
+        MenuItemButton(
+          onPressed: () {
+            widget.onDelete();
+            _menuController.close();
+          },
+          child: const Row(
+            children: [
+              Icon(Icons.check, color: Colors.red, size: 20),
+              SizedBox(width: 8),
+              Text('确认删除', style: TextStyle(color: Colors.red)),
+            ],
+          ),
+        ),
+        MenuItemButton(
+          onPressed: () {
+            _menuController.close();
+          },
+          child: const Row(
+            children: [
+              Icon(Icons.close, size: 20),
+              SizedBox(width: 8),
+              Text('取消'),
+            ],
+          ),
+        ),
+      ],
+      builder: (context, controller, child) {
+        return ElevatedButton.icon(
+          onPressed: () {
+            if (controller.isOpen) {
+              controller.close();
+            } else {
+              controller.open();
+            }
+          },
+          icon: const Icon(Icons.delete),
+          label: Text(widget.labelText),
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.red,
+          ),
+        );
+      },
+    );
+  }
+}
+

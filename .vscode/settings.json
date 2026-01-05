@@ -9,7 +9,8 @@
         "**/Flutter/ephemeral": true,
         "**/.symlinks": true,
         "**/.plugin_symlinks": true,
-
         "**/android": true
-    }
+    },
+    "java.format.enabled": false,
+    "java.completion.enabled": false
 }

@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:fucking_math/db/app_dao.dart';
+import 'package:fucking_math/db/daos/tag.dart';
 import 'package:fucking_math/utils/db/exceptions.dart';
 import 'package:fucking_math/utils/types.dart';
 import 'package:fucking_math/db/app_database.dart' as db;
@@ -27,7 +27,7 @@ class TagRepository {
   // 通过 id 删除 tag
   Future<void> deleteTag(int id) async => await _dao.deleteTag(id);
 
-  // 通过 tag对象 更新 tag
+  // 通过 通过tag
   Future<void> changeTagById(Tag tag) async =>
       await _dao.updateTagWithCompanion(
         tag.id,

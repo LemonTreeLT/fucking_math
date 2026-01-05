@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:fucking_math/db/app_dao.dart';
+import 'package:fucking_math/db/daos/knowledge.dart' show KnowledgeDao;
 import 'package:fucking_math/utils/db/exceptions.dart';
 import 'package:fucking_math/utils/types.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;

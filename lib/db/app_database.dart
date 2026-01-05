@@ -9,11 +9,17 @@ import 'package:path/path.dart' as p;
 // --- 引入所有表格定义 ---
 import 'package:fucking_math/db/tables/tables_english.dart';
 import 'package:fucking_math/db/tables/tables_knowledge.dart';
-import 'package:fucking_math/db/tables/tables_mistakes.dart' ;
+import 'package:fucking_math/db/tables/tables_mistakes.dart';
 import 'package:fucking_math/db/tables/tables_tags.dart';
 
 import 'package:fucking_math/utils/types.dart';
-import 'app_dao.dart';
+
+// 引入 dao 定义
+import 'daos/tag.dart';
+import 'daos/knowledge.dart';
+import 'daos/mistake.dart';
+import 'daos/phrase.dart';
+import 'daos/word.dart';
 
 // 告诉 drift 生成代码。运行 `dart run build_runner build`
 part 'app_database.g.dart';
