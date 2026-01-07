@@ -34,7 +34,7 @@ abstract class GenericFormState<T extends StatefulWidget> extends State<T>
   List<Widget> buildFormFields(BuildContext context);
 
   /// 按钮按下时
-  Future<void> onPrimaryAction();
+  Future<void> onPrimaryAction() async {}
 
   // 可选配置
   String get primaryButtonLabel => "提交";

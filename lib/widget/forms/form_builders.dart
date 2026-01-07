@@ -25,6 +25,7 @@ class FormBuilders {
     required String label,
     required List<T> items,
     required ValueChanged<T?> onChanged,
+    bool noneOption = true,
     T? initialValue,
     Key? key,
   }) {
@@ -37,11 +38,9 @@ class FormBuilders {
         border: const OutlineInputBorder(),
       ),
       items: [
-        const DropdownMenuItem(value: null, child: Text("None")),
-        ...items.map((e) => DropdownMenuItem(
-          value: e,
-          child: Text(e.name),
-        )),
+        if (noneOption)
+          const DropdownMenuItem(value: null, child: Text("None")),
+        ...items.map((e) => DropdownMenuItem(value: e, child: Text(e.name))),
       ],
     );
   }
@@ -52,11 +51,8 @@ class FormBuilders {
     required ValueChanged<Color> onColorChanged,
   }) {
     return InkWell(
-      onTap: () => _showColorPickerDialog(
-        context,
-        currentColor,
-        onColorChanged,
-      ),
+      onTap: () =>
+          _showColorPickerDialog(context, currentColor, onColorChanged),
       child: Container(
         height: 50,
         decoration: BoxDecoration(
@@ -114,24 +110,18 @@ class FormBuilders {
   }
 
   static Widget deleteObject({
-  required void Function() delete, 
-  String labelText = "删除"
-}) {
-  return _DeleteButton(
-    onDelete: delete,
-    labelText: labelText,
-  );
-}
+    required void Function() delete,
+    String labelText = "删除",
+  }) {
+    return _DeleteButton(onDelete: delete, labelText: labelText);
+  }
 }
 
 class _DeleteButton extends StatefulWidget {
   final void Function() onDelete;
   final String labelText;
 
-  const _DeleteButton({
-    required this.onDelete,
-    required this.labelText,
-  });
+  const _DeleteButton({required this.onDelete, required this.labelText});
 
   @override
   State<_DeleteButton> createState() => _DeleteButtonState();
@@ -182,12 +172,9 @@ class _DeleteButtonState extends State<_DeleteButton> {
           },
           icon: const Icon(Icons.delete),
           label: Text(widget.labelText),
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.red,
-          ),
+          style: ElevatedButton.styleFrom(foregroundColor: Colors.red),
         );
       },
     );
   }
 }
-
