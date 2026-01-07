@@ -40,4 +40,10 @@ class TagsDao extends DatabaseAccessor<AppDatabase> with _$TagsDaoMixin {
   // 删除标签
   Future<int> deleteTag(int id) =>
       (delete(tags)..where((t) => t.id.equals(id))).go();
+
+  /// Upsert 标签（基于 tag 名称的 unique 约束）
+  /// 如果 tag 名称已存在则更新，否则插入
+  /// 返回插入或更新的记录 ID
+  Future<int> upsertTag(TagsCompanion entry) async =>
+      await into(tags).insertOnConflictUpdate(entry);
 }

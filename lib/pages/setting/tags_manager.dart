@@ -135,25 +135,15 @@ class _TagsDetailedFormState extends State<_TagsDetailedForm> {
                 const Spacer(),
                 ElevatedButton.icon(
                   onPressed: () {
-                    final TagProvider provider = context.read();
-                    final unsavedTag = Tag(
-                      id: widget.tag.id,
-                      name: _nameController.text.trim(),
-                      description: _descriptionController.text.trim(),
-                      subject: _selectedSubject,
-                      color: _selectedColor?.toARGB32(),
+                    context.read<TagProvider>().upsertTag(
+                      Tag(
+                        id: widget.tag.id,
+                        name: _nameController.text.trim(),
+                        description: _descriptionController.text.trim(),
+                        subject: _selectedSubject,
+                        color: _selectedColor?.toARGB32(),
+                      ),
                     );
-
-                    if (!provider.getItems.any((t) => t.id == widget.tag.id)) {
-                      provider.saveTag(
-                        unsavedTag.name,
-                        description: unsavedTag.description,
-                        subject: unsavedTag.subject,
-                        color: unsavedTag.color,
-                      );
-                    } else {
-                      provider.changeTag(unsavedTag);
-                    }
                   },
                   label: const Text("保 存"),
                   icon: const Icon(Icons.save),
