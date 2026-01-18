@@ -12,7 +12,7 @@ import 'package:fucking_math/pages/knowledge/editor.dart';
 import 'package:fucking_math/pages/knowledge/learning.dart';
 import 'package:fucking_math/pages/setting/settings.dart';
 import 'package:fucking_math/pages/setting/tags_manager.dart';
-import 'package:fucking_math/widget/forms/knowledge_page_state.dart';
+import 'package:fucking_math/providers/knowledge_page_state.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -88,10 +88,7 @@ final List<RouterConfig> _routesConfig = [
     path: '/knowledge_shell',
     name: 'Knowledge Shell',
     builder: (c, s) => Container(),
-    shellBuilder: (context, state, child) => ChangeNotifierProvider(
-      create: (c) => KnowledgePageState(),
-      child: KnowledgeShell(child: child),
-    ),
+    shellBuilder: (context, state, child) => KnowledgeShell(child: child),
     navigatorKey: _knowledgeNavigatorKey,
     routes: [
       RouterConfig(
@@ -106,7 +103,10 @@ final List<RouterConfig> _routesConfig = [
       RouterConfig(
         path: '/knowledge/editor',
         name: '知识点编辑器',
-        builder: (c, s) => const KnowledgeEditor(),
+        builder: (c, s) => ChangeNotifierProvider(
+          create: (c) => KnowledgePageState(),
+          child: const KnowledgeEditor(),
+        ),
       ),
     ],
   ),

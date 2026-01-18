@@ -26,7 +26,7 @@ void main() {
           create: (context) => TagProvider(context.read())..loadTags(),
         ),
         ChangeNotifierProvider(
-          create: (context) => KnowledgeProvider(context.read()),
+          create: (context) => KnowledgeProvider(context.read())..loadKnowledge(),
         ),
       ],
       child: const App(),

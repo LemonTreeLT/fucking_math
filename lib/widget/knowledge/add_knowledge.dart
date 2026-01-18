@@ -28,7 +28,11 @@ class _AddKnowledgeState extends GenericFormState<AddKnowledge> {
     boxH16,
     sInputer((t) => setState(() => _selectedSuject = t!)),
     boxH16,
-    tInputer(controller: _bodyInputerController, labelText: "详细描述"),
+    tInputer(
+      controller: _bodyInputerController,
+      labelText: "详细描述",
+      maxLines: 3,
+    ),
     boxH16,
     TagSelectionArea(
       selectedTagIds: _selectedTags,
@@ -44,7 +48,7 @@ class _AddKnowledgeState extends GenericFormState<AddKnowledge> {
       _headInputerController.text.trim(),
       _bodyInputerController.text.trim(),
       tags: _selectedTags.toList(),
-      note: _noteInputerController.text.nullIfEmpty
+      note: _noteInputerController.text.nullIfEmpty,
     );
   }
 
@@ -76,5 +80,5 @@ Widget sInputer(void Function(Subject?) onChanged) => FormBuilders.enumDropdown(
   items: Subject.values,
   onChanged: onChanged,
   initialValue: Subject.math,
-  noneOption: false
+  noneOption: false,
 );
