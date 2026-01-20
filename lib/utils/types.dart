@@ -12,21 +12,8 @@ enum Subject {
   politics,
 }
 
-class SubjectConverter extends TypeConverter<Subject, String> {
-  const SubjectConverter();
-
-  @override
-  Subject fromSql(String fromDb) {
-    try {
-      return Subject.values.byName(fromDb);
-    } catch (e) {
-      throw ArgumentError('Invalid Subject index: $fromDb');
-    }
-  }
-
-  @override
-  String toSql(Subject value) => value.name;
-}
+// ignore: non_constant_identifier_names
+final SubjectConverter = EnumNameConverter(Subject.values);
 
 // 单词
 class Word {

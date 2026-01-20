@@ -6,15 +6,22 @@ import 'package:fucking_math/utils/types.dart';
 // 错题表
 class Mistakes extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get subject => text().map(const SubjectConverter())();
+  TextColumn get subject => text().map(SubjectConverter)();
   TextColumn get questionHeader => text()(); // 题目标题
   TextColumn get questionBody => text()(); // 题目内容
   TextColumn get correctAnswer => text().nullable()(); // 正确答案
   TextColumn get unvifiedAnswer => text().nullable()(); // 未验证答案
-  TextColumn get userAnswer => text().nullable()(); // 用户答案
   TextColumn get source => text().nullable()();
   DateTimeColumn get createdAt =>
       dateTime().withDefault(currentDateAndTime)(); // 创建时间
+}
+
+class AnswersLink extends Table {
+    IntColumn get id => integer().autoIncrement()();
+    IntColumn get mistakeId => integer().references(Mistakes, #id)();
+
+    TextColumn get note => text().nullable()();
+    TextColumn get answer => text()();
 }
 
 class MistakesTagLink extends Table {
@@ -28,28 +35,10 @@ class MistakesTagLink extends Table {
 class MistakeLogs extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get mistakeID => integer().references(Mistakes, #id)(); // 关联错题ID
-  TextColumn get type => text().map(const MistakeLogTypeConverter())(); // 日志类型
+  TextColumn get type => text().map(const EnumNameConverter(MistakeLogType.values))(); // 日志类型
   DateTimeColumn get timestamp =>
       dateTime().withDefault(currentDateAndTime)(); // 时间戳
   TextColumn get notes => text().nullable()(); // 备注，可选
 }
 
 enum MistakeLogType { view, review, repeat }
-
-class MistakeLogTypeConverter extends TypeConverter<MistakeLogType, String> {
-  const MistakeLogTypeConverter();
-
-  @override
-  MistakeLogType fromSql(String fromDb) {
-    try {
-      return MistakeLogType.values.byName(fromDb);
-    } catch (e) {
-      throw ArgumentError('Invalid MistakeLogType index: $fromDb');
-    }
-  }
-
-  @override
-  String toSql(MistakeLogType value) {
-    return value.name;
-  }
-}

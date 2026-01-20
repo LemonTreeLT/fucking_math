@@ -139,10 +139,10 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
     return $TagsTable(attachedDatabase, alias);
   }
 
-  static TypeConverter<Subject, String> $convertersubject =
-      const SubjectConverter();
-  static TypeConverter<Subject?, String?> $convertersubjectn =
-      NullAwareTypeConverter.wrap($convertersubject);
+  static JsonTypeConverter2<Subject, String, String> $convertersubject =
+      SubjectConverter;
+  static JsonTypeConverter2<Subject?, String?, String?> $convertersubjectn =
+      JsonTypeConverter2.asNullable($convertersubject);
 }
 
 class Tag extends DataClass implements Insertable<Tag> {
@@ -200,7 +200,9 @@ class Tag extends DataClass implements Insertable<Tag> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Tag(
       id: serializer.fromJson<int>(json['id']),
-      subject: serializer.fromJson<Subject?>(json['subject']),
+      subject: $TagsTable.$convertersubjectn.fromJson(
+        serializer.fromJson<String?>(json['subject']),
+      ),
       tag: serializer.fromJson<String>(json['tag']),
       color: serializer.fromJson<int?>(json['color']),
       description: serializer.fromJson<String?>(json['description']),
@@ -211,7 +213,9 @@ class Tag extends DataClass implements Insertable<Tag> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'subject': serializer.toJson<Subject?>(subject),
+      'subject': serializer.toJson<String?>(
+        $TagsTable.$convertersubjectn.toJson(subject),
+      ),
       'tag': serializer.toJson<String>(tag),
       'color': serializer.toJson<int?>(color),
       'description': serializer.toJson<String?>(description),
@@ -2335,8 +2339,8 @@ class $KnowledgeTableTable extends KnowledgeTable
     return $KnowledgeTableTable(attachedDatabase, alias);
   }
 
-  static TypeConverter<Subject, String> $convertersubject =
-      const SubjectConverter();
+  static JsonTypeConverter2<Subject, String, String> $convertersubject =
+      SubjectConverter;
 }
 
 class KnowledgeTableData extends DataClass
@@ -2385,7 +2389,9 @@ class KnowledgeTableData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return KnowledgeTableData(
       id: serializer.fromJson<int>(json['id']),
-      subject: serializer.fromJson<Subject>(json['subject']),
+      subject: $KnowledgeTableTable.$convertersubject.fromJson(
+        serializer.fromJson<String>(json['subject']),
+      ),
       head: serializer.fromJson<String>(json['head']),
       body: serializer.fromJson<String>(json['body']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
@@ -2396,7 +2402,9 @@ class KnowledgeTableData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'subject': serializer.toJson<Subject>(subject),
+      'subject': serializer.toJson<String>(
+        $KnowledgeTableTable.$convertersubject.toJson(subject),
+      ),
       'head': serializer.toJson<String>(head),
       'body': serializer.toJson<String>(body),
       'createdAt': serializer.toJson<DateTime>(createdAt),
@@ -3192,17 +3200,6 @@ class $MistakesTable extends Mistakes with TableInfo<$MistakesTable, Mistake> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _userAnswerMeta = const VerificationMeta(
-    'userAnswer',
-  );
-  @override
-  late final GeneratedColumn<String> userAnswer = GeneratedColumn<String>(
-    'user_answer',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
   static const VerificationMeta _sourceMeta = const VerificationMeta('source');
   @override
   late final GeneratedColumn<String> source = GeneratedColumn<String>(
@@ -3232,7 +3229,6 @@ class $MistakesTable extends Mistakes with TableInfo<$MistakesTable, Mistake> {
     questionBody,
     correctAnswer,
     unvifiedAnswer,
-    userAnswer,
     source,
     createdAt,
   ];
@@ -3291,12 +3287,6 @@ class $MistakesTable extends Mistakes with TableInfo<$MistakesTable, Mistake> {
         ),
       );
     }
-    if (data.containsKey('user_answer')) {
-      context.handle(
-        _userAnswerMeta,
-        userAnswer.isAcceptableOrUnknown(data['user_answer']!, _userAnswerMeta),
-      );
-    }
     if (data.containsKey('source')) {
       context.handle(
         _sourceMeta,
@@ -3344,10 +3334,6 @@ class $MistakesTable extends Mistakes with TableInfo<$MistakesTable, Mistake> {
         DriftSqlType.string,
         data['${effectivePrefix}unvified_answer'],
       ),
-      userAnswer: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}user_answer'],
-      ),
       source: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}source'],
@@ -3364,8 +3350,8 @@ class $MistakesTable extends Mistakes with TableInfo<$MistakesTable, Mistake> {
     return $MistakesTable(attachedDatabase, alias);
   }
 
-  static TypeConverter<Subject, String> $convertersubject =
-      const SubjectConverter();
+  static JsonTypeConverter2<Subject, String, String> $convertersubject =
+      SubjectConverter;
 }
 
 class Mistake extends DataClass implements Insertable<Mistake> {
@@ -3375,7 +3361,6 @@ class Mistake extends DataClass implements Insertable<Mistake> {
   final String questionBody;
   final String? correctAnswer;
   final String? unvifiedAnswer;
-  final String? userAnswer;
   final String? source;
   final DateTime createdAt;
   const Mistake({
@@ -3385,7 +3370,6 @@ class Mistake extends DataClass implements Insertable<Mistake> {
     required this.questionBody,
     this.correctAnswer,
     this.unvifiedAnswer,
-    this.userAnswer,
     this.source,
     required this.createdAt,
   });
@@ -3406,9 +3390,6 @@ class Mistake extends DataClass implements Insertable<Mistake> {
     if (!nullToAbsent || unvifiedAnswer != null) {
       map['unvified_answer'] = Variable<String>(unvifiedAnswer);
     }
-    if (!nullToAbsent || userAnswer != null) {
-      map['user_answer'] = Variable<String>(userAnswer);
-    }
     if (!nullToAbsent || source != null) {
       map['source'] = Variable<String>(source);
     }
@@ -3428,9 +3409,6 @@ class Mistake extends DataClass implements Insertable<Mistake> {
       unvifiedAnswer: unvifiedAnswer == null && nullToAbsent
           ? const Value.absent()
           : Value(unvifiedAnswer),
-      userAnswer: userAnswer == null && nullToAbsent
-          ? const Value.absent()
-          : Value(userAnswer),
       source: source == null && nullToAbsent
           ? const Value.absent()
           : Value(source),
@@ -3445,12 +3423,13 @@ class Mistake extends DataClass implements Insertable<Mistake> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Mistake(
       id: serializer.fromJson<int>(json['id']),
-      subject: serializer.fromJson<Subject>(json['subject']),
+      subject: $MistakesTable.$convertersubject.fromJson(
+        serializer.fromJson<String>(json['subject']),
+      ),
       questionHeader: serializer.fromJson<String>(json['questionHeader']),
       questionBody: serializer.fromJson<String>(json['questionBody']),
       correctAnswer: serializer.fromJson<String?>(json['correctAnswer']),
       unvifiedAnswer: serializer.fromJson<String?>(json['unvifiedAnswer']),
-      userAnswer: serializer.fromJson<String?>(json['userAnswer']),
       source: serializer.fromJson<String?>(json['source']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
@@ -3460,12 +3439,13 @@ class Mistake extends DataClass implements Insertable<Mistake> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'subject': serializer.toJson<Subject>(subject),
+      'subject': serializer.toJson<String>(
+        $MistakesTable.$convertersubject.toJson(subject),
+      ),
       'questionHeader': serializer.toJson<String>(questionHeader),
       'questionBody': serializer.toJson<String>(questionBody),
       'correctAnswer': serializer.toJson<String?>(correctAnswer),
       'unvifiedAnswer': serializer.toJson<String?>(unvifiedAnswer),
-      'userAnswer': serializer.toJson<String?>(userAnswer),
       'source': serializer.toJson<String?>(source),
       'createdAt': serializer.toJson<DateTime>(createdAt),
     };
@@ -3478,7 +3458,6 @@ class Mistake extends DataClass implements Insertable<Mistake> {
     String? questionBody,
     Value<String?> correctAnswer = const Value.absent(),
     Value<String?> unvifiedAnswer = const Value.absent(),
-    Value<String?> userAnswer = const Value.absent(),
     Value<String?> source = const Value.absent(),
     DateTime? createdAt,
   }) => Mistake(
@@ -3492,7 +3471,6 @@ class Mistake extends DataClass implements Insertable<Mistake> {
     unvifiedAnswer: unvifiedAnswer.present
         ? unvifiedAnswer.value
         : this.unvifiedAnswer,
-    userAnswer: userAnswer.present ? userAnswer.value : this.userAnswer,
     source: source.present ? source.value : this.source,
     createdAt: createdAt ?? this.createdAt,
   );
@@ -3512,9 +3490,6 @@ class Mistake extends DataClass implements Insertable<Mistake> {
       unvifiedAnswer: data.unvifiedAnswer.present
           ? data.unvifiedAnswer.value
           : this.unvifiedAnswer,
-      userAnswer: data.userAnswer.present
-          ? data.userAnswer.value
-          : this.userAnswer,
       source: data.source.present ? data.source.value : this.source,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
@@ -3529,7 +3504,6 @@ class Mistake extends DataClass implements Insertable<Mistake> {
           ..write('questionBody: $questionBody, ')
           ..write('correctAnswer: $correctAnswer, ')
           ..write('unvifiedAnswer: $unvifiedAnswer, ')
-          ..write('userAnswer: $userAnswer, ')
           ..write('source: $source, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
@@ -3544,7 +3518,6 @@ class Mistake extends DataClass implements Insertable<Mistake> {
     questionBody,
     correctAnswer,
     unvifiedAnswer,
-    userAnswer,
     source,
     createdAt,
   );
@@ -3558,7 +3531,6 @@ class Mistake extends DataClass implements Insertable<Mistake> {
           other.questionBody == this.questionBody &&
           other.correctAnswer == this.correctAnswer &&
           other.unvifiedAnswer == this.unvifiedAnswer &&
-          other.userAnswer == this.userAnswer &&
           other.source == this.source &&
           other.createdAt == this.createdAt);
 }
@@ -3570,7 +3542,6 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
   final Value<String> questionBody;
   final Value<String?> correctAnswer;
   final Value<String?> unvifiedAnswer;
-  final Value<String?> userAnswer;
   final Value<String?> source;
   final Value<DateTime> createdAt;
   const MistakesCompanion({
@@ -3580,7 +3551,6 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
     this.questionBody = const Value.absent(),
     this.correctAnswer = const Value.absent(),
     this.unvifiedAnswer = const Value.absent(),
-    this.userAnswer = const Value.absent(),
     this.source = const Value.absent(),
     this.createdAt = const Value.absent(),
   });
@@ -3591,7 +3561,6 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
     required String questionBody,
     this.correctAnswer = const Value.absent(),
     this.unvifiedAnswer = const Value.absent(),
-    this.userAnswer = const Value.absent(),
     this.source = const Value.absent(),
     this.createdAt = const Value.absent(),
   }) : subject = Value(subject),
@@ -3604,7 +3573,6 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
     Expression<String>? questionBody,
     Expression<String>? correctAnswer,
     Expression<String>? unvifiedAnswer,
-    Expression<String>? userAnswer,
     Expression<String>? source,
     Expression<DateTime>? createdAt,
   }) {
@@ -3615,7 +3583,6 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
       if (questionBody != null) 'question_body': questionBody,
       if (correctAnswer != null) 'correct_answer': correctAnswer,
       if (unvifiedAnswer != null) 'unvified_answer': unvifiedAnswer,
-      if (userAnswer != null) 'user_answer': userAnswer,
       if (source != null) 'source': source,
       if (createdAt != null) 'created_at': createdAt,
     });
@@ -3628,7 +3595,6 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
     Value<String>? questionBody,
     Value<String?>? correctAnswer,
     Value<String?>? unvifiedAnswer,
-    Value<String?>? userAnswer,
     Value<String?>? source,
     Value<DateTime>? createdAt,
   }) {
@@ -3639,7 +3605,6 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
       questionBody: questionBody ?? this.questionBody,
       correctAnswer: correctAnswer ?? this.correctAnswer,
       unvifiedAnswer: unvifiedAnswer ?? this.unvifiedAnswer,
-      userAnswer: userAnswer ?? this.userAnswer,
       source: source ?? this.source,
       createdAt: createdAt ?? this.createdAt,
     );
@@ -3668,9 +3633,6 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
     if (unvifiedAnswer.present) {
       map['unvified_answer'] = Variable<String>(unvifiedAnswer.value);
     }
-    if (userAnswer.present) {
-      map['user_answer'] = Variable<String>(userAnswer.value);
-    }
     if (source.present) {
       map['source'] = Variable<String>(source.value);
     }
@@ -3689,7 +3651,6 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
           ..write('questionBody: $questionBody, ')
           ..write('correctAnswer: $correctAnswer, ')
           ..write('unvifiedAnswer: $unvifiedAnswer, ')
-          ..write('userAnswer: $userAnswer, ')
           ..write('source: $source, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
@@ -4059,8 +4020,8 @@ class $MistakeLogsTable extends MistakeLogs
     return $MistakeLogsTable(attachedDatabase, alias);
   }
 
-  static TypeConverter<MistakeLogType, String> $convertertype =
-      const MistakeLogTypeConverter();
+  static JsonTypeConverter2<MistakeLogType, String, String> $convertertype =
+      const EnumNameConverter(MistakeLogType.values);
 }
 
 class MistakeLog extends DataClass implements Insertable<MistakeLog> {
@@ -4113,7 +4074,9 @@ class MistakeLog extends DataClass implements Insertable<MistakeLog> {
     return MistakeLog(
       id: serializer.fromJson<int>(json['id']),
       mistakeID: serializer.fromJson<int>(json['mistakeID']),
-      type: serializer.fromJson<MistakeLogType>(json['type']),
+      type: $MistakeLogsTable.$convertertype.fromJson(
+        serializer.fromJson<String>(json['type']),
+      ),
       timestamp: serializer.fromJson<DateTime>(json['timestamp']),
       notes: serializer.fromJson<String?>(json['notes']),
     );
@@ -4124,7 +4087,9 @@ class MistakeLog extends DataClass implements Insertable<MistakeLog> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'mistakeID': serializer.toJson<int>(mistakeID),
-      'type': serializer.toJson<MistakeLogType>(type),
+      'type': serializer.toJson<String>(
+        $MistakeLogsTable.$convertertype.toJson(type),
+      ),
       'timestamp': serializer.toJson<DateTime>(timestamp),
       'notes': serializer.toJson<String?>(notes),
     };
@@ -8356,7 +8321,6 @@ typedef $$MistakesTableCreateCompanionBuilder =
       required String questionBody,
       Value<String?> correctAnswer,
       Value<String?> unvifiedAnswer,
-      Value<String?> userAnswer,
       Value<String?> source,
       Value<DateTime> createdAt,
     });
@@ -8368,7 +8332,6 @@ typedef $$MistakesTableUpdateCompanionBuilder =
       Value<String> questionBody,
       Value<String?> correctAnswer,
       Value<String?> unvifiedAnswer,
-      Value<String?> userAnswer,
       Value<String?> source,
       Value<DateTime> createdAt,
     });
@@ -8456,11 +8419,6 @@ class $$MistakesTableFilterComposer
 
   ColumnFilters<String> get unvifiedAnswer => $composableBuilder(
     column: $table.unvifiedAnswer,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get userAnswer => $composableBuilder(
-    column: $table.userAnswer,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -8564,11 +8522,6 @@ class $$MistakesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get userAnswer => $composableBuilder(
-    column: $table.userAnswer,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<String> get source => $composableBuilder(
     column: $table.source,
     builder: (column) => ColumnOrderings(column),
@@ -8612,11 +8565,6 @@ class $$MistakesTableAnnotationComposer
 
   GeneratedColumn<String> get unvifiedAnswer => $composableBuilder(
     column: $table.unvifiedAnswer,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get userAnswer => $composableBuilder(
-    column: $table.userAnswer,
     builder: (column) => column,
   );
 
@@ -8714,7 +8662,6 @@ class $$MistakesTableTableManager
                 Value<String> questionBody = const Value.absent(),
                 Value<String?> correctAnswer = const Value.absent(),
                 Value<String?> unvifiedAnswer = const Value.absent(),
-                Value<String?> userAnswer = const Value.absent(),
                 Value<String?> source = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
               }) => MistakesCompanion(
@@ -8724,7 +8671,6 @@ class $$MistakesTableTableManager
                 questionBody: questionBody,
                 correctAnswer: correctAnswer,
                 unvifiedAnswer: unvifiedAnswer,
-                userAnswer: userAnswer,
                 source: source,
                 createdAt: createdAt,
               ),
@@ -8736,7 +8682,6 @@ class $$MistakesTableTableManager
                 required String questionBody,
                 Value<String?> correctAnswer = const Value.absent(),
                 Value<String?> unvifiedAnswer = const Value.absent(),
-                Value<String?> userAnswer = const Value.absent(),
                 Value<String?> source = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
               }) => MistakesCompanion.insert(
@@ -8746,7 +8691,6 @@ class $$MistakesTableTableManager
                 questionBody: questionBody,
                 correctAnswer: correctAnswer,
                 unvifiedAnswer: unvifiedAnswer,
-                userAnswer: userAnswer,
                 source: source,
                 createdAt: createdAt,
               ),
