@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:fucking_math/db/_default_tags.dart';
+import 'package:fucking_math/configs/tags.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
@@ -45,6 +45,8 @@ part 'app_database.g.dart';
     Mistakes,
     MistakesTagLink,
     MistakeLogs,
+    AnswersLink,
+    AnswersTagsLink,
   ],
   daos: [TagsDao, WordsDao, KnowledgeDao, MistakesDao, PhrasesDao],
 )
@@ -54,13 +56,11 @@ class AppDatabase extends _$AppDatabase {
   @override
   int get schemaVersion => 1; // 在mvp之前这个值为1
 
-  static LazyDatabase _openConnection() {
-    return LazyDatabase(() async {
-      final dbFolder = await getApplicationDocumentsDirectory();
-      final file = File(p.join(dbFolder.path, 'fucking_math_db.sqlite'));
-      return NativeDatabase(file);
-    });
-  }
+  static LazyDatabase _openConnection() => LazyDatabase(() async {
+    final dbFolder = await getApplicationDocumentsDirectory();
+    final file = File(p.join(dbFolder.path, 'fucking_math_db.sqlite'));
+    return NativeDatabase(file);
+  });
 
   // DAO 访问器
   @override
@@ -81,3 +81,14 @@ class AppDatabase extends _$AppDatabase {
     },
   );
 }
+
+List<TagsCompanion> getDefaultTagList() => DefaultTag.values
+    .map(
+      (t) => TagsCompanion.insert(
+        tag: t.name,
+        description: Value(t.desc),
+        color: Value(t.c),
+        subject: Value(t.sub),
+      ),
+    )
+    .toList();

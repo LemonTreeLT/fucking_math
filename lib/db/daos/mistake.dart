@@ -87,15 +87,7 @@ class MistakesDao extends DatabaseAccessor<AppDatabase>
 
     return query.map((row) => row.readTable(mistakes)).get();
   }
-
-  // 获取未验证答案的错题
-  Future<List<Mistake>> getUnverifiedMistakes() {
-    return (select(mistakes)..where(
-          (m) => m.unvifiedAnswer.isNotNull() & m.correctAnswer.isNull(),
-        ))
-        .get();
-  }
-
+  
   // 为错题添加日志
   Future<int> addMistakeLog(MistakeLogsCompanion entry) =>
       into(mistakeLogs).insert(entry);

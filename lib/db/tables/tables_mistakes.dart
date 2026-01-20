@@ -9,9 +9,7 @@ class Mistakes extends Table {
   TextColumn get subject => text().map(SubjectConverter)();
   TextColumn get questionHeader => text()(); // 题目标题
   TextColumn get questionBody => text()(); // 题目内容
-  TextColumn get correctAnswer => text().nullable()(); // 正确答案
-  TextColumn get unvifiedAnswer => text().nullable()(); // 未验证答案
-  TextColumn get source => text().nullable()();
+  TextColumn get source => text().nullable()(); // 题目来源
   DateTimeColumn get createdAt =>
       dateTime().withDefault(currentDateAndTime)(); // 创建时间
 }
@@ -22,6 +20,14 @@ class AnswersLink extends Table {
 
     TextColumn get note => text().nullable()();
     TextColumn get answer => text()();
+}
+
+class AnswersTagsLink extends Table {
+  IntColumn get answerID => integer().references(AnswersLink, #id)();
+  IntColumn get tagID => integer().references(Tags, #id)();
+
+  @override
+  Set<Column> get primaryKey => {answerID, tagID};
 }
 
 class MistakesTagLink extends Table {
@@ -41,4 +47,4 @@ class MistakeLogs extends Table {
   TextColumn get notes => text().nullable()(); // 备注，可选
 }
 
-enum MistakeLogType { view, review, repeat }
+enum MistakeLogType { view, review, repeat, answer }
