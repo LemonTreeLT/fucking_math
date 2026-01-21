@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:fucking_math/db/tables/tables_images.dart';
 import 'package:fucking_math/db/tables/tables_tags.dart';
 import 'package:fucking_math/utils/types.dart';
 
@@ -14,12 +15,20 @@ class Mistakes extends Table {
       dateTime().withDefault(currentDateAndTime)(); // 创建时间
 }
 
-class AnswersLink extends Table {
-    IntColumn get id => integer().autoIncrement()();
-    IntColumn get mistakeId => integer().references(Mistakes, #id)();
+class MistakePicsLink extends Table {
+  IntColumn get mistakeId => integer().references(Mistakes, #id)();
+  IntColumn get picId => integer().references(Images, #id)();
 
-    TextColumn get note => text().nullable()();
-    TextColumn get answer => text()();
+  @override
+  Set<Column> get primaryKey => {mistakeId, picId};
+}
+
+class AnswersLink extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get mistakeId => integer().references(Mistakes, #id)();
+
+  TextColumn get note => text().nullable()();
+  TextColumn get answer => text()();
 }
 
 class AnswersTagsLink extends Table {
@@ -41,7 +50,8 @@ class MistakesTagLink extends Table {
 class MistakeLogs extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get mistakeID => integer().references(Mistakes, #id)(); // 关联错题ID
-  TextColumn get type => text().map(const EnumNameConverter(MistakeLogType.values))(); // 日志类型
+  TextColumn get type =>
+      text().map(const EnumNameConverter(MistakeLogType.values))(); // 日志类型
   DateTimeColumn get timestamp =>
       dateTime().withDefault(currentDateAndTime)(); // 时间戳
   TextColumn get notes => text().nullable()(); // 备注，可选
