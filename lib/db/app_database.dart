@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:fucking_math/configs/tags.dart';
+import 'package:fucking_math/db/tables/tables_images.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
@@ -45,8 +46,12 @@ part 'app_database.g.dart';
     Mistakes,
     MistakesTagLink,
     MistakeLogs,
-    AnswersLink,
+    MistakePicsLink,
+    Answers,
     AnswersTagsLink,
+    AnswerPicsLink,
+    Images,
+
   ],
   daos: [TagsDao, WordsDao, KnowledgeDao, MistakesDao, PhrasesDao],
 )

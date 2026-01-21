@@ -15,6 +15,7 @@ class Mistakes extends Table {
       dateTime().withDefault(currentDateAndTime)(); // 创建时间
 }
 
+/// 问题正文内嵌图片链接表
 class MistakePicsLink extends Table {
   IntColumn get mistakeId => integer().references(Mistakes, #id)();
   IntColumn get picId => integer().references(Images, #id)();
@@ -23,20 +24,30 @@ class MistakePicsLink extends Table {
   Set<Column> get primaryKey => {mistakeId, picId};
 }
 
-class AnswersLink extends Table {
+class Answers extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get mistakeId => integer().references(Mistakes, #id)();
 
   TextColumn get note => text().nullable()();
+  TextColumn get head => text().nullable()();
   TextColumn get answer => text()();
 }
 
 class AnswersTagsLink extends Table {
-  IntColumn get answerID => integer().references(AnswersLink, #id)();
+  IntColumn get answerID => integer().references(Answers, #id)();
   IntColumn get tagID => integer().references(Tags, #id)();
 
   @override
   Set<Column> get primaryKey => {answerID, tagID};
+}
+
+/// 回答正文链接图片表
+class AnswerPicsLink extends Table {
+  IntColumn get answerID => integer().references(Answers, #id)();
+  IntColumn get picID => integer().references(Images, #id)();
+
+  @override
+  Set<Column> get primaryKey => {answerID, picID};
 }
 
 class MistakesTagLink extends Table {
