@@ -90,3 +90,75 @@ class Knowledge {
     required this.createdAt,
   });
 }
+
+// 错题
+class Mistake {
+  final int id;
+  final Subject subject;
+  final String head;
+  final String body;
+  final String? source;
+  final MistakeState state;
+  final List<ImageStorage> images;
+  Mistake({
+    required this.id,
+    required this.subject,
+    required this.head,
+    required this.body,
+    required this.state,
+    this.source,
+    this.images = const [],
+  });
+}
+
+/// 记录了错题的当前状态
+class MistakeState {
+  final int view;
+  final int review;
+  final int repeat;
+  final int answer;
+
+  MistakeState({
+    required this.view,
+    required this.answer,
+    required this.repeat,
+    required this.review,
+  });
+}
+
+class Answer {
+  final int id;
+  final int questionID;
+
+  final String? head;
+  final String body;
+  final String? note;
+  final List<ImageStorage> images;
+
+  Answer({
+    required this.id,
+    required this.questionID,
+    required this.body,
+    this.head,
+    this.note,
+    this.images = const [],
+  });
+}
+
+class ImageStorage {
+  /// 该路径为图片存储的绝对路径
+  /// 相关转换应该在repository中完成
+  final String imagePath;
+  final int id;
+  final String name;
+  final String? desc;
+  final String? path;
+
+  ImageStorage({
+    required this.imagePath,
+    required this.id,
+    required this.name,
+    this.desc,
+    this.path,
+  });
+}

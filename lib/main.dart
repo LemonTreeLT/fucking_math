@@ -9,8 +9,9 @@ import 'package:provider/provider.dart';
 import 'pages/routers/router.dart';
 import 'configs/config.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Config.initialize();
   final AppDatabase database = AppDatabase();
   runApp(
     MultiProvider(
@@ -26,7 +27,8 @@ void main() {
           create: (context) => TagProvider(context.read())..loadTags(),
         ),
         ChangeNotifierProvider(
-          create: (context) => KnowledgeProvider(context.read())..loadKnowledge(),
+          create: (context) =>
+              KnowledgeProvider(context.read())..loadKnowledge(),
         ),
       ],
       child: const App(),
