@@ -72,3 +72,68 @@ class TagNotFoundException implements Exception {
   @override
   String toString() => 'TagNotFoundException: $message';
 }
+
+class TagOrMistakeNotFoundException implements Exception {
+  final String message;
+  final int? tagID;
+  final int? mistakeId;
+
+  TagOrMistakeNotFoundException(
+    this.message, {
+    this.tagID,
+    this.mistakeId,
+  });
+
+  @override
+  String toString() =>
+      'Tag or mistake not found: $message, tagID: $tagID, mistakeId: $mistakeId';
+}
+
+class ImageOrMistakeNotFoundException implements Exception {
+  final String message;
+  final int? imageId;
+  final int? mistakeId;
+
+  ImageOrMistakeNotFoundException(
+    this.message, {
+    this.imageId,
+    this.mistakeId,
+  });
+
+  @override
+  String toString() =>
+      'Image or mistake not found: $message, imageId: $imageId, mistakeId: $mistakeId';
+}
+
+class TagOrAnswerNotFoundException implements Exception {
+  final String message;
+  final int? tagID;
+  final int? answerId;
+
+  TagOrAnswerNotFoundException(
+    this.message, {
+    this.tagID,
+    this.answerId,
+  });
+
+  @override
+  String toString() =>
+      'Tag or answer not found: $message, tagID: $tagID, answerId: $answerId';
+}
+
+class ImageOrAnswerNotFoundException implements Exception {
+  final String message;
+  final int? imageId;
+  final int? answerId;
+
+  ImageOrAnswerNotFoundException(
+    this.message, {
+    this.imageId,
+    this.answerId,
+  });
+
+  @override
+  String toString() =>
+      'Image or answer not found: $message, imageId: $imageId, answerId: $answerId';
+}
+

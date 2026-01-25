@@ -133,6 +133,8 @@ class Answer {
   final String? head;
   final String body;
   final String? note;
+
+  final List<Tag> tags;
   final List<ImageStorage> images;
 
   Answer({
@@ -141,6 +143,7 @@ class Answer {
     required this.body,
     this.head,
     this.note,
+    this.tags = const [],
     this.images = const [],
   });
 }
