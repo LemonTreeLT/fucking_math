@@ -23,3 +23,15 @@ extension ListUpdateOrAdd<T> on List<T> {
     }
   }
 }
+
+extension FirstWhereOrNullExtension<T> on Iterable<T> {
+  
+  /// 查找第一个满足测试条件的元素。
+  /// 如果找到，则返回该元素；否则，返回 null。
+  T? firstWhereOrNull(bool Function(T element) test) {
+    return firstWhere(
+      test,
+      orElse: () => null as T,
+    );
+  }
+}

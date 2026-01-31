@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fucking_math/providers/mistakes.dart';
 import 'package:fucking_math/utils/types.dart';
@@ -73,7 +72,7 @@ class _AddMistakeState extends GenericFormState<AddMistake> {
   );
 
   /// TODO: 提交更改
-  Future<void> _submit() async{
+  Future<void> _submit() async {
     final subject = _selectedSubject;
     final head = _titleInputerController.text.trim();
     final body = _bodyInputerController.text.trim();

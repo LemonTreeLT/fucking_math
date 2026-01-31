@@ -1,11 +1,8 @@
-import 'dart:io';
-
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:fucking_math/configs/config.dart';
 import 'package:fucking_math/configs/tags.dart';
 import 'package:fucking_math/db/tables/tables_images.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as p;
 
 // --- 引入所有表格定义 ---
 import 'package:fucking_math/db/tables/tables_english.dart';
@@ -51,7 +48,6 @@ part 'app_database.g.dart';
     AnswersTagsLink,
     AnswerPicsLink,
     Images,
-
   ],
   daos: [TagsDao, WordsDao, KnowledgeDao, MistakesDao, PhrasesDao],
 )
@@ -61,11 +57,8 @@ class AppDatabase extends _$AppDatabase {
   @override
   int get schemaVersion => 1; // 在mvp之前这个值为1
 
-  static LazyDatabase _openConnection() => LazyDatabase(() async {
-    final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, 'fucking_math_db.sqlite'));
-    return NativeDatabase(file);
-  });
+  static LazyDatabase _openConnection() =>
+      LazyDatabase(() async => NativeDatabase(Config.dbFile));
 
   // DAO 访问器
   @override

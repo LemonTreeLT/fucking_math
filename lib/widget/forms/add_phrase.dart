@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fucking_math/extensions/list.dart';
 import 'package:fucking_math/providers/phrase.dart';
 import 'package:fucking_math/providers/words.dart';
 import 'package:fucking_math/utils/mixin/form_helper.dart';
@@ -11,7 +12,6 @@ import 'package:fucking_math/widget/ui_constants.dart';
 import 'package:fucking_math/utils/types.dart';
 import 'package:fucking_math/widget/inputs/word_autocomplete_field.dart';
 import 'package:provider/provider.dart';
-import 'package:collection/collection.dart';
 
 class AddPhraseForm extends StatefulWidget {
   const AddPhraseForm({super.key});

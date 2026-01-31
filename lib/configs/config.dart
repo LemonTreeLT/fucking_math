@@ -16,17 +16,37 @@ class Config {
     fontFamily: fontFamily,
     primarySwatch: Colors.yellow,
   );
+  static final dbFileName = "i like math anyway.sqlite.db";
   static late final Directory defaultDataStorage;
+  static late final File dbFile;
+  static late final File configFile;
+  static late final bool isDesktop;
+  static late final Directory imagesStorage;
 
   static Future<void> initialize() async {
+    isDesktop = Platform.isLinux || Platform.isWindows || Platform.isMacOS;
+    bool portable = false;
+
+    if (isDesktop) {
+      final portableFile = File(join(Directory.current.path, "portable"));
+      if (await portableFile.exists()) portable = true;
+    }
+
     defaultDataStorage = Directory(
-      join(
-        (await getApplicationDocumentsDirectory()).path,
-        ".lemontree",
-        "Fucking Math",
-      ),
+      !portable
+          ? join(
+              (await getApplicationDocumentsDirectory()).path,
+              "Fucking Math",
+            )
+          : join(Directory.current.path, "Portable Files"),
     );
+
+    dbFile = File(join(defaultDataStorage.path, dbFileName));
+    configFile = File(join(defaultDataStorage.path, "config.toml"));
+    imagesStorage = Directory(join(defaultDataStorage.path, "images"));
+
     await defaultDataStorage.createIfNotExists();
+    await imagesStorage.createIfNotExists();
   }
 }
 

@@ -15,22 +15,22 @@ Knowledge dbKnowledgeToKnowledge(
   List<Tag> tags, {
   int? editCount,
   String? note,
-}) =>
-    Knowledge(
-      id: dbKnowledge.id,
-      subject: dbKnowledge.subject,
-      head: dbKnowledge.head,
-      body: dbKnowledge.body,
-      tags: tags,
-      editCount: editCount ?? 0,
-      note: note,
-      createdAt: dbKnowledge.createdAt,
-    );
-
+}) => Knowledge(
+  id: dbKnowledge.id,
+  subject: dbKnowledge.subject,
+  head: dbKnowledge.head,
+  body: dbKnowledge.body,
+  tags: tags,
+  editCount: editCount ?? 0,
+  note: note,
+  createdAt: dbKnowledge.createdAt,
+);
 
 /// 转换数据库 Image 到应用 ImageStorage
 ImageStorage dbImageToImageStorage(db.Image dbImage) => ImageStorage(
-  imagePath: ImageHelper.buildPath(dbImage.name),
+  imagePath: dbImage.path != null
+      ? dbImage.path!
+      : ImageHelper.buildPathString(dbImage.name),
   id: dbImage.id,
   name: dbImage.name,
   desc: dbImage.desc,
@@ -51,7 +51,7 @@ Mistake dbMistakeToMistake(
   source: dbMistake.source,
   state: state,
   images: images,
-  tags: tags
+  tags: tags,
 );
 
 /// 转换数据库 Answer 到应用 Answer
@@ -69,4 +69,3 @@ Answer dbAnswerToAnswer(
   tags: tags,
   images: images,
 );
-

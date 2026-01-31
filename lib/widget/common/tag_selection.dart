@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fucking_math/extensions/list.dart';
 import 'package:fucking_math/providers/tags.dart';
 import 'package:fucking_math/utils/types.dart';
 import 'package:fucking_math/widget/common/tag_badge.dart';
 import 'package:provider/provider.dart';
-import 'package:collection/collection.dart';
 
 class TagSelectionArea extends StatefulWidget {
   final Set<int> selectedTagIds;
