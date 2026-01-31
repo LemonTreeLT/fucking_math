@@ -40,6 +40,7 @@ abstract class GenericFormState<T extends StatefulWidget> extends State<T>
   String get primaryButtonLabel => "提交";
   IconData get primaryButtonIcon => Icons.check;
   bool validateForm() => formKey.currentState?.validate() ?? false;
+  double spacing = 0;
 
   @override
   Widget build(BuildContext context) => BorderedContainerWithTopText(
@@ -49,6 +50,7 @@ abstract class GenericFormState<T extends StatefulWidget> extends State<T>
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
+          spacing: spacing,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ...buildFormFields(context),

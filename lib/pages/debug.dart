@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fucking_math/providers/phrase_proivder.dart';
-import 'package:fucking_math/providers/words_proivder.dart';
+import 'package:fucking_math/providers/phrase.dart';
+import 'package:fucking_math/providers/words.dart';
 import 'package:fucking_math/utils/types.dart';
 import 'package:provider/provider.dart';
 

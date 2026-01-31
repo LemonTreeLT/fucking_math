@@ -100,6 +100,7 @@ class Mistake {
   final String? source;
   final MistakeState state;
   final List<ImageStorage> images;
+  final List<Tag> tags;
   Mistake({
     required this.id,
     required this.subject,
@@ -108,6 +109,7 @@ class Mistake {
     required this.state,
     this.source,
     this.images = const [],
+    this.tags = const [],
   });
 }
 
@@ -120,9 +122,9 @@ class MistakeState {
 
   MistakeState({
     required this.view,
-    required this.answer,
-    required this.repeat,
-    required this.review,
+    this.answer = 0,
+    this.repeat = 0,
+    this.review = 0,
   });
 }
 
@@ -133,6 +135,7 @@ class Answer {
   final String? head;
   final String body;
   final String? note;
+  final String? source;
 
   final List<Tag> tags;
   final List<ImageStorage> images;
@@ -143,6 +146,7 @@ class Answer {
     required this.body,
     this.head,
     this.note,
+    this.source,
     this.tags = const [],
     this.images = const [],
   });

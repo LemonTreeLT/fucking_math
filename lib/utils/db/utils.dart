@@ -42,6 +42,7 @@ Mistake dbMistakeToMistake(
   db.Mistake dbMistake,
   MistakeState state,
   List<ImageStorage> images,
+  List<Tag> tags,
 ) => Mistake(
   id: dbMistake.id,
   subject: dbMistake.subject,
@@ -50,6 +51,7 @@ Mistake dbMistakeToMistake(
   source: dbMistake.source,
   state: state,
   images: images,
+  tags: tags
 );
 
 /// 转换数据库 Answer 到应用 Answer
@@ -63,6 +65,7 @@ Answer dbAnswerToAnswer(
   head: dbAnswer.head,
   body: dbAnswer.answer,
   note: dbAnswer.note,
+  source: dbAnswer.source,
   tags: tags,
   images: images,
 );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fucking_math/providers/knowledge_page_state.dart';
-import 'package:fucking_math/providers/knowledge_proivder.dart';
+import 'package:fucking_math/providers/knowledge.dart';
 import 'package:fucking_math/utils/types.dart';
 import 'package:fucking_math/widget/common/background_container.dart';
 import 'package:fucking_math/widget/forms/form_builders.dart';

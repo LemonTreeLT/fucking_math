@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fucking_math/extensions/string.dart';
-import 'package:fucking_math/providers/knowledge_proivder.dart';
+import 'package:fucking_math/providers/knowledge.dart';
 import 'package:fucking_math/utils/types.dart';
 import 'package:fucking_math/widget/common/tag_selection.dart';
 import 'package:fucking_math/widget/forms/base_form.dart';

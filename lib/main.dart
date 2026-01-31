@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fucking_math/db/app_database.dart';
-import 'package:fucking_math/providers/knowledge_proivder.dart';
-import 'package:fucking_math/providers/phrase_proivder.dart';
-import 'package:fucking_math/providers/tags_proivder.dart';
-import 'package:fucking_math/providers/words_proivder.dart';
+import 'package:fucking_math/providers/knowledge.dart';
+import 'package:fucking_math/providers/mistakes.dart';
+import 'package:fucking_math/providers/phrase.dart';
+import 'package:fucking_math/providers/tags.dart';
+import 'package:fucking_math/providers/words.dart';
 import 'package:provider/provider.dart';
 
 import 'pages/routers/router.dart';
@@ -29,6 +30,9 @@ void main() async {
         ChangeNotifierProvider(
           create: (context) =>
               KnowledgeProvider(context.read())..loadKnowledge(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => MistakesProvider(context.read())..loadMistakes(),
         ),
       ],
       child: const App(),

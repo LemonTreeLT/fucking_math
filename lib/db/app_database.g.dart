@@ -4734,6 +4734,15 @@ class $AnswersTable extends Answers with TableInfo<$AnswersTable, Answer> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _sourceMeta = const VerificationMeta('source');
+  @override
+  late final GeneratedColumn<String> source = GeneratedColumn<String>(
+    'source',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _answerMeta = const VerificationMeta('answer');
   @override
   late final GeneratedColumn<String> answer = GeneratedColumn<String>(
@@ -4744,7 +4753,14 @@ class $AnswersTable extends Answers with TableInfo<$AnswersTable, Answer> {
     requiredDuringInsert: true,
   );
   @override
-  List<GeneratedColumn> get $columns => [id, mistakeId, note, head, answer];
+  List<GeneratedColumn> get $columns => [
+    id,
+    mistakeId,
+    note,
+    head,
+    source,
+    answer,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -4780,6 +4796,12 @@ class $AnswersTable extends Answers with TableInfo<$AnswersTable, Answer> {
         head.isAcceptableOrUnknown(data['head']!, _headMeta),
       );
     }
+    if (data.containsKey('source')) {
+      context.handle(
+        _sourceMeta,
+        source.isAcceptableOrUnknown(data['source']!, _sourceMeta),
+      );
+    }
     if (data.containsKey('answer')) {
       context.handle(
         _answerMeta,
@@ -4813,6 +4835,10 @@ class $AnswersTable extends Answers with TableInfo<$AnswersTable, Answer> {
         DriftSqlType.string,
         data['${effectivePrefix}head'],
       ),
+      source: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source'],
+      ),
       answer: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}answer'],
@@ -4831,12 +4857,14 @@ class Answer extends DataClass implements Insertable<Answer> {
   final int mistakeId;
   final String? note;
   final String? head;
+  final String? source;
   final String answer;
   const Answer({
     required this.id,
     required this.mistakeId,
     this.note,
     this.head,
+    this.source,
     required this.answer,
   });
   @override
@@ -4850,6 +4878,9 @@ class Answer extends DataClass implements Insertable<Answer> {
     if (!nullToAbsent || head != null) {
       map['head'] = Variable<String>(head);
     }
+    if (!nullToAbsent || source != null) {
+      map['source'] = Variable<String>(source);
+    }
     map['answer'] = Variable<String>(answer);
     return map;
   }
@@ -4860,6 +4891,9 @@ class Answer extends DataClass implements Insertable<Answer> {
       mistakeId: Value(mistakeId),
       note: note == null && nullToAbsent ? const Value.absent() : Value(note),
       head: head == null && nullToAbsent ? const Value.absent() : Value(head),
+      source: source == null && nullToAbsent
+          ? const Value.absent()
+          : Value(source),
       answer: Value(answer),
     );
   }
@@ -4874,6 +4908,7 @@ class Answer extends DataClass implements Insertable<Answer> {
       mistakeId: serializer.fromJson<int>(json['mistakeId']),
       note: serializer.fromJson<String?>(json['note']),
       head: serializer.fromJson<String?>(json['head']),
+      source: serializer.fromJson<String?>(json['source']),
       answer: serializer.fromJson<String>(json['answer']),
     );
   }
@@ -4885,6 +4920,7 @@ class Answer extends DataClass implements Insertable<Answer> {
       'mistakeId': serializer.toJson<int>(mistakeId),
       'note': serializer.toJson<String?>(note),
       'head': serializer.toJson<String?>(head),
+      'source': serializer.toJson<String?>(source),
       'answer': serializer.toJson<String>(answer),
     };
   }
@@ -4894,12 +4930,14 @@ class Answer extends DataClass implements Insertable<Answer> {
     int? mistakeId,
     Value<String?> note = const Value.absent(),
     Value<String?> head = const Value.absent(),
+    Value<String?> source = const Value.absent(),
     String? answer,
   }) => Answer(
     id: id ?? this.id,
     mistakeId: mistakeId ?? this.mistakeId,
     note: note.present ? note.value : this.note,
     head: head.present ? head.value : this.head,
+    source: source.present ? source.value : this.source,
     answer: answer ?? this.answer,
   );
   Answer copyWithCompanion(AnswersCompanion data) {
@@ -4908,6 +4946,7 @@ class Answer extends DataClass implements Insertable<Answer> {
       mistakeId: data.mistakeId.present ? data.mistakeId.value : this.mistakeId,
       note: data.note.present ? data.note.value : this.note,
       head: data.head.present ? data.head.value : this.head,
+      source: data.source.present ? data.source.value : this.source,
       answer: data.answer.present ? data.answer.value : this.answer,
     );
   }
@@ -4919,13 +4958,14 @@ class Answer extends DataClass implements Insertable<Answer> {
           ..write('mistakeId: $mistakeId, ')
           ..write('note: $note, ')
           ..write('head: $head, ')
+          ..write('source: $source, ')
           ..write('answer: $answer')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, mistakeId, note, head, answer);
+  int get hashCode => Object.hash(id, mistakeId, note, head, source, answer);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -4934,6 +4974,7 @@ class Answer extends DataClass implements Insertable<Answer> {
           other.mistakeId == this.mistakeId &&
           other.note == this.note &&
           other.head == this.head &&
+          other.source == this.source &&
           other.answer == this.answer);
 }
 
@@ -4942,12 +4983,14 @@ class AnswersCompanion extends UpdateCompanion<Answer> {
   final Value<int> mistakeId;
   final Value<String?> note;
   final Value<String?> head;
+  final Value<String?> source;
   final Value<String> answer;
   const AnswersCompanion({
     this.id = const Value.absent(),
     this.mistakeId = const Value.absent(),
     this.note = const Value.absent(),
     this.head = const Value.absent(),
+    this.source = const Value.absent(),
     this.answer = const Value.absent(),
   });
   AnswersCompanion.insert({
@@ -4955,6 +4998,7 @@ class AnswersCompanion extends UpdateCompanion<Answer> {
     required int mistakeId,
     this.note = const Value.absent(),
     this.head = const Value.absent(),
+    this.source = const Value.absent(),
     required String answer,
   }) : mistakeId = Value(mistakeId),
        answer = Value(answer);
@@ -4963,6 +5007,7 @@ class AnswersCompanion extends UpdateCompanion<Answer> {
     Expression<int>? mistakeId,
     Expression<String>? note,
     Expression<String>? head,
+    Expression<String>? source,
     Expression<String>? answer,
   }) {
     return RawValuesInsertable({
@@ -4970,6 +5015,7 @@ class AnswersCompanion extends UpdateCompanion<Answer> {
       if (mistakeId != null) 'mistake_id': mistakeId,
       if (note != null) 'note': note,
       if (head != null) 'head': head,
+      if (source != null) 'source': source,
       if (answer != null) 'answer': answer,
     });
   }
@@ -4979,6 +5025,7 @@ class AnswersCompanion extends UpdateCompanion<Answer> {
     Value<int>? mistakeId,
     Value<String?>? note,
     Value<String?>? head,
+    Value<String?>? source,
     Value<String>? answer,
   }) {
     return AnswersCompanion(
@@ -4986,6 +5033,7 @@ class AnswersCompanion extends UpdateCompanion<Answer> {
       mistakeId: mistakeId ?? this.mistakeId,
       note: note ?? this.note,
       head: head ?? this.head,
+      source: source ?? this.source,
       answer: answer ?? this.answer,
     );
   }
@@ -5005,6 +5053,9 @@ class AnswersCompanion extends UpdateCompanion<Answer> {
     if (head.present) {
       map['head'] = Variable<String>(head.value);
     }
+    if (source.present) {
+      map['source'] = Variable<String>(source.value);
+    }
     if (answer.present) {
       map['answer'] = Variable<String>(answer.value);
     }
@@ -5018,6 +5069,7 @@ class AnswersCompanion extends UpdateCompanion<Answer> {
           ..write('mistakeId: $mistakeId, ')
           ..write('note: $note, ')
           ..write('head: $head, ')
+          ..write('source: $source, ')
           ..write('answer: $answer')
           ..write(')'))
         .toString();
@@ -11723,6 +11775,7 @@ typedef $$AnswersTableCreateCompanionBuilder =
       required int mistakeId,
       Value<String?> note,
       Value<String?> head,
+      Value<String?> source,
       required String answer,
     });
 typedef $$AnswersTableUpdateCompanionBuilder =
@@ -11731,6 +11784,7 @@ typedef $$AnswersTableUpdateCompanionBuilder =
       Value<int> mistakeId,
       Value<String?> note,
       Value<String?> head,
+      Value<String?> source,
       Value<String> answer,
     });
 
@@ -11815,6 +11869,11 @@ class $$AnswersTableFilterComposer
 
   ColumnFilters<String> get head => $composableBuilder(
     column: $table.head,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get source => $composableBuilder(
+    column: $table.source,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -11921,6 +11980,11 @@ class $$AnswersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get answer => $composableBuilder(
     column: $table.answer,
     builder: (column) => ColumnOrderings(column),
@@ -11967,6 +12031,9 @@ class $$AnswersTableAnnotationComposer
 
   GeneratedColumn<String> get head =>
       $composableBuilder(column: $table.head, builder: (column) => column);
+
+  GeneratedColumn<String> get source =>
+      $composableBuilder(column: $table.source, builder: (column) => column);
 
   GeneratedColumn<String> get answer =>
       $composableBuilder(column: $table.answer, builder: (column) => column);
@@ -12081,12 +12148,14 @@ class $$AnswersTableTableManager
                 Value<int> mistakeId = const Value.absent(),
                 Value<String?> note = const Value.absent(),
                 Value<String?> head = const Value.absent(),
+                Value<String?> source = const Value.absent(),
                 Value<String> answer = const Value.absent(),
               }) => AnswersCompanion(
                 id: id,
                 mistakeId: mistakeId,
                 note: note,
                 head: head,
+                source: source,
                 answer: answer,
               ),
           createCompanionCallback:
@@ -12095,12 +12164,14 @@ class $$AnswersTableTableManager
                 required int mistakeId,
                 Value<String?> note = const Value.absent(),
                 Value<String?> head = const Value.absent(),
+                Value<String?> source = const Value.absent(),
                 required String answer,
               }) => AnswersCompanion.insert(
                 id: id,
                 mistakeId: mistakeId,
                 note: note,
                 head: head,
+                source: source,
                 answer: answer,
               ),
           withReferenceMapper: (p0) => p0

@@ -30,6 +30,7 @@ class Answers extends Table {
 
   TextColumn get note => text().nullable()();
   TextColumn get head => text().nullable()();
+  TextColumn get source => text().nullable()();
   TextColumn get answer => text()();
 }
 

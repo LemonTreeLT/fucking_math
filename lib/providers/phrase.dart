@@ -1,7 +1,7 @@
 import 'package:fucking_math/db/app_database.dart' show AppDatabase;
 import 'package:fucking_math/db/daos/phrase.dart';
 import 'package:fucking_math/extensions/list.dart';
-import 'package:fucking_math/providers/base_proivder.dart';
+import 'package:fucking_math/providers/base_db_proivder.dart';
 import 'package:fucking_math/utils/db/phrase_repository.dart';
 import 'package:fucking_math/utils/types.dart';
 

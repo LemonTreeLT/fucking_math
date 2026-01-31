@@ -7,7 +7,7 @@ import 'package:fucking_math/widget/forms/form_builders.dart';
 import 'package:fucking_math/widget/ui_constants.dart';
 import 'package:fucking_math/widget/common/tag_selection.dart';
 import 'package:provider/provider.dart';
-import 'package:fucking_math/providers/words_proivder.dart';
+import 'package:fucking_math/providers/words.dart';
 
 class AddWordForm extends StatefulWidget {
   const AddWordForm({super.key});

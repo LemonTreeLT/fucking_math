@@ -113,15 +113,23 @@ class MistakesRepository {
   /// - [id] 为 null 或 0 时创建新答案,否则更新已有答案
   /// - [tags] 和 [imageIds] 采用追加模式
   Future<Answer> saveAnswer({
-    int? id,
     required int mistakeId,
-    String? head,
     required String body,
+    int? id,
+    String? head,
     String? note,
+    String? source,
     List<int>? tags,
     List<int>? imageIds,
   }) async {
-    final answer = await _findOrCreateAnswer(id, mistakeId, head, body, note);
+    final answer = await _findOrCreateAnswer(
+      id,
+      mistakeId,
+      head,
+      body,
+      note,
+      source,
+    );
     await _updateAnswerContent(answer.id, head, body, note);
 
     if (tags != null && tags.isNotEmpty) {
@@ -346,6 +354,7 @@ class MistakesRepository {
       _dao.getLogsByMistakeIdAndType(mistake.id, MistakeLogType.repeat),
       _dao.getLogsByMistakeIdAndType(mistake.id, MistakeLogType.answer),
       _dao.getPicsByMistakeId(mistake.id),
+      _dao.getTagsByMistakeId(mistake.id),
     ]);
 
     final state = MistakeState(
@@ -359,7 +368,9 @@ class MistakesRepository {
         .map((img) => dbImageToImageStorage(img))
         .toList();
 
-    return dbMistakeToMistake(mistake, state, images);
+    final tags = results[5].map((tag) => dbTagToTag(tag as db.Tag)).toList();
+
+    return dbMistakeToMistake(mistake, state, images, tags);
   }
 
   /// Find or create an answer based on id
@@ -369,6 +380,7 @@ class MistakesRepository {
     String? head,
     String body,
     String? note,
+    String? source,
   ) async {
     if (id != null && id > 0) {
       final existing = await _dao.getAnswerById(id);
@@ -385,6 +397,7 @@ class MistakesRepository {
         answer: body,
         head: Value(head),
         note: Value(note),
+        source: Value(source),
       ),
     );
 
