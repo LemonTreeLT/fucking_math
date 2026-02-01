@@ -41,8 +41,10 @@ dependencies:
   path: ^1.9.1
   provider: ^6.1.5+1
   sqlite3: ^2.9.4
-  flutter_color_picker_plus: ^2.2.1
+  flutter_colorpicker: ^1.1.0
   toml: ^0.18.0
+  file_picker: ^10.3.10
+  desktop_drop: ^0.7.0
 
 dev_dependencies:
   flutter_test:

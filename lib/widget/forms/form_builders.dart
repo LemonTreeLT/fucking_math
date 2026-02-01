@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_color_picker_plus/flutter_color_picker_plus.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class FormBuilders {
   static Widget textField({

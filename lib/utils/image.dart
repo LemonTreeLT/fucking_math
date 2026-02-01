@@ -8,4 +8,12 @@ class ImageHelper {
       join(Config.defaultDataStorage.path, name);
 
   static File buildImageFile(String name) => File(buildPathString(name));
+
+  static bool isImageFile(String lowerCasePath) =>
+      lowerCasePath.endsWith('.jpg') ||
+      lowerCasePath.endsWith('.jpeg') ||
+      lowerCasePath.endsWith('.png') ||
+      lowerCasePath.endsWith('.gif') ||
+      lowerCasePath.endsWith('.bmp') ||
+      lowerCasePath.endsWith('.webp');
 }

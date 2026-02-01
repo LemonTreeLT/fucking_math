@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fucking_math/providers/mistakes.dart';
 import 'package:fucking_math/utils/types.dart';
+import 'package:fucking_math/widget/common/images_picker.dart';
 import 'package:fucking_math/widget/common/tag_selection.dart';
 import 'package:fucking_math/widget/forms/base_form.dart';
 import 'package:fucking_math/widget/forms/form_builders.dart';
@@ -57,10 +58,9 @@ class _AddMistakeState extends GenericFormState<AddMistake> {
     ],
   );
 
-  // TODO: 图像选择器，实现拖拽上传模式
-  Widget _buildImageUplaoder() => tInputer(
-    controller: TextEditingController(),
-    labelText: "This is buildImageUplaoder place, its in deving",
+  Widget _buildImageUplaoder() => ImagesPicker(
+    selectedImageIDs: _selectedImages,
+    onSelectionChanged: (images) => setState(() => _selectedImages = images),
   );
 
   // TODO: 提交按钮 & 编辑模式切换
