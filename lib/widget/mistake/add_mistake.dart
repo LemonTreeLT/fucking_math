@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fucking_math/providers/images.dart';
 import 'package:fucking_math/providers/mistakes.dart';
 import 'package:fucking_math/utils/types.dart';
 import 'package:fucking_math/widget/common/images_picker.dart';
@@ -19,10 +20,10 @@ class _AddMistakeState extends GenericFormState<AddMistake> {
   final _bodyInputerController = TextEditingController();
   final _sourceInputerController = TextEditingController();
   final _noteInputerController = TextEditingController();
+  final _imagesInputerKey = GlobalKey<ImagesPickerState>();
 
   Subject _selectedSubject = Subject.math;
   Set<int> _selectedTags = {};
-  List<int> _selectedImages = [];
 
   @override
   List<Widget> buildFormFields(BuildContext context) => [
@@ -58,38 +59,38 @@ class _AddMistakeState extends GenericFormState<AddMistake> {
     ],
   );
 
-  Widget _buildImageUplaoder() => ImagesPicker(
-    selectedImageIDs: _selectedImages,
-    onSelectionChanged: (images) => setState(() => _selectedImages = images),
-  );
+  Widget _buildImageUplaoder() => ImagesPicker(key: _imagesInputerKey,);
 
   // TODO: 提交按钮 & 编辑模式切换
   @override
   Widget buildActionButton() => ElevatedButton.icon(
-    onPressed: () => _submit,
+    onPressed: _submit,
     label: const Text("保存"),
     icon: const Icon(Icons.save),
   );
 
-  /// TODO: 提交更改
   Future<void> _submit() async {
     final subject = _selectedSubject;
     final head = _titleInputerController.text.trim();
     final body = _bodyInputerController.text.trim();
     final source = _sourceInputerController.text.trim();
     final note = _noteInputerController.text.trim();
-    final images = _selectedImages;
+    final images = _imagesInputerKey.currentState?.images;
     final tags = _selectedTags;
 
-    final MistakesProvider provider = context.read();
+    final MistakesProvider misProvider = context.read();
+    final ImagesProvider imgProvider = context.read();
 
-    await provider.createMistakes(
+    List<int> imageIDs =[];
+    if (images != null) imageIDs = (await imgProvider.uploadImages(images))??[];
+
+    await misProvider.createMistakes(
       subject,
       head,
       body,
       source: source,
       note: note,
-      images: images,
+      images: imageIDs,
       tags: tags.toList(),
     );
   }

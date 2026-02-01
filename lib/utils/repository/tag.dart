@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:fucking_math/db/daos/tag.dart';
-import 'package:fucking_math/utils/db/exceptions.dart';
+import 'package:fucking_math/utils/repository/helper/exceptions.dart';
 import 'package:fucking_math/utils/types.dart';
 import 'package:fucking_math/db/app_database.dart' as db;
 

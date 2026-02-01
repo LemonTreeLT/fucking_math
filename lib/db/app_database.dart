@@ -18,6 +18,7 @@ import 'daos/knowledge.dart';
 import 'daos/mistake.dart';
 import 'daos/phrase.dart';
 import 'daos/word.dart';
+import 'daos/images.dart';
 
 // 告诉 drift 生成代码。运行 `dart run build_runner build`
 part 'app_database.g.dart';
@@ -49,7 +50,7 @@ part 'app_database.g.dart';
     AnswerPicsLink,
     Images,
   ],
-  daos: [TagsDao, WordsDao, KnowledgeDao, MistakesDao, PhrasesDao],
+  daos: [TagsDao, WordsDao, KnowledgeDao, MistakesDao, PhrasesDao, ImagesDao],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());

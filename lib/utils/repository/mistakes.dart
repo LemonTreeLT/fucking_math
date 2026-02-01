@@ -2,10 +2,10 @@ import 'package:drift/drift.dart';
 import 'package:fucking_math/db/daos/mistake.dart';
 import 'package:fucking_math/db/tables/tables_mistakes.dart'
     show MistakeLogType;
-import 'package:fucking_math/utils/db/exceptions.dart';
+import 'package:fucking_math/utils/repository/helper/exceptions.dart';
 import 'package:fucking_math/utils/types.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
-import 'package:fucking_math/utils/db/utils.dart';
+import 'package:fucking_math/utils/repository/helper/utils.dart';
 
 import 'package:fucking_math/db/app_database.dart' as db;
 

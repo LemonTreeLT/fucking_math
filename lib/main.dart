@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fucking_math/db/app_database.dart';
+import 'package:fucking_math/providers/images.dart';
 import 'package:fucking_math/providers/knowledge.dart';
 import 'package:fucking_math/providers/mistakes.dart';
 import 'package:fucking_math/providers/phrase.dart';
@@ -33,6 +34,9 @@ void main() async {
         ),
         ChangeNotifierProvider(
           create: (context) => MistakesProvider(context.read())..loadMistakes(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ImagesProvider(context.read()),
         ),
       ],
       child: const App(),

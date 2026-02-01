@@ -2,7 +2,7 @@ import 'package:fucking_math/db/app_database.dart' show AppDatabase;
 import 'package:fucking_math/db/daos/mistake.dart';
 import 'package:fucking_math/extensions/list.dart';
 import 'package:fucking_math/providers/base_db_proivder.dart';
-import 'package:fucking_math/utils/db/mistakes_repository.dart';
+import 'package:fucking_math/utils/repository/mistakes.dart';
 import 'package:fucking_math/utils/types.dart';
 
 class MistakesProvider

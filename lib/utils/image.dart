@@ -16,4 +16,7 @@ class ImageHelper {
       lowerCasePath.endsWith('.gif') ||
       lowerCasePath.endsWith('.bmp') ||
       lowerCasePath.endsWith('.webp');
+
+  static Future<File> copyFileToDataDir(String path, String name) =>
+      File(path).copy(join(Config.imagesStorage.path, name));
 }

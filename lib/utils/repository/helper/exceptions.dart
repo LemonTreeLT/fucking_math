@@ -34,11 +34,7 @@ class AppDatabaseException implements Exception {
   final String message;
   final Object? originalError;
   final StackTrace? stackTrace;
-  AppDatabaseException(
-    this.message, {
-    this.originalError,
-    this.stackTrace,
-  });
+  AppDatabaseException(this.message, {this.originalError, this.stackTrace});
   @override
   String toString() {
     if (originalError != null) {
@@ -66,9 +62,9 @@ class TagOrKnowledgeNotFoundException implements Exception {
 
 class TagNotFoundException implements Exception {
   final String message;
-  
+
   TagNotFoundException(this.message);
-  
+
   @override
   String toString() => 'TagNotFoundException: $message';
 }
@@ -78,11 +74,7 @@ class TagOrMistakeNotFoundException implements Exception {
   final int? tagID;
   final int? mistakeId;
 
-  TagOrMistakeNotFoundException(
-    this.message, {
-    this.tagID,
-    this.mistakeId,
-  });
+  TagOrMistakeNotFoundException(this.message, {this.tagID, this.mistakeId});
 
   @override
   String toString() =>
@@ -94,11 +86,7 @@ class ImageOrMistakeNotFoundException implements Exception {
   final int? imageId;
   final int? mistakeId;
 
-  ImageOrMistakeNotFoundException(
-    this.message, {
-    this.imageId,
-    this.mistakeId,
-  });
+  ImageOrMistakeNotFoundException(this.message, {this.imageId, this.mistakeId});
 
   @override
   String toString() =>
@@ -110,11 +98,7 @@ class TagOrAnswerNotFoundException implements Exception {
   final int? tagID;
   final int? answerId;
 
-  TagOrAnswerNotFoundException(
-    this.message, {
-    this.tagID,
-    this.answerId,
-  });
+  TagOrAnswerNotFoundException(this.message, {this.tagID, this.answerId});
 
   @override
   String toString() =>
@@ -126,14 +110,35 @@ class ImageOrAnswerNotFoundException implements Exception {
   final int? imageId;
   final int? answerId;
 
-  ImageOrAnswerNotFoundException(
-    this.message, {
-    this.imageId,
-    this.answerId,
-  });
+  ImageOrAnswerNotFoundException(this.message, {this.imageId, this.answerId});
 
   @override
   String toString() =>
       'Image or answer not found: $message, imageId: $imageId, answerId: $answerId';
 }
 
+/// 图片验证异常(文件不存在等业务逻辑错误)
+class ImageValidationException implements Exception {
+  final String message;
+  final String? imagePath;
+
+  ImageValidationException(this.message, {this.imagePath});
+
+  @override
+  String toString() =>
+      'ImageValidationException: $message'
+      '${imagePath != null ? ' (path: $imagePath)' : ''}';
+}
+
+/// 图片未找到异常
+class ImageNotFoundException implements Exception {
+  final String message;
+  final int? imageId;
+
+  ImageNotFoundException(this.message, {this.imageId});
+
+  @override
+  String toString() =>
+      'ImageNotFoundException: $message'
+      '${imageId != null ? ' (id: $imageId)' : ''}';
+}

@@ -9,23 +9,20 @@ import 'package:fucking_math/widget/ui_constants.dart';
 class ImagesPicker extends StatefulWidget {
   const ImagesPicker({
     super.key,
-    required this.selectedImageIDs,
-    required this.onSelectionChanged,
     this.horizontal = true,
     this.maxPreviewedImage = 3,
   });
 
   final bool horizontal;
   final int maxPreviewedImage;
-  final List<int> selectedImageIDs;
-  final ValueChanged<List<int>> onSelectionChanged;
 
   @override
-  State<StatefulWidget> createState() => _ImagesPickerState();
+  State<StatefulWidget> createState() => ImagesPickerState();
 }
 
-class _ImagesPickerState extends State<ImagesPicker> {
-  final List<String> _paths = [];
+class ImagesPickerState extends State<ImagesPicker> {
+  final List<GenFile> _images = [];
+  List<GenFile> get images => _images;
   bool _isDragging = false;
   @override
   Widget build(BuildContext context) => InkWell(
@@ -58,31 +55,34 @@ class _ImagesPickerState extends State<ImagesPicker> {
     Row(spacing: 8, children: _buildPreviewImageList()),
   ];
 
-  void _onDragDone(DropDoneDetails details) => _paths.addAll(
+  void _onDragDone(DropDoneDetails details) => _images.addAll(
     details.files
         .where((f) => ImageHelper.isImageFile(f.name.toLowerCase()))
-        .map((f) => f.path),
+        .map((f) => (path: f.path, name: f.name)),
   );
 
   Future<void> _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.image,
     );
-    if (result != null && result.files.single.path != null) {
-      setState(() => _paths.add(result.files.single.path!));
-    }
+    if (result == null) return;
+    setState(
+      () => _images.addAll(
+        result.files.map((f) => (path: f.path ?? "", name: f.name)),
+      ),
+    );
   }
 
   List<Widget> _buildPreviewImageList() => [
-    ..._getPreviewPaths().map((p) => PreviewedImage(imageFile: File(p))),
+    ..._getPreviewPaths().map((p) => PreviewedImage(imageFile: File(p.path))),
     if (_isPathsTooLoog()) const Text("..."),
   ];
 
-  List<String> _getPreviewPaths() => _isPathsTooLoog()
-      ? _paths.getRange(0, widget.maxPreviewedImage).toList()
-      : _paths;
+  List<GenFile> _getPreviewPaths() => _isPathsTooLoog()
+      ? _images.getRange(0, widget.maxPreviewedImage).toList()
+      : _images;
 
-  bool _isPathsTooLoog() => _paths.length >= 4;
+  bool _isPathsTooLoog() => _images.length >= 4;
 }
 
 class PreviewedImage extends StatelessWidget {
@@ -123,3 +123,5 @@ final dev = Container(
   ),
   child: Center(child: const Text("IN DEVING")),
 );
+
+typedef GenFile = ({String path, String name});
