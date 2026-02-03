@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fucking_math/pages/debug.dart';
 import 'package:fucking_math/pages/english/editor.dart';
@@ -129,15 +130,16 @@ final List<RouterConfig> _routesConfig = [
     navSelectedIcon: Icons.settings_outlined,
   ),
   // 调试页面
-  RouterConfig(
-    path: '/debug',
-    name: '调试页面',
-    builder: (context, state) => const Debug(),
-    showInNav: true,
-    navLablel: '调试',
-    navIcon: Icons.bug_report,
-    navSelectedIcon: Icons.bug_report_outlined,
-  ),
+  if (kDebugMode)
+    RouterConfig(
+      path: '/debug',
+      name: '调试页面',
+      builder: (context, state) => const Debug(),
+      showInNav: true,
+      navLablel: '调试',
+      navIcon: Icons.bug_report,
+      navSelectedIcon: Icons.bug_report_outlined,
+    ),
 ];
 
 // GoRoute 路由生成

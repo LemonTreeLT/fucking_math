@@ -23,13 +23,38 @@ mixin FormResetMixin<T extends StatefulWidget>
   }
 }
 
-abstract class GenericFormState<T extends StatefulWidget> extends State<T>
-    with ControllerManager<T> {
+mixin FormKey {
   final formKey = GlobalKey<FormState>();
+}
 
-  // 子类实现
+mixin FormTitleConfig {
   String get formTitle;
+}
 
+mixin FormBorder {
+  Widget getBorder(String title, GlobalKey key, Widget child) =>
+      BorderedContainerWithTopText(
+        labelText: title,
+        child: Form(
+          key: key,
+          child: Padding(padding: const EdgeInsets.all(16), child: child),
+        ),
+      );
+}
+
+abstract class GenericFormStateV2<T extends StatefulWidget> extends State<T>
+    with ControllerManager<T>, FormKey, FormTitleConfig, FormBorder {
+  /// 全部需要被展示的内容
+  /// 上层仅仅提供了边框与 padding
+  Widget content();
+
+  @override
+  Widget build(BuildContext context) =>
+      getBorder(formTitle, formKey, content());
+}
+
+abstract class GenericFormState<T extends StatefulWidget> extends State<T>
+    with ControllerManager<T>, FormKey, FormTitleConfig {
   /// 表单主要内容，不含按钮
   List<Widget> buildFormFields(BuildContext context);
 
@@ -52,9 +77,10 @@ abstract class GenericFormState<T extends StatefulWidget> extends State<T>
         child: Column(
           spacing: spacing,
           crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            ...buildFormFields(context),
-            const Spacer(),
+            Column(spacing: spacing, children: [...buildFormFields(context)]),
+
             buildActionButton(),
           ],
         ),

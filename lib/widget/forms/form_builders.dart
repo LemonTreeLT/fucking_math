@@ -28,8 +28,7 @@ class FormBuilders {
     bool noneOption = true,
     T? initialValue,
     Key? key,
-  }) {
-    return DropdownButtonFormField<T?>(
+  }) => DropdownButtonFormField<T?>(
       key: key,
       initialValue: initialValue,
       onChanged: onChanged,
@@ -43,7 +42,6 @@ class FormBuilders {
         ...items.map((e) => DropdownMenuItem(value: e, child: Text(e.name))),
       ],
     );
-  }
 
   static Widget colorPicker({
     required BuildContext context,

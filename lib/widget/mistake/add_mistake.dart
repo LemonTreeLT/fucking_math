@@ -6,6 +6,7 @@ import 'package:fucking_math/widget/common/images_picker.dart';
 import 'package:fucking_math/widget/common/tag_selection.dart';
 import 'package:fucking_math/widget/forms/base_form.dart';
 import 'package:fucking_math/widget/forms/form_builders.dart';
+import 'package:fucking_math/widget/mistake/answer_edit.dart';
 import 'package:provider/provider.dart';
 
 class AddMistake extends StatefulWidget {
@@ -15,7 +16,7 @@ class AddMistake extends StatefulWidget {
   State<StatefulWidget> createState() => _AddMistakeState();
 }
 
-class _AddMistakeState extends GenericFormState<AddMistake> {
+class _AddMistakeState extends GenericFormStateV2<AddMistake> {
   final _titleInputerController = TextEditingController();
   final _bodyInputerController = TextEditingController();
   final _sourceInputerController = TextEditingController();
@@ -25,51 +26,111 @@ class _AddMistakeState extends GenericFormState<AddMistake> {
   Subject _selectedSubject = Subject.math;
   Set<int> _selectedTags = {};
 
+  final double spacing = 10;
+
+  String? _validateNotNull(String? value, String desc) =>
+      value == null || value.trim().isEmpty ? '$desc 不能为空' : null;
+
+
+  // TODO: 清理代码
   @override
-  List<Widget> buildFormFields(BuildContext context) => [
-    tInputer(controller: _titleInputerController, labelText: "标题"),
-    TagSelectionArea(
-      selectedTagIds: _selectedTags,
-      onSelectionChanged: (tags) => setState(() => _selectedTags = tags),
-    ),
-    tInputer(controller: _bodyInputerController, labelText: "题干", maxLines: 3),
+  Widget content() => Column(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    spacing: spacing,
+    children: [
+      // TODO: 重构这个输入框，格式："# {id,不存在则显示未分配} {标题，为空时展示仅存在底部线框的text输入表格，存在内容时显示标题文本，单击可编辑} "
+      Column(
+        spacing: spacing,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          tInputer(
+            controller: _titleInputerController,
+            labelText: "标题",
+            validator: (v) => _validateNotNull(v, "标题"),
+          ),
+          TagSelectionArea(
+            selectedTagIds: _selectedTags,
+            onSelectionChanged: (tags) => setState(() => _selectedTags = tags),
+          ),
+          tInputer(
+            controller: _bodyInputerController,
+            labelText: "题干",
+            maxLines: 3,
+            validator: (v) => _validateNotNull(v, "题干"),
+          ),
+        ],
+      ),
 
-    Row(
-      spacing: spacing,
-      children: [
-        Expanded(child: _buildRightInputArea()),
-        Expanded(child: _buildAnswerEditingArea()),
-      ],
-    ),
-  ];
+      Expanded(
+            child: Column(
+              children: [
+                const SizedBox(height: 10),
+                IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 区域3 - 左侧（占2/3）
+                      Expanded(
+                        flex: 2,
+                        child: _buildRightInputArea(),
+                      ),
+                      const SizedBox(width: 10),
+                      // 区域4 - 右侧（占1/3）
+                      Expanded(
+                        flex: 1,
+                        child: ShowAnswerButtonWithPreview(),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
 
-  Widget _buildAnswerEditingArea() => Container(
-    decoration: BoxDecoration(
-      border: Border.all(color: Colors.white, width: 1),
-    ),
-    child: Text("deving"),
+      _buildActionButton(),
+    ],
   );
 
   Widget _buildRightInputArea() => Column(
     spacing: spacing,
+    crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       sInputer((s) => setState(() => _selectedSubject = s!)),
+      ImagesPicker(key: _imagesInputerKey, height: 60,),
       tInputer(controller: _sourceInputerController, labelText: "来源"),
-      _buildImageUplaoder(),
     ],
   );
 
-  Widget _buildImageUplaoder() => ImagesPicker(key: _imagesInputerKey,);
-
-  // TODO: 提交按钮 & 编辑模式切换
-  @override
-  Widget buildActionButton() => ElevatedButton.icon(
-    onPressed: _submit,
-    label: const Text("保存"),
-    icon: const Icon(Icons.save),
+  Widget _buildActionButton() => Row(
+    mainAxisAlignment: MainAxisAlignment.end,
+    spacing: spacing / 2,
+    children: [
+      ElevatedButton.icon(
+        onPressed: _submit,
+        label: const Text("保存"),
+        icon: const Icon(Icons.save),
+      ),
+      ElevatedButton.icon(
+        onPressed: _assignID,
+        label: const Text("分配 ID"),
+        icon: Icon(Icons.assignment),
+      ),
+      ElevatedButton.icon(
+        onPressed: _clearForm,
+        label: const Text("清空表单"),
+        icon: Icon(Icons.clear_all),
+      ),
+    ],
   );
 
+  // TODO: 实现清空表单
+  void _clearForm() {}
+
+  // TODO: 实现对未提交错题分配id功能
+  void _assignID() {}
+
   Future<void> _submit() async {
+    if (!formKey.currentState!.validate()) return;
     final subject = _selectedSubject;
     final head = _titleInputerController.text.trim();
     final body = _bodyInputerController.text.trim();
@@ -81,8 +142,10 @@ class _AddMistakeState extends GenericFormState<AddMistake> {
     final MistakesProvider misProvider = context.read();
     final ImagesProvider imgProvider = context.read();
 
-    List<int> imageIDs =[];
-    if (images != null) imageIDs = (await imgProvider.uploadImages(images))??[];
+    List<int> imageIDs = [];
+    if (images != null) {
+      imageIDs = (await imgProvider.uploadImages(images)) ?? [];
+    }
 
     await misProvider.createMistakes(
       subject,
@@ -105,9 +168,6 @@ class _AddMistakeState extends GenericFormState<AddMistake> {
 
   @override
   String get formTitle => "添加错题";
-
-  @override
-  double get spacing => 16;
 }
 
 final tInputer = FormBuilders.textField;
