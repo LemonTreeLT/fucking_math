@@ -22,72 +22,63 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
   final _sourceInputerController = TextEditingController();
   final _noteInputerController = TextEditingController();
   final _imagesInputerKey = GlobalKey<ImagesPickerState>();
+  final _tagKey = GlobalKey<TagSelectionAreaState>();
 
   Subject _selectedSubject = Subject.math;
-  Set<int> _selectedTags = {};
 
   final double spacing = 10;
 
   String? _validateNotNull(String? value, String desc) =>
       value == null || value.trim().isEmpty ? '$desc 不能为空' : null;
 
-
-  // TODO: 清理代码
   @override
   Widget content() => Column(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     spacing: spacing,
     children: [
-      // TODO: 重构这个输入框，格式："# {id,不存在则显示未分配} {标题，为空时展示仅存在底部线框的text输入表格，存在内容时显示标题文本，单击可编辑} "
-      Column(
-        spacing: spacing,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          tInputer(
-            controller: _titleInputerController,
-            labelText: "标题",
-            validator: (v) => _validateNotNull(v, "标题"),
-          ),
-          TagSelectionArea(
-            selectedTagIds: _selectedTags,
-            onSelectionChanged: (tags) => setState(() => _selectedTags = tags),
-          ),
-          tInputer(
-            controller: _bodyInputerController,
-            labelText: "题干",
-            maxLines: 3,
-            validator: (v) => _validateNotNull(v, "题干"),
-          ),
-        ],
-      ),
+      _buildTopArea(),
 
       Expanded(
-            child: Column(
-              children: [
-                const SizedBox(height: 10),
-                IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // 区域3 - 左侧（占2/3）
-                      Expanded(
-                        flex: 2,
-                        child: _buildRightInputArea(),
-                      ),
-                      const SizedBox(width: 10),
-                      // 区域4 - 右侧（占1/3）
-                      Expanded(
-                        flex: 1,
-                        child: ShowAnswerButtonWithPreview(),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+        child: Column(
+          children: [
+            const SizedBox(height: 10),
+            IntrinsicHeight(child: _buildBottomLayout()),
+          ],
+        ),
+      ),
 
       _buildActionButton(),
+    ],
+  );
+
+  Widget _buildBottomLayout() => Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      // 区域3 - 左侧（占2/3）
+      Expanded(flex: 2, child: _buildRightInputArea()),
+      const SizedBox(width: 10),
+      // 区域4 - 右侧（占1/3）
+      Expanded(flex: 1, child: ShowAnswerButtonWithPreview()),
+    ],
+  );
+
+  Widget _buildTopArea() => Column(
+    spacing: spacing,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      // TODO: 重构这个输入框，格式："# {id,不存在则显示未分配} {标题，为空时展示仅存在底部线框的text输入表格，存在内容时显示标题文本，单击可编辑} "
+      tInputer(
+        controller: _titleInputerController,
+        labelText: "标题",
+        validator: (v) => _validateNotNull(v, "标题"),
+      ),
+      TagSelectionArea(),
+      tInputer(
+        controller: _bodyInputerController,
+        labelText: "题干",
+        maxLines: 3,
+        validator: (v) => _validateNotNull(v, "题干"),
+      ),
     ],
   );
 
@@ -96,7 +87,7 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       sInputer((s) => setState(() => _selectedSubject = s!)),
-      ImagesPicker(key: _imagesInputerKey, height: 60,),
+      ImagesPicker(key: _imagesInputerKey, height: 60),
       tInputer(controller: _sourceInputerController, labelText: "来源"),
     ],
   );
@@ -137,7 +128,7 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
     final source = _sourceInputerController.text.trim();
     final note = _noteInputerController.text.trim();
     final images = _imagesInputerKey.currentState?.images;
-    final tags = _selectedTags;
+    final tags = _tagKey.currentState?.selectedTagIds;
 
     final MistakesProvider misProvider = context.read();
     final ImagesProvider imgProvider = context.read();
@@ -154,7 +145,7 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
       source: source,
       note: note,
       images: imageIDs,
-      tags: tags.toList(),
+      tags: tags?.toList(),
     );
   }
 

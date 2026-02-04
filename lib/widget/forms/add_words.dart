@@ -22,18 +22,15 @@ class _AddWordFormState extends State<AddWordForm>
   final _definitionPreController = TextEditingController();
   final _noteController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final _tagKey = GlobalKey<TagSelectionAreaState>();
 
-  Set<int> _selectedTagIds = {};
   @override
   List<TextEditingController> get controllers => [
-        _wordController,
-        _definitionController,
-        _definitionPreController,
-        _noteController
-      ];
-
-  @override
-  Set<int> get tagSelection => _selectedTagIds;
+    _wordController,
+    _definitionController,
+    _definitionPreController,
+    _noteController,
+  ];
 
   @override
   void dispose() {
@@ -59,12 +56,14 @@ class _AddWordFormState extends State<AddWordForm>
         ? null
         : _definitionController.text.trim();
     final note = _noteController.text.trim();
+    final tags = _tagKey.currentState?.selectedTagIds;
+
     await provider.addWord(
       word,
       definition: definition,
       definitionPre: definitionPre,
       note: note,
-      tags: _selectedTagIds.isEmpty ? null : _selectedTagIds.toList(),
+      tags: tags?.toList(),
     );
     if (provider.error == null) clearForm();
   }
@@ -105,12 +104,7 @@ class _AddWordFormState extends State<AddWordForm>
                 labelText: '备注 (Notes) (可选)',
               ),
               boxH16,
-              TagSelectionArea(
-                selectedTagIds: _selectedTagIds,
-                onSelectionChanged: (newSelection) {
-                  setState(() => _selectedTagIds = newSelection);
-                },
-              ),
+              TagSelectionArea(key: _tagKey),
               const Spacer(),
               Consumer<WordsProvider>(
                 builder: (context, provider, child) {

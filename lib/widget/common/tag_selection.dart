@@ -6,132 +6,118 @@ import 'package:fucking_math/widget/common/tag_badge.dart';
 import 'package:provider/provider.dart';
 
 class TagSelectionArea extends StatefulWidget {
-  final Set<int> selectedTagIds;
-  final ValueChanged<Set<int>> onSelectionChanged;
-
-  const TagSelectionArea({
-    super.key,
-    required this.selectedTagIds,
-    required this.onSelectionChanged,
-  });
+  const TagSelectionArea({super.key});
 
   @override
-  State<TagSelectionArea> createState() => _TagSelectionAreaState();
+  State<TagSelectionArea> createState() => TagSelectionAreaState();
 }
 
-class _TagSelectionAreaState extends State<TagSelectionArea> {
+class TagSelectionAreaState extends State<TagSelectionArea> {
   final MenuController _menuController = MenuController();
 
-  List<Tag> _getAvailableTags(List<Tag> allTags) {
-    return allTags
-        .where((tag) => !widget.selectedTagIds.contains(tag.id))
-        .toList();
-  }
+  final Set<int> _selectedTagIds = {};
+  Set<int> get selectedTagIds => _selectedTagIds;
 
-  List<Tag> _getSelectedTags(List<Tag> allTags) {
-    return allTags
-        .where((tag) => widget.selectedTagIds.contains(tag.id))
-        .toList();
-  }
+  List<Tag> _getAvailableTags(List<Tag> allTags) =>
+      allTags.where((tag) => !_selectedTagIds.contains(tag.id)).toList();
 
-  void _toggleTag(int tagId) {
-    final newSelection = Set<int>.from(widget.selectedTagIds);
-    if (newSelection.contains(tagId)) {
-      newSelection.remove(tagId);
-    } else {
-      newSelection.add(tagId);
-    }
-    widget.onSelectionChanged(newSelection);
-  }
+  List<Tag> _getSelectedTags(List<Tag> allTags) =>
+      allTags.where((tag) => _selectedTagIds.contains(tag.id)).toList();
+
+  void _toggleTag(int tagId) => setState(
+    () => _selectedTagIds.contains(tagId)
+        ? _selectedTagIds.remove(tagId)
+        : _selectedTagIds.add(tagId),
+  );
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer<TagProvider>(
-      builder: (context, tagProvider, child) {
-        final selectedTags = _getSelectedTags(tagProvider.getItems);
-        final availableTags = _getAvailableTags(tagProvider.getItems);
+  Widget build(BuildContext context) => Consumer<TagProvider>(
+    builder: (context, tagProvider, child) {
+      final selectedTags = _getSelectedTags(tagProvider.getItems);
+      final availableTags = _getAvailableTags(tagProvider.getItems);
 
-        return MenuAnchor(
-          controller: _menuController,
-          alignmentOffset: const Offset(0, 4),
-          style: MenuStyle(
-            elevation: const WidgetStatePropertyAll(8),
-            backgroundColor: WidgetStatePropertyAll(
-              Theme.of(context).colorScheme.surface,
-            ),
+      return MenuAnchor(
+        controller: _menuController,
+        alignmentOffset: const Offset(0, 4),
+        style: MenuStyle(
+          elevation: const WidgetStatePropertyAll(8),
+          backgroundColor: WidgetStatePropertyAll(
+            Theme.of(context).colorScheme.surface,
           ),
-          menuChildren: [
-            Container(
-              constraints: const BoxConstraints(maxHeight: 240, maxWidth: 300),
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(12),
-                child: Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    ...availableTags.map((tag) {
-                      return TagBadge(
-                        tag: tag,
-                        onTap: () {
-                          _toggleTag(tag.id);
-                          _menuController.close();
-                        },
-                      );
-                    }),
-                    NewTagButton(
-                      onCreateTag: (name) async {
-                        await tagProvider.saveTag(name);
-                        if (tagProvider.error == null) {
-                          final newTag = tagProvider.getItems.firstWhereOrNull(
-                            (tag) => tag.name == name,
-                          );
-                          if (newTag != null) {
-                            _toggleTag(newTag.id);
-                          }
-                        }
+        ),
+        menuChildren: [
+          Container(
+            constraints: const BoxConstraints(maxHeight: 240, maxWidth: 300),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(12),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  ...availableTags.map(
+                    (tag) => TagBadge(
+                      tag: tag,
+                      onTap: () {
+                        _toggleTag(tag.id);
                         _menuController.close();
                       },
                     ),
-                  ],
-                ),
+                  ),
+                  NewTagButton(
+                    onCreateTag: (name) async {
+                      await tagProvider.saveTag(name);
+                      if (tagProvider.error == null) {
+                        final newTag = tagProvider.getItems.firstWhereOrNull(
+                          (tag) => tag.name == name,
+                        );
+                        if (newTag != null) {
+                          _toggleTag(newTag.id);
+                        }
+                      }
+                      _menuController.close();
+                    },
+                  ),
+                ],
               ),
-            ),
-          ],
-          child: InkWell(
-            onTap: () => _menuController.open(),
-            child: Container(
-              constraints: const BoxConstraints(minHeight: 48, maxHeight: 100),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: selectedTags.isEmpty
-                  ? Row(
-                      children: [
-                        Icon(Icons.add, size: 16, color: Colors.grey),
-                        const SizedBox(width: 8),
-                        Text('点击选择标签', style: TextStyle(color: Colors.grey)),
-                      ],
-                    )
-                  : SingleChildScrollView(
-                      child: Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: selectedTags.map((tag) {
-                          return GestureDetector(
-                            onTap: () => _toggleTag(tag.id),
-                            child: TagBadge(tag: tag),
-                          );
-                        }).toList(),
-                      ),
-                    ),
             ),
           ),
-        );
-      },
-    );
-  }
+        ],
+        child: InkWell(
+          onTap: () => _menuController.open(),
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 48, maxHeight: 100),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: selectedTags.isEmpty
+                ? Row(
+                    children: [
+                      Icon(Icons.add, size: 16, color: Colors.grey),
+                      const SizedBox(width: 8),
+                      Text('点击选择标签', style: TextStyle(color: Colors.grey)),
+                    ],
+                  )
+                : SingleChildScrollView(
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: selectedTags
+                          .map(
+                            (tag) => GestureDetector(
+                              onTap: () => _toggleTag(tag.id),
+                              child: TagBadge(tag: tag),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ),
+          ),
+        ),
+      );
+    },
+  );
 }
 
 /// 新建标签按钮

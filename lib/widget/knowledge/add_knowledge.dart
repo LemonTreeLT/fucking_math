@@ -14,46 +14,47 @@ class AddKnowledge extends StatefulWidget {
   State<AddKnowledge> createState() => _AddKnowledgeState();
 }
 
-class _AddKnowledgeState extends GenericFormState<AddKnowledge> {
+class _AddKnowledgeState extends GenericFormStateV2<AddKnowledge> {
   final _headInputerController = TextEditingController();
   final _bodyInputerController = TextEditingController();
   final _noteInputerController = TextEditingController();
+  final _tagKey = GlobalKey<TagSelectionAreaState>();
 
   Subject _selectedSuject = Subject.math;
-  Set<int> _selectedTags = {};
 
   @override
-  List<Widget> buildFormFields(BuildContext context) => [
-    tInputer(controller: _headInputerController, labelText: "概述"),
-    boxH16,
-    sInputer((t) => setState(() => _selectedSuject = t!)),
-    boxH16,
-    tInputer(
-      controller: _bodyInputerController,
-      labelText: "详细描述",
-      maxLines: 3,
-    ),
-    boxH16,
-    TagSelectionArea(
-      selectedTagIds: _selectedTags,
-      onSelectionChanged: (tags) => setState(() => _selectedTags = tags),
-    ),
-    boxH16,
-    tInputer(controller: _noteInputerController, labelText: "提交描述"),
-  ];
+  Widget content() => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      tInputer(controller: _headInputerController, labelText: "概述"),
+      boxH16,
+      sInputer((t) => setState(() => _selectedSuject = t!)),
+      boxH16,
+      tInputer(
+        controller: _bodyInputerController,
+        labelText: "详细描述",
+        maxLines: 3,
+      ),
+      boxH16,
+      TagSelectionArea(key: _tagKey),
+      boxH16,
+      tInputer(controller: _noteInputerController, labelText: "提交描述"),
+      const Spacer(),
+      buildActionButton(),
+    ],
+  );
 
   Future<void> _saveKnowledge() async {
     context.read<KnowledgeProvider>().saveKnowledge(
       _selectedSuject,
       _headInputerController.text.trim(),
       _bodyInputerController.text.trim(),
-      tags: _selectedTags.toList(),
+      tags: _tagKey.currentState?.selectedTagIds.toList(),
       note: _noteInputerController.text.nullIfEmpty,
     );
   }
 
   // TODO: 实现接收provider状态动态更新列表
-  @override
   Widget buildActionButton() => Row(
     children: [
       ElevatedButton.icon(

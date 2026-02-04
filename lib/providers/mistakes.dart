@@ -22,7 +22,7 @@ class MistakesProvider
     String? source,
     String? note,
     List<int> images = const [],
-    List<int> tags = const [],
+    List<int>? tags = const [],
   }) async => justDoIt(
     action: () => rep.saveMistake(
       subject: subject,

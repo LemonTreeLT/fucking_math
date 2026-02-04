@@ -25,9 +25,11 @@ class _AddPhraseFormState extends State<AddPhraseForm>
   final _definitionInputController = TextEditingController();
   final _noteInputController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final _tagKey = GlobalKey<TagSelectionAreaState>();
+
   Word? _selectedWord;
   String? _autocompleteText;
-  Set<int> _selectedTagIds = {};
+
   static const _ignoredStartWords = {
     'be', 'am', 'is', 'are', 'was', 'were',
     'do', 'does', 'did',
@@ -43,13 +45,10 @@ class _AddPhraseFormState extends State<AddPhraseForm>
 
   @override
   List<TextEditingController> get controllers => [
-        _phraseInputController,
-        _definitionInputController,
-        _noteInputController,
-      ];
-
-  @override
-  Set<int> get tagSelection => _selectedTagIds;
+    _phraseInputController,
+    _definitionInputController,
+    _noteInputController,
+  ];
 
   @override
   void clearForm() {
@@ -119,12 +118,13 @@ class _AddPhraseFormState extends State<AddPhraseForm>
     final phrase = _phraseInputController.text.trim();
     final definition = _definitionInputController.text.trim();
     final note = _noteInputController.text.trim();
+    final tags = _tagKey.currentState?.selectedTagIds;
     await provider.addPhrases(
       _selectedWord!.id,
       phrase,
       definition: definition.isEmpty ? null : definition,
       note: note.isEmpty ? null : note,
-      tags: _selectedTagIds.isEmpty ? null : _selectedTagIds.toList(),
+      tags: tags?.toList(),
     );
     if (provider.error == null) {
       clearForm();
@@ -171,12 +171,7 @@ class _AddPhraseFormState extends State<AddPhraseForm>
                 labelText: '备注 (Notes) (可选)',
               ),
               boxH16,
-              TagSelectionArea(
-                selectedTagIds: _selectedTagIds,
-                onSelectionChanged: (newSelection) {
-                  setState(() => _selectedTagIds = newSelection);
-                },
-              ),
+              TagSelectionArea(key: _tagKey),
               const Spacer(),
               Consumer<PhraseProvider>(
                 builder: (context, provider, child) {
