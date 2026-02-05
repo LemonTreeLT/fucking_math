@@ -33,7 +33,7 @@ void main() async {
               KnowledgeProvider(context.read())..loadKnowledge(),
         ),
         ChangeNotifierProvider(
-          create: (context) => MistakesProvider(context.read())..loadMistakes(),
+          create: (context) => MistakesProvider(context.read()),
         ),
         ChangeNotifierProvider(
           create: (context) => ImagesProvider(context.read()),

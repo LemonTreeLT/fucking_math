@@ -42,6 +42,15 @@ mixin FormBorder {
       );
 }
 
+abstract class GenericFormStateV3<T extends StatefulWidget> extends State<T>
+    with ControllerManager<T>, FormKey {
+  /// 上层仅仅提供了controller管理与formkey
+  Widget content();
+
+  @override
+  Widget build(BuildContext context) => content();
+}
+
 abstract class GenericFormStateV2<T extends StatefulWidget> extends State<T>
     with ControllerManager<T>, FormKey, FormTitleConfig, FormBorder {
   /// 全部需要被展示的内容

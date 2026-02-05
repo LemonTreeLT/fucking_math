@@ -6,20 +6,25 @@ class FormBuilders {
     required TextEditingController controller,
     required String labelText,
     String? hintText,
-    int maxLines = 1,
+    bool expands = false,
+    int? maxLines = 1,
     String? Function(String?)? validator,
-  }) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: labelText,
-        hintText: hintText,
-        border: const OutlineInputBorder(),
-      ),
-      validator: validator,
-      maxLines: maxLines,
-    );
-  }
+    TextAlignVertical? textAlignVertical,
+    bool? noCenterLabel
+  }) => TextFormField(
+    controller: controller,
+    decoration: InputDecoration(
+      labelText: labelText,
+      hintText: hintText,
+      alignLabelWithHint: noCenterLabel,
+      border: const OutlineInputBorder(),
+    ),
+    expands: expands,
+    validator: validator,
+    maxLines: maxLines,
+    textAlignVertical: textAlignVertical,
+    
+  );
 
   static Widget enumDropdown<T extends Enum>({
     required String label,
@@ -29,19 +34,18 @@ class FormBuilders {
     T? initialValue,
     Key? key,
   }) => DropdownButtonFormField<T?>(
-      key: key,
-      initialValue: initialValue,
-      onChanged: onChanged,
-      decoration: InputDecoration(
-        labelText: label,
-        border: const OutlineInputBorder(),
-      ),
-      items: [
-        if (noneOption)
-          const DropdownMenuItem(value: null, child: Text("None")),
-        ...items.map((e) => DropdownMenuItem(value: e, child: Text(e.name))),
-      ],
-    );
+    key: key,
+    initialValue: initialValue,
+    onChanged: onChanged,
+    decoration: InputDecoration(
+      labelText: label,
+      border: const OutlineInputBorder(),
+    ),
+    items: [
+      if (noneOption) const DropdownMenuItem(value: null, child: Text("None")),
+      ...items.map((e) => DropdownMenuItem(value: e, child: Text(e.name))),
+    ],
+  );
 
   static Widget colorPicker({
     required BuildContext context,

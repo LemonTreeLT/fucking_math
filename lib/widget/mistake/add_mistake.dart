@@ -27,6 +27,7 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
   Subject _selectedSubject = Subject.math;
 
   final double spacing = 10;
+  int? _mistakeId;
 
   String? _validateNotNull(String? value, String desc) =>
       value == null || value.trim().isEmpty ? '$desc 不能为空' : null;
@@ -58,7 +59,10 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
       Expanded(flex: 2, child: _buildRightInputArea()),
       const SizedBox(width: 10),
       // 区域4 - 右侧（占1/3）
-      Expanded(flex: 1, child: ShowAnswerButtonWithPreview()),
+      Expanded(
+        flex: 1,
+        child: ShowAnswerButtonWithPreview(mistakeID: _mistakeId),
+      ),
     ],
   );
 
@@ -66,18 +70,37 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
     spacing: spacing,
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      // TODO: 重构这个输入框，格式："# {id,不存在则显示未分配} {标题，为空时展示仅存在底部线框的text输入表格，存在内容时显示标题文本，单击可编辑} "
-      tInputer(
-        controller: _titleInputerController,
-        labelText: "标题",
-        validator: (v) => _validateNotNull(v, "标题"),
-      ),
-      TagSelectionArea(),
+      _buildTitle(),
+
+      Row(children: [Expanded(child: TagSelectionArea())]),
       tInputer(
         controller: _bodyInputerController,
         labelText: "题干",
         maxLines: 3,
         validator: (v) => _validateNotNull(v, "题干"),
+      ),
+    ],
+  );
+
+  Widget _buildTitle() => Row(
+    spacing: 16,
+    children: [
+      Text(
+        "# ${_mistakeId ?? "未分配 ID"}",
+        style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+      ),
+      Expanded(
+        child: Center(
+          child: TextFormField(
+            controller: _titleInputerController,
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: "输入标题",
+            ),
+            validator: (value) => _validateNotNull(value, "标题"),
+            style: TextStyle(fontSize: 24),
+          ),
+        ),
       ),
     ],
   );
@@ -102,7 +125,7 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
         icon: const Icon(Icons.save),
       ),
       ElevatedButton.icon(
-        onPressed: _assignID,
+        onPressed: _mistakeId == null ? _assignID : _showAssignedAlert,
         label: const Text("分配 ID"),
         icon: Icon(Icons.assignment),
       ),
@@ -117,8 +140,18 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
   // TODO: 实现清空表单
   void _clearForm() {}
 
-  // TODO: 实现对未提交错题分配id功能
-  void _assignID() {}
+  Future<void> _assignID() async {
+    final provider = context.read<MistakesProvider>();
+    final newMistake = await provider.createMistakes(Subject.math, "", "");
+    setState(() => _mistakeId = newMistake?.id);
+  }
+
+  void _showAssignedAlert() => ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: const Text("ID 已经分配"),
+      duration: const Duration(seconds: 1),
+    ),
+  );
 
   Future<void> _submit() async {
     if (!formKey.currentState!.validate()) return;

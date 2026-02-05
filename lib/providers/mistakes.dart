@@ -7,7 +7,10 @@ import 'package:fucking_math/utils/types.dart';
 
 class MistakesProvider
     extends BaseRepositoryProvider<Mistake, MistakesRepository> {
-  MistakesProvider(AppDatabase db) : super(MistakesRepository(MistakesDao(db)));
+  MistakesProvider(AppDatabase db)
+    : super(MistakesRepository(MistakesDao(db))) {
+    loadMistakes();
+  }
 
   Future<void> loadMistakes() async => justDoIt(
     action: () => rep.getAllMistakes(),
@@ -15,7 +18,7 @@ class MistakesProvider
     errMsg: "加载错题失败",
   );
 
-  Future<void> createMistakes(
+  Future<Mistake?> createMistakes(
     Subject subject,
     String head,
     String body, {
@@ -23,8 +26,8 @@ class MistakesProvider
     String? note,
     List<int> images = const [],
     List<int>? tags = const [],
-  }) async => justDoIt(
-    action: () => rep.saveMistake(
+  }) async => justDoItNext(
+    action:() => rep.saveMistake(
       subject: subject,
       head: head,
       body: body,
@@ -36,5 +39,33 @@ class MistakesProvider
     onSucces: (save) =>
         setItems(items.withUpsert(save, (k) => k.id == save.id)),
     errMsg: "保存错题失败",
+  );
+
+  Future<Answer?> createAnswer(
+    int mistakeId,
+    String body, {
+    int? id,
+    String? head,
+    String? note,
+    String? source,
+    List<int>? tags,
+    List<int>? imageIds,
+  }) async => justDoItNext(
+    action: () => rep.saveAnswer(
+      mistakeId: mistakeId,
+      body: body,
+      id: id,
+      head: head,
+      note: note,
+      source: source,
+      tags: tags,
+      imageIds: imageIds,
+    ),
+    errMsg: "保存答案失败",
+  );
+
+  Future<List<Answer>?> getAnswerOfMistakes(int mistakeId) => justDoItNext(
+    action: () => rep.getAnswersByMistakeId(mistakeId),
+    errMsg: "查询 $mistakeId 号错题时发生错误",
   );
 }
