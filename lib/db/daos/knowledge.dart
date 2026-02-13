@@ -6,59 +6,54 @@ import 'package:fucking_math/utils/types.dart' show Subject;
 
 part 'knowledge.g.dart';
 
-@DriftAccessor(
-  tables: [KnowledgeTable, KnowledgeLogTable, KnowledgeTagLink, Tags],
-)
+@DriftAccessor(tables: [Knowledge, KnowledgeLogs, KnowledgeTagLink, Tags])
 class KnowledgeDao extends DatabaseAccessor<AppDatabase>
     with _$KnowledgeDaoMixin {
   KnowledgeDao(super.db);
 
   // 创建知识点
-  Future<int> createKnowledge(KnowledgeTableCompanion entry) =>
-      into(knowledgeTable).insert(entry);
+  Future<int> createKnowledge(KnowledgeCompanion entry) =>
+      into(knowledge).insert(entry);
 
   // 获取所有知识点
-  Future<List<KnowledgeTableData>> getAllKnowledge() =>
-      select(knowledgeTable).get();
+  Future<List<KnowledgeData>> getAllKnowledge() => select(knowledge).get();
 
   // 根据学科获取知识点
-  Future<List<KnowledgeTableData>> getKnowledgeBySubject(Subject subject) {
+  Future<List<KnowledgeData>> getKnowledgeBySubject(Subject subject) {
     return (select(
-      knowledgeTable,
+      knowledge,
     )..where((k) => k.subject.equalsValue(subject))).get();
   }
 
   // 根据ID获取知识点
-  Future<KnowledgeTableData?> getKnowledgeById(int id) {
-    return (select(
-      knowledgeTable,
-    )..where((k) => k.id.equals(id))).getSingleOrNull();
+  Future<KnowledgeData?> getKnowledgeById(int id) {
+    return (select(knowledge)..where((k) => k.id.equals(id))).getSingleOrNull();
   }
 
   // 搜索知识点(根据标题和内容)
-  Future<List<KnowledgeTableData>> searchKnowledge(String query) {
+  Future<List<KnowledgeData>> searchKnowledge(String query) {
     return (select(
-      knowledgeTable,
+      knowledge,
     )..where((k) => k.head.like('%$query%') | k.body.like('%$query%'))).get();
   }
 
   // 更新知识点
-  Future<bool> updateKnowledge(KnowledgeTableData knowledge) =>
-      update(knowledgeTable).replace(knowledge);
+  Future<bool> updateKnowledge(KnowledgeData newKnowledge) =>
+      update(knowledge).replace(newKnowledge);
 
   // 删除知识点
   Future<int> deleteKnowledge(int id) {
-    return (delete(knowledgeTable)..where((k) => k.id.equals(id))).go();
+    return (delete(knowledge)..where((k) => k.id.equals(id))).go();
   }
 
   // 添加知识点日志
-  Future<int> addKnowledgeLog(KnowledgeLogTableCompanion entry) =>
-      into(knowledgeLogTable).insert(entry);
+  Future<int> addKnowledgeLog(KnowledgeLogsCompanion entry) =>
+      into(knowledgeLogs).insert(entry);
 
   // 获取知识点的所有日志
-  Future<List<KnowledgeLogTableData>> getKnowledgeLogs(int knowledgeId) {
+  Future<List<KnowledgeLog>> getKnowledgeLogs(int knowledgeId) {
     return (select(
-      knowledgeLogTable,
+      knowledgeLogs,
     )..where((l) => l.knowledgeID.equals(knowledgeId))).get();
   }
 
@@ -91,14 +86,14 @@ class KnowledgeDao extends DatabaseAccessor<AppDatabase>
   }
 
   // 获取带有特定标签的所有知识点
-  Future<List<KnowledgeTableData>> getKnowledgeByTag(int tagId) {
-    final query = select(knowledgeTable).join([
+  Future<List<KnowledgeData>> getKnowledgeByTag(int tagId) {
+    final query = select(knowledge).join([
       innerJoin(
         knowledgeTagLink,
-        knowledgeTagLink.knowledgeID.equalsExp(knowledgeTable.id),
+        knowledgeTagLink.knowledgeID.equalsExp(knowledge.id),
       ),
     ])..where(knowledgeTagLink.tagID.equals(tagId));
 
-    return query.map((row) => row.readTable(knowledgeTable)).get();
+    return query.map((row) => row.readTable(knowledge)).get();
   }
 }

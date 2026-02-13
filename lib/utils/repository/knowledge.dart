@@ -87,26 +87,23 @@ class KnowledgeRepository {
   // ------ PRIVATE HELPER METHODS BELOW ------
 
   // 辅助函数: 查找或创建知识点
-  Future<db.KnowledgeTableData> _findOrCreateKnowledge(
+  Future<db.KnowledgeData> _findOrCreateKnowledge(
     Subject subject,
     String head,
     String body,
   ) async {
     // 尝试根据标题和学科查找现有知识点
     final allKnowledge = await _dao.getKnowledgeBySubject(subject);
-    final existingKnowledge = allKnowledge
-        .cast<db.KnowledgeTableData?>()
-        .firstWhere((k) => k?.head == head, orElse: () => null);
+    final existingKnowledge = allKnowledge.cast<db.KnowledgeData?>().firstWhere(
+      (k) => k?.head == head,
+      orElse: () => null,
+    );
 
     if (existingKnowledge != null) return existingKnowledge;
 
     // 创建新知识点
     final knowledgeId = await _dao.createKnowledge(
-      db.KnowledgeTableCompanion.insert(
-        subject: subject,
-        head: head,
-        body: body,
-      ),
+      db.KnowledgeCompanion.insert(subject: subject, head: head, body: body),
     );
 
     final newKnowledge = await _dao.getKnowledgeById(knowledgeId);
@@ -167,7 +164,7 @@ class KnowledgeRepository {
     know.KnowledgeLogType type, {
     String? note,
   }) async => await _dao.addKnowledgeLog(
-    db.KnowledgeLogTableCompanion.insert(
+    db.KnowledgeLogsCompanion.insert(
       knowledgeID: knowledgeId,
       type: type,
       notes: Value(note),
@@ -175,9 +172,7 @@ class KnowledgeRepository {
   );
 
   // 辅助函数: 构建完整的 Knowledge 对象
-  Future<Knowledge> _buildCompleteKnowledge(
-    db.KnowledgeTableData knowledge,
-  ) async {
+  Future<Knowledge> _buildCompleteKnowledge(db.KnowledgeData knowledge) async {
     final dbTags = await _dao.getKnowledgeTags(knowledge.id);
     final appTags = dbTags.map(dbTagToTag).toList();
     final logs = await _dao.getKnowledgeLogs(knowledge.id);
@@ -196,7 +191,7 @@ class KnowledgeRepository {
 
   // 辅助函数: 数据库 Knowledge 转换为应用 Knowledge
   Knowledge _dbKnowledgeToKnowledge(
-    db.KnowledgeTableData dbKnowledge,
+    db.KnowledgeData dbKnowledge,
     List<Tag> tags, {
     int? editCount,
     String? note,

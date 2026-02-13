@@ -2211,12 +2211,12 @@ class PhraseLogsCompanion extends UpdateCompanion<PhraseLog> {
   }
 }
 
-class $KnowledgeTableTable extends KnowledgeTable
-    with TableInfo<$KnowledgeTableTable, KnowledgeTableData> {
+class $KnowledgeTable extends Knowledge
+    with TableInfo<$KnowledgeTable, KnowledgeData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $KnowledgeTableTable(this.attachedDatabase, [this._alias]);
+  $KnowledgeTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -2238,7 +2238,7 @@ class $KnowledgeTableTable extends KnowledgeTable
         false,
         type: DriftSqlType.string,
         requiredDuringInsert: true,
-      ).withConverter<Subject>($KnowledgeTableTable.$convertersubject);
+      ).withConverter<Subject>($KnowledgeTable.$convertersubject);
   static const VerificationMeta _headMeta = const VerificationMeta('head');
   @override
   late final GeneratedColumn<String> head = GeneratedColumn<String>(
@@ -2275,10 +2275,10 @@ class $KnowledgeTableTable extends KnowledgeTable
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'knowledge_table';
+  static const String $name = 'knowledge';
   @override
   VerificationContext validateIntegrity(
-    Insertable<KnowledgeTableData> instance, {
+    Insertable<KnowledgeData> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -2314,14 +2314,14 @@ class $KnowledgeTableTable extends KnowledgeTable
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  KnowledgeTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  KnowledgeData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return KnowledgeTableData(
+    return KnowledgeData(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
-      subject: $KnowledgeTableTable.$convertersubject.fromSql(
+      subject: $KnowledgeTable.$convertersubject.fromSql(
         attachedDatabase.typeMapping.read(
           DriftSqlType.string,
           data['${effectivePrefix}subject'],
@@ -2343,22 +2343,21 @@ class $KnowledgeTableTable extends KnowledgeTable
   }
 
   @override
-  $KnowledgeTableTable createAlias(String alias) {
-    return $KnowledgeTableTable(attachedDatabase, alias);
+  $KnowledgeTable createAlias(String alias) {
+    return $KnowledgeTable(attachedDatabase, alias);
   }
 
   static JsonTypeConverter2<Subject, String, String> $convertersubject =
       SubjectConverter;
 }
 
-class KnowledgeTableData extends DataClass
-    implements Insertable<KnowledgeTableData> {
+class KnowledgeData extends DataClass implements Insertable<KnowledgeData> {
   final int id;
   final Subject subject;
   final String head;
   final String body;
   final DateTime createdAt;
-  const KnowledgeTableData({
+  const KnowledgeData({
     required this.id,
     required this.subject,
     required this.head,
@@ -2371,7 +2370,7 @@ class KnowledgeTableData extends DataClass
     map['id'] = Variable<int>(id);
     {
       map['subject'] = Variable<String>(
-        $KnowledgeTableTable.$convertersubject.toSql(subject),
+        $KnowledgeTable.$convertersubject.toSql(subject),
       );
     }
     map['head'] = Variable<String>(head);
@@ -2380,8 +2379,8 @@ class KnowledgeTableData extends DataClass
     return map;
   }
 
-  KnowledgeTableCompanion toCompanion(bool nullToAbsent) {
-    return KnowledgeTableCompanion(
+  KnowledgeCompanion toCompanion(bool nullToAbsent) {
+    return KnowledgeCompanion(
       id: Value(id),
       subject: Value(subject),
       head: Value(head),
@@ -2390,14 +2389,14 @@ class KnowledgeTableData extends DataClass
     );
   }
 
-  factory KnowledgeTableData.fromJson(
+  factory KnowledgeData.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return KnowledgeTableData(
+    return KnowledgeData(
       id: serializer.fromJson<int>(json['id']),
-      subject: $KnowledgeTableTable.$convertersubject.fromJson(
+      subject: $KnowledgeTable.$convertersubject.fromJson(
         serializer.fromJson<String>(json['subject']),
       ),
       head: serializer.fromJson<String>(json['head']),
@@ -2411,7 +2410,7 @@ class KnowledgeTableData extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'subject': serializer.toJson<String>(
-        $KnowledgeTableTable.$convertersubject.toJson(subject),
+        $KnowledgeTable.$convertersubject.toJson(subject),
       ),
       'head': serializer.toJson<String>(head),
       'body': serializer.toJson<String>(body),
@@ -2419,21 +2418,21 @@ class KnowledgeTableData extends DataClass
     };
   }
 
-  KnowledgeTableData copyWith({
+  KnowledgeData copyWith({
     int? id,
     Subject? subject,
     String? head,
     String? body,
     DateTime? createdAt,
-  }) => KnowledgeTableData(
+  }) => KnowledgeData(
     id: id ?? this.id,
     subject: subject ?? this.subject,
     head: head ?? this.head,
     body: body ?? this.body,
     createdAt: createdAt ?? this.createdAt,
   );
-  KnowledgeTableData copyWithCompanion(KnowledgeTableCompanion data) {
-    return KnowledgeTableData(
+  KnowledgeData copyWithCompanion(KnowledgeCompanion data) {
+    return KnowledgeData(
       id: data.id.present ? data.id.value : this.id,
       subject: data.subject.present ? data.subject.value : this.subject,
       head: data.head.present ? data.head.value : this.head,
@@ -2444,7 +2443,7 @@ class KnowledgeTableData extends DataClass
 
   @override
   String toString() {
-    return (StringBuffer('KnowledgeTableData(')
+    return (StringBuffer('KnowledgeData(')
           ..write('id: $id, ')
           ..write('subject: $subject, ')
           ..write('head: $head, ')
@@ -2459,7 +2458,7 @@ class KnowledgeTableData extends DataClass
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is KnowledgeTableData &&
+      (other is KnowledgeData &&
           other.id == this.id &&
           other.subject == this.subject &&
           other.head == this.head &&
@@ -2467,20 +2466,20 @@ class KnowledgeTableData extends DataClass
           other.createdAt == this.createdAt);
 }
 
-class KnowledgeTableCompanion extends UpdateCompanion<KnowledgeTableData> {
+class KnowledgeCompanion extends UpdateCompanion<KnowledgeData> {
   final Value<int> id;
   final Value<Subject> subject;
   final Value<String> head;
   final Value<String> body;
   final Value<DateTime> createdAt;
-  const KnowledgeTableCompanion({
+  const KnowledgeCompanion({
     this.id = const Value.absent(),
     this.subject = const Value.absent(),
     this.head = const Value.absent(),
     this.body = const Value.absent(),
     this.createdAt = const Value.absent(),
   });
-  KnowledgeTableCompanion.insert({
+  KnowledgeCompanion.insert({
     this.id = const Value.absent(),
     required Subject subject,
     required String head,
@@ -2489,7 +2488,7 @@ class KnowledgeTableCompanion extends UpdateCompanion<KnowledgeTableData> {
   }) : subject = Value(subject),
        head = Value(head),
        body = Value(body);
-  static Insertable<KnowledgeTableData> custom({
+  static Insertable<KnowledgeData> custom({
     Expression<int>? id,
     Expression<String>? subject,
     Expression<String>? head,
@@ -2505,14 +2504,14 @@ class KnowledgeTableCompanion extends UpdateCompanion<KnowledgeTableData> {
     });
   }
 
-  KnowledgeTableCompanion copyWith({
+  KnowledgeCompanion copyWith({
     Value<int>? id,
     Value<Subject>? subject,
     Value<String>? head,
     Value<String>? body,
     Value<DateTime>? createdAt,
   }) {
-    return KnowledgeTableCompanion(
+    return KnowledgeCompanion(
       id: id ?? this.id,
       subject: subject ?? this.subject,
       head: head ?? this.head,
@@ -2529,7 +2528,7 @@ class KnowledgeTableCompanion extends UpdateCompanion<KnowledgeTableData> {
     }
     if (subject.present) {
       map['subject'] = Variable<String>(
-        $KnowledgeTableTable.$convertersubject.toSql(subject.value),
+        $KnowledgeTable.$convertersubject.toSql(subject.value),
       );
     }
     if (head.present) {
@@ -2546,7 +2545,7 @@ class KnowledgeTableCompanion extends UpdateCompanion<KnowledgeTableData> {
 
   @override
   String toString() {
-    return (StringBuffer('KnowledgeTableCompanion(')
+    return (StringBuffer('KnowledgeCompanion(')
           ..write('id: $id, ')
           ..write('subject: $subject, ')
           ..write('head: $head, ')
@@ -2557,12 +2556,12 @@ class KnowledgeTableCompanion extends UpdateCompanion<KnowledgeTableData> {
   }
 }
 
-class $KnowledgeLogTableTable extends KnowledgeLogTable
-    with TableInfo<$KnowledgeLogTableTable, KnowledgeLogTableData> {
+class $KnowledgeLogsTable extends KnowledgeLogs
+    with TableInfo<$KnowledgeLogsTable, KnowledgeLog> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $KnowledgeLogTableTable(this.attachedDatabase, [this._alias]);
+  $KnowledgeLogsTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -2587,7 +2586,7 @@ class $KnowledgeLogTableTable extends KnowledgeLogTable
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES knowledge_table (id)',
+      'REFERENCES knowledge (id)',
     ),
   );
   static const VerificationMeta _timeMeta = const VerificationMeta('time');
@@ -2608,7 +2607,7 @@ class $KnowledgeLogTableTable extends KnowledgeLogTable
         false,
         type: DriftSqlType.string,
         requiredDuringInsert: true,
-      ).withConverter<KnowledgeLogType>($KnowledgeLogTableTable.$convertertype);
+      ).withConverter<KnowledgeLogType>($KnowledgeLogsTable.$convertertype);
   static const VerificationMeta _notesMeta = const VerificationMeta('notes');
   @override
   late final GeneratedColumn<String> notes = GeneratedColumn<String>(
@@ -2624,10 +2623,10 @@ class $KnowledgeLogTableTable extends KnowledgeLogTable
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'knowledge_log_table';
+  static const String $name = 'knowledge_logs';
   @override
   VerificationContext validateIntegrity(
-    Insertable<KnowledgeLogTableData> instance, {
+    Insertable<KnowledgeLog> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -2664,9 +2663,9 @@ class $KnowledgeLogTableTable extends KnowledgeLogTable
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  KnowledgeLogTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  KnowledgeLog map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return KnowledgeLogTableData(
+    return KnowledgeLog(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -2679,7 +2678,7 @@ class $KnowledgeLogTableTable extends KnowledgeLogTable
         DriftSqlType.dateTime,
         data['${effectivePrefix}time'],
       )!,
-      type: $KnowledgeLogTableTable.$convertertype.fromSql(
+      type: $KnowledgeLogsTable.$convertertype.fromSql(
         attachedDatabase.typeMapping.read(
           DriftSqlType.string,
           data['${effectivePrefix}type'],
@@ -2693,22 +2692,21 @@ class $KnowledgeLogTableTable extends KnowledgeLogTable
   }
 
   @override
-  $KnowledgeLogTableTable createAlias(String alias) {
-    return $KnowledgeLogTableTable(attachedDatabase, alias);
+  $KnowledgeLogsTable createAlias(String alias) {
+    return $KnowledgeLogsTable(attachedDatabase, alias);
   }
 
   static JsonTypeConverter2<KnowledgeLogType, String, String> $convertertype =
       EnumNameConverter(KnowledgeLogType.values);
 }
 
-class KnowledgeLogTableData extends DataClass
-    implements Insertable<KnowledgeLogTableData> {
+class KnowledgeLog extends DataClass implements Insertable<KnowledgeLog> {
   final int id;
   final int knowledgeID;
   final DateTime time;
   final KnowledgeLogType type;
   final String? notes;
-  const KnowledgeLogTableData({
+  const KnowledgeLog({
     required this.id,
     required this.knowledgeID,
     required this.time,
@@ -2723,7 +2721,7 @@ class KnowledgeLogTableData extends DataClass
     map['time'] = Variable<DateTime>(time);
     {
       map['type'] = Variable<String>(
-        $KnowledgeLogTableTable.$convertertype.toSql(type),
+        $KnowledgeLogsTable.$convertertype.toSql(type),
       );
     }
     if (!nullToAbsent || notes != null) {
@@ -2732,8 +2730,8 @@ class KnowledgeLogTableData extends DataClass
     return map;
   }
 
-  KnowledgeLogTableCompanion toCompanion(bool nullToAbsent) {
-    return KnowledgeLogTableCompanion(
+  KnowledgeLogsCompanion toCompanion(bool nullToAbsent) {
+    return KnowledgeLogsCompanion(
       id: Value(id),
       knowledgeID: Value(knowledgeID),
       time: Value(time),
@@ -2744,16 +2742,16 @@ class KnowledgeLogTableData extends DataClass
     );
   }
 
-  factory KnowledgeLogTableData.fromJson(
+  factory KnowledgeLog.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return KnowledgeLogTableData(
+    return KnowledgeLog(
       id: serializer.fromJson<int>(json['id']),
       knowledgeID: serializer.fromJson<int>(json['knowledgeID']),
       time: serializer.fromJson<DateTime>(json['time']),
-      type: $KnowledgeLogTableTable.$convertertype.fromJson(
+      type: $KnowledgeLogsTable.$convertertype.fromJson(
         serializer.fromJson<String>(json['type']),
       ),
       notes: serializer.fromJson<String?>(json['notes']),
@@ -2767,27 +2765,27 @@ class KnowledgeLogTableData extends DataClass
       'knowledgeID': serializer.toJson<int>(knowledgeID),
       'time': serializer.toJson<DateTime>(time),
       'type': serializer.toJson<String>(
-        $KnowledgeLogTableTable.$convertertype.toJson(type),
+        $KnowledgeLogsTable.$convertertype.toJson(type),
       ),
       'notes': serializer.toJson<String?>(notes),
     };
   }
 
-  KnowledgeLogTableData copyWith({
+  KnowledgeLog copyWith({
     int? id,
     int? knowledgeID,
     DateTime? time,
     KnowledgeLogType? type,
     Value<String?> notes = const Value.absent(),
-  }) => KnowledgeLogTableData(
+  }) => KnowledgeLog(
     id: id ?? this.id,
     knowledgeID: knowledgeID ?? this.knowledgeID,
     time: time ?? this.time,
     type: type ?? this.type,
     notes: notes.present ? notes.value : this.notes,
   );
-  KnowledgeLogTableData copyWithCompanion(KnowledgeLogTableCompanion data) {
-    return KnowledgeLogTableData(
+  KnowledgeLog copyWithCompanion(KnowledgeLogsCompanion data) {
+    return KnowledgeLog(
       id: data.id.present ? data.id.value : this.id,
       knowledgeID: data.knowledgeID.present
           ? data.knowledgeID.value
@@ -2800,7 +2798,7 @@ class KnowledgeLogTableData extends DataClass
 
   @override
   String toString() {
-    return (StringBuffer('KnowledgeLogTableData(')
+    return (StringBuffer('KnowledgeLog(')
           ..write('id: $id, ')
           ..write('knowledgeID: $knowledgeID, ')
           ..write('time: $time, ')
@@ -2815,7 +2813,7 @@ class KnowledgeLogTableData extends DataClass
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is KnowledgeLogTableData &&
+      (other is KnowledgeLog &&
           other.id == this.id &&
           other.knowledgeID == this.knowledgeID &&
           other.time == this.time &&
@@ -2823,21 +2821,20 @@ class KnowledgeLogTableData extends DataClass
           other.notes == this.notes);
 }
 
-class KnowledgeLogTableCompanion
-    extends UpdateCompanion<KnowledgeLogTableData> {
+class KnowledgeLogsCompanion extends UpdateCompanion<KnowledgeLog> {
   final Value<int> id;
   final Value<int> knowledgeID;
   final Value<DateTime> time;
   final Value<KnowledgeLogType> type;
   final Value<String?> notes;
-  const KnowledgeLogTableCompanion({
+  const KnowledgeLogsCompanion({
     this.id = const Value.absent(),
     this.knowledgeID = const Value.absent(),
     this.time = const Value.absent(),
     this.type = const Value.absent(),
     this.notes = const Value.absent(),
   });
-  KnowledgeLogTableCompanion.insert({
+  KnowledgeLogsCompanion.insert({
     this.id = const Value.absent(),
     required int knowledgeID,
     this.time = const Value.absent(),
@@ -2845,7 +2842,7 @@ class KnowledgeLogTableCompanion
     this.notes = const Value.absent(),
   }) : knowledgeID = Value(knowledgeID),
        type = Value(type);
-  static Insertable<KnowledgeLogTableData> custom({
+  static Insertable<KnowledgeLog> custom({
     Expression<int>? id,
     Expression<int>? knowledgeID,
     Expression<DateTime>? time,
@@ -2861,14 +2858,14 @@ class KnowledgeLogTableCompanion
     });
   }
 
-  KnowledgeLogTableCompanion copyWith({
+  KnowledgeLogsCompanion copyWith({
     Value<int>? id,
     Value<int>? knowledgeID,
     Value<DateTime>? time,
     Value<KnowledgeLogType>? type,
     Value<String?>? notes,
   }) {
-    return KnowledgeLogTableCompanion(
+    return KnowledgeLogsCompanion(
       id: id ?? this.id,
       knowledgeID: knowledgeID ?? this.knowledgeID,
       time: time ?? this.time,
@@ -2891,7 +2888,7 @@ class KnowledgeLogTableCompanion
     }
     if (type.present) {
       map['type'] = Variable<String>(
-        $KnowledgeLogTableTable.$convertertype.toSql(type.value),
+        $KnowledgeLogsTable.$convertertype.toSql(type.value),
       );
     }
     if (notes.present) {
@@ -2902,7 +2899,7 @@ class KnowledgeLogTableCompanion
 
   @override
   String toString() {
-    return (StringBuffer('KnowledgeLogTableCompanion(')
+    return (StringBuffer('KnowledgeLogsCompanion(')
           ..write('id: $id, ')
           ..write('knowledgeID: $knowledgeID, ')
           ..write('time: $time, ')
@@ -2930,7 +2927,7 @@ class $KnowledgeTagLinkTable extends KnowledgeTagLink
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES knowledge_table (id)',
+      'REFERENCES knowledge (id)',
     ),
   );
   static const VerificationMeta _tagIDMeta = const VerificationMeta('tagID');
@@ -5522,6 +5519,567 @@ class AnswerPicsLinkCompanion extends UpdateCompanion<AnswerPicsLinkData> {
   }
 }
 
+class $MistakeAnalysisTable extends MistakeAnalysis
+    with TableInfo<$MistakeAnalysisTable, MistakeAnalysi> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MistakeAnalysisTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'UNIQUE REFERENCES mistakes (id)',
+    ),
+  );
+  static const VerificationMeta _bestAnswerMeta = const VerificationMeta(
+    'bestAnswer',
+  );
+  @override
+  late final GeneratedColumn<int> bestAnswer = GeneratedColumn<int>(
+    'best_answer',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES answers (id)',
+    ),
+  );
+  static const VerificationMeta _reasonMeta = const VerificationMeta('reason');
+  @override
+  late final GeneratedColumn<String> reason = GeneratedColumn<String>(
+    'reason',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _analysisMeta = const VerificationMeta(
+    'analysis',
+  );
+  @override
+  late final GeneratedColumn<String> analysis = GeneratedColumn<String>(
+    'analysis',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, bestAnswer, reason, analysis];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'mistake_analysis';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<MistakeAnalysi> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('best_answer')) {
+      context.handle(
+        _bestAnswerMeta,
+        bestAnswer.isAcceptableOrUnknown(data['best_answer']!, _bestAnswerMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bestAnswerMeta);
+    }
+    if (data.containsKey('reason')) {
+      context.handle(
+        _reasonMeta,
+        reason.isAcceptableOrUnknown(data['reason']!, _reasonMeta),
+      );
+    }
+    if (data.containsKey('analysis')) {
+      context.handle(
+        _analysisMeta,
+        analysis.isAcceptableOrUnknown(data['analysis']!, _analysisMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => const {};
+  @override
+  MistakeAnalysi map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MistakeAnalysi(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      bestAnswer: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}best_answer'],
+      )!,
+      reason: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}reason'],
+      ),
+      analysis: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}analysis'],
+      ),
+    );
+  }
+
+  @override
+  $MistakeAnalysisTable createAlias(String alias) {
+    return $MistakeAnalysisTable(attachedDatabase, alias);
+  }
+}
+
+class MistakeAnalysi extends DataClass implements Insertable<MistakeAnalysi> {
+  final int id;
+  final int bestAnswer;
+
+  /// 该字段为错因分析
+  final String? reason;
+
+  /// 该字段为易错点分析
+  final String? analysis;
+  const MistakeAnalysi({
+    required this.id,
+    required this.bestAnswer,
+    this.reason,
+    this.analysis,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['best_answer'] = Variable<int>(bestAnswer);
+    if (!nullToAbsent || reason != null) {
+      map['reason'] = Variable<String>(reason);
+    }
+    if (!nullToAbsent || analysis != null) {
+      map['analysis'] = Variable<String>(analysis);
+    }
+    return map;
+  }
+
+  MistakeAnalysisCompanion toCompanion(bool nullToAbsent) {
+    return MistakeAnalysisCompanion(
+      id: Value(id),
+      bestAnswer: Value(bestAnswer),
+      reason: reason == null && nullToAbsent
+          ? const Value.absent()
+          : Value(reason),
+      analysis: analysis == null && nullToAbsent
+          ? const Value.absent()
+          : Value(analysis),
+    );
+  }
+
+  factory MistakeAnalysi.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MistakeAnalysi(
+      id: serializer.fromJson<int>(json['id']),
+      bestAnswer: serializer.fromJson<int>(json['bestAnswer']),
+      reason: serializer.fromJson<String?>(json['reason']),
+      analysis: serializer.fromJson<String?>(json['analysis']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'bestAnswer': serializer.toJson<int>(bestAnswer),
+      'reason': serializer.toJson<String?>(reason),
+      'analysis': serializer.toJson<String?>(analysis),
+    };
+  }
+
+  MistakeAnalysi copyWith({
+    int? id,
+    int? bestAnswer,
+    Value<String?> reason = const Value.absent(),
+    Value<String?> analysis = const Value.absent(),
+  }) => MistakeAnalysi(
+    id: id ?? this.id,
+    bestAnswer: bestAnswer ?? this.bestAnswer,
+    reason: reason.present ? reason.value : this.reason,
+    analysis: analysis.present ? analysis.value : this.analysis,
+  );
+  MistakeAnalysi copyWithCompanion(MistakeAnalysisCompanion data) {
+    return MistakeAnalysi(
+      id: data.id.present ? data.id.value : this.id,
+      bestAnswer: data.bestAnswer.present
+          ? data.bestAnswer.value
+          : this.bestAnswer,
+      reason: data.reason.present ? data.reason.value : this.reason,
+      analysis: data.analysis.present ? data.analysis.value : this.analysis,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MistakeAnalysi(')
+          ..write('id: $id, ')
+          ..write('bestAnswer: $bestAnswer, ')
+          ..write('reason: $reason, ')
+          ..write('analysis: $analysis')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, bestAnswer, reason, analysis);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MistakeAnalysi &&
+          other.id == this.id &&
+          other.bestAnswer == this.bestAnswer &&
+          other.reason == this.reason &&
+          other.analysis == this.analysis);
+}
+
+class MistakeAnalysisCompanion extends UpdateCompanion<MistakeAnalysi> {
+  final Value<int> id;
+  final Value<int> bestAnswer;
+  final Value<String?> reason;
+  final Value<String?> analysis;
+  final Value<int> rowid;
+  const MistakeAnalysisCompanion({
+    this.id = const Value.absent(),
+    this.bestAnswer = const Value.absent(),
+    this.reason = const Value.absent(),
+    this.analysis = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  MistakeAnalysisCompanion.insert({
+    required int id,
+    required int bestAnswer,
+    this.reason = const Value.absent(),
+    this.analysis = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       bestAnswer = Value(bestAnswer);
+  static Insertable<MistakeAnalysi> custom({
+    Expression<int>? id,
+    Expression<int>? bestAnswer,
+    Expression<String>? reason,
+    Expression<String>? analysis,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (bestAnswer != null) 'best_answer': bestAnswer,
+      if (reason != null) 'reason': reason,
+      if (analysis != null) 'analysis': analysis,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  MistakeAnalysisCompanion copyWith({
+    Value<int>? id,
+    Value<int>? bestAnswer,
+    Value<String?>? reason,
+    Value<String?>? analysis,
+    Value<int>? rowid,
+  }) {
+    return MistakeAnalysisCompanion(
+      id: id ?? this.id,
+      bestAnswer: bestAnswer ?? this.bestAnswer,
+      reason: reason ?? this.reason,
+      analysis: analysis ?? this.analysis,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (bestAnswer.present) {
+      map['best_answer'] = Variable<int>(bestAnswer.value);
+    }
+    if (reason.present) {
+      map['reason'] = Variable<String>(reason.value);
+    }
+    if (analysis.present) {
+      map['analysis'] = Variable<String>(analysis.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MistakeAnalysisCompanion(')
+          ..write('id: $id, ')
+          ..write('bestAnswer: $bestAnswer, ')
+          ..write('reason: $reason, ')
+          ..write('analysis: $analysis, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $MistakeKnowledgeLinkTable extends MistakeKnowledgeLink
+    with TableInfo<$MistakeKnowledgeLinkTable, MistakeKnowledgeLinkData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MistakeKnowledgeLinkTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _mistakeIdMeta = const VerificationMeta(
+    'mistakeId',
+  );
+  @override
+  late final GeneratedColumn<int> mistakeId = GeneratedColumn<int>(
+    'mistake_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES mistakes (id)',
+    ),
+  );
+  static const VerificationMeta _knowledgeIdMeta = const VerificationMeta(
+    'knowledgeId',
+  );
+  @override
+  late final GeneratedColumn<int> knowledgeId = GeneratedColumn<int>(
+    'knowledge_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES knowledge (id)',
+    ),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [mistakeId, knowledgeId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'mistake_knowledge_link';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<MistakeKnowledgeLinkData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('mistake_id')) {
+      context.handle(
+        _mistakeIdMeta,
+        mistakeId.isAcceptableOrUnknown(data['mistake_id']!, _mistakeIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_mistakeIdMeta);
+    }
+    if (data.containsKey('knowledge_id')) {
+      context.handle(
+        _knowledgeIdMeta,
+        knowledgeId.isAcceptableOrUnknown(
+          data['knowledge_id']!,
+          _knowledgeIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_knowledgeIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {mistakeId, knowledgeId};
+  @override
+  MistakeKnowledgeLinkData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MistakeKnowledgeLinkData(
+      mistakeId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}mistake_id'],
+      )!,
+      knowledgeId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}knowledge_id'],
+      )!,
+    );
+  }
+
+  @override
+  $MistakeKnowledgeLinkTable createAlias(String alias) {
+    return $MistakeKnowledgeLinkTable(attachedDatabase, alias);
+  }
+}
+
+class MistakeKnowledgeLinkData extends DataClass
+    implements Insertable<MistakeKnowledgeLinkData> {
+  final int mistakeId;
+  final int knowledgeId;
+  const MistakeKnowledgeLinkData({
+    required this.mistakeId,
+    required this.knowledgeId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['mistake_id'] = Variable<int>(mistakeId);
+    map['knowledge_id'] = Variable<int>(knowledgeId);
+    return map;
+  }
+
+  MistakeKnowledgeLinkCompanion toCompanion(bool nullToAbsent) {
+    return MistakeKnowledgeLinkCompanion(
+      mistakeId: Value(mistakeId),
+      knowledgeId: Value(knowledgeId),
+    );
+  }
+
+  factory MistakeKnowledgeLinkData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MistakeKnowledgeLinkData(
+      mistakeId: serializer.fromJson<int>(json['mistakeId']),
+      knowledgeId: serializer.fromJson<int>(json['knowledgeId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'mistakeId': serializer.toJson<int>(mistakeId),
+      'knowledgeId': serializer.toJson<int>(knowledgeId),
+    };
+  }
+
+  MistakeKnowledgeLinkData copyWith({int? mistakeId, int? knowledgeId}) =>
+      MistakeKnowledgeLinkData(
+        mistakeId: mistakeId ?? this.mistakeId,
+        knowledgeId: knowledgeId ?? this.knowledgeId,
+      );
+  MistakeKnowledgeLinkData copyWithCompanion(
+    MistakeKnowledgeLinkCompanion data,
+  ) {
+    return MistakeKnowledgeLinkData(
+      mistakeId: data.mistakeId.present ? data.mistakeId.value : this.mistakeId,
+      knowledgeId: data.knowledgeId.present
+          ? data.knowledgeId.value
+          : this.knowledgeId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MistakeKnowledgeLinkData(')
+          ..write('mistakeId: $mistakeId, ')
+          ..write('knowledgeId: $knowledgeId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(mistakeId, knowledgeId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MistakeKnowledgeLinkData &&
+          other.mistakeId == this.mistakeId &&
+          other.knowledgeId == this.knowledgeId);
+}
+
+class MistakeKnowledgeLinkCompanion
+    extends UpdateCompanion<MistakeKnowledgeLinkData> {
+  final Value<int> mistakeId;
+  final Value<int> knowledgeId;
+  final Value<int> rowid;
+  const MistakeKnowledgeLinkCompanion({
+    this.mistakeId = const Value.absent(),
+    this.knowledgeId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  MistakeKnowledgeLinkCompanion.insert({
+    required int mistakeId,
+    required int knowledgeId,
+    this.rowid = const Value.absent(),
+  }) : mistakeId = Value(mistakeId),
+       knowledgeId = Value(knowledgeId);
+  static Insertable<MistakeKnowledgeLinkData> custom({
+    Expression<int>? mistakeId,
+    Expression<int>? knowledgeId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (mistakeId != null) 'mistake_id': mistakeId,
+      if (knowledgeId != null) 'knowledge_id': knowledgeId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  MistakeKnowledgeLinkCompanion copyWith({
+    Value<int>? mistakeId,
+    Value<int>? knowledgeId,
+    Value<int>? rowid,
+  }) {
+    return MistakeKnowledgeLinkCompanion(
+      mistakeId: mistakeId ?? this.mistakeId,
+      knowledgeId: knowledgeId ?? this.knowledgeId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (mistakeId.present) {
+      map['mistake_id'] = Variable<int>(mistakeId.value);
+    }
+    if (knowledgeId.present) {
+      map['knowledge_id'] = Variable<int>(knowledgeId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MistakeKnowledgeLinkCompanion(')
+          ..write('mistakeId: $mistakeId, ')
+          ..write('knowledgeId: $knowledgeId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -5532,9 +6090,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $PhrasesTable phrases = $PhrasesTable(this);
   late final $PhrasesTagLinkTable phrasesTagLink = $PhrasesTagLinkTable(this);
   late final $PhraseLogsTable phraseLogs = $PhraseLogsTable(this);
-  late final $KnowledgeTableTable knowledgeTable = $KnowledgeTableTable(this);
-  late final $KnowledgeLogTableTable knowledgeLogTable =
-      $KnowledgeLogTableTable(this);
+  late final $KnowledgeTable knowledge = $KnowledgeTable(this);
+  late final $KnowledgeLogsTable knowledgeLogs = $KnowledgeLogsTable(this);
   late final $KnowledgeTagLinkTable knowledgeTagLink = $KnowledgeTagLinkTable(
     this,
   );
@@ -5552,11 +6109,17 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     this,
   );
   late final $AnswerPicsLinkTable answerPicsLink = $AnswerPicsLinkTable(this);
+  late final $MistakeAnalysisTable mistakeAnalysis = $MistakeAnalysisTable(
+    this,
+  );
+  late final $MistakeKnowledgeLinkTable mistakeKnowledgeLink =
+      $MistakeKnowledgeLinkTable(this);
   late final TagsDao tagsDao = TagsDao(this as AppDatabase);
   late final WordsDao wordsDao = WordsDao(this as AppDatabase);
   late final KnowledgeDao knowledgeDao = KnowledgeDao(this as AppDatabase);
   late final MistakesDao mistakesDao = MistakesDao(this as AppDatabase);
   late final PhrasesDao phrasesDao = PhrasesDao(this as AppDatabase);
+  late final ImagesDao imagesDao = ImagesDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -5569,8 +6132,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     phrases,
     phrasesTagLink,
     phraseLogs,
-    knowledgeTable,
-    knowledgeLogTable,
+    knowledge,
+    knowledgeLogs,
     knowledgeTagLink,
     mistakes,
     mistakesTagLink,
@@ -5580,6 +6143,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     answers,
     answersTagsLink,
     answerPicsLink,
+    mistakeAnalysis,
+    mistakeKnowledgeLink,
   ];
 }
 
@@ -8588,16 +9153,16 @@ typedef $$PhraseLogsTableProcessedTableManager =
       PhraseLog,
       PrefetchHooks Function({bool phraseID})
     >;
-typedef $$KnowledgeTableTableCreateCompanionBuilder =
-    KnowledgeTableCompanion Function({
+typedef $$KnowledgeTableCreateCompanionBuilder =
+    KnowledgeCompanion Function({
       Value<int> id,
       required Subject subject,
       required String head,
       required String body,
       Value<DateTime> createdAt,
     });
-typedef $$KnowledgeTableTableUpdateCompanionBuilder =
-    KnowledgeTableCompanion Function({
+typedef $$KnowledgeTableUpdateCompanionBuilder =
+    KnowledgeCompanion Function({
       Value<int> id,
       Value<Subject> subject,
       Value<String> head,
@@ -8605,41 +9170,26 @@ typedef $$KnowledgeTableTableUpdateCompanionBuilder =
       Value<DateTime> createdAt,
     });
 
-final class $$KnowledgeTableTableReferences
-    extends
-        BaseReferences<
-          _$AppDatabase,
-          $KnowledgeTableTable,
-          KnowledgeTableData
-        > {
-  $$KnowledgeTableTableReferences(
-    super.$_db,
-    super.$_table,
-    super.$_typedResult,
+final class $$KnowledgeTableReferences
+    extends BaseReferences<_$AppDatabase, $KnowledgeTable, KnowledgeData> {
+  $$KnowledgeTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$KnowledgeLogsTable, List<KnowledgeLog>>
+  _knowledgeLogsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.knowledgeLogs,
+    aliasName: $_aliasNameGenerator(
+      db.knowledge.id,
+      db.knowledgeLogs.knowledgeID,
+    ),
   );
 
-  static MultiTypedResultKey<
-    $KnowledgeLogTableTable,
-    List<KnowledgeLogTableData>
-  >
-  _knowledgeLogTableRefsTable(_$AppDatabase db) =>
-      MultiTypedResultKey.fromTable(
-        db.knowledgeLogTable,
-        aliasName: $_aliasNameGenerator(
-          db.knowledgeTable.id,
-          db.knowledgeLogTable.knowledgeID,
-        ),
-      );
-
-  $$KnowledgeLogTableTableProcessedTableManager get knowledgeLogTableRefs {
-    final manager = $$KnowledgeLogTableTableTableManager(
+  $$KnowledgeLogsTableProcessedTableManager get knowledgeLogsRefs {
+    final manager = $$KnowledgeLogsTableTableManager(
       $_db,
-      $_db.knowledgeLogTable,
+      $_db.knowledgeLogs,
     ).filter((f) => f.knowledgeID.id.sqlEquals($_itemColumn<int>('id')!));
 
-    final cache = $_typedResult.readTableOrNull(
-      _knowledgeLogTableRefsTable($_db),
-    );
+    final cache = $_typedResult.readTableOrNull(_knowledgeLogsRefsTable($_db));
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -8649,7 +9199,7 @@ final class $$KnowledgeTableTableReferences
   _knowledgeTagLinkRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.knowledgeTagLink,
     aliasName: $_aliasNameGenerator(
-      db.knowledgeTable.id,
+      db.knowledge.id,
       db.knowledgeTagLink.knowledgeID,
     ),
   );
@@ -8667,11 +9217,39 @@ final class $$KnowledgeTableTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<
+    $MistakeKnowledgeLinkTable,
+    List<MistakeKnowledgeLinkData>
+  >
+  _mistakeKnowledgeLinkRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.mistakeKnowledgeLink,
+        aliasName: $_aliasNameGenerator(
+          db.knowledge.id,
+          db.mistakeKnowledgeLink.knowledgeId,
+        ),
+      );
+
+  $$MistakeKnowledgeLinkTableProcessedTableManager
+  get mistakeKnowledgeLinkRefs {
+    final manager = $$MistakeKnowledgeLinkTableTableManager(
+      $_db,
+      $_db.mistakeKnowledgeLink,
+    ).filter((f) => f.knowledgeId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _mistakeKnowledgeLinkRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
-class $$KnowledgeTableTableFilterComposer
-    extends Composer<_$AppDatabase, $KnowledgeTableTable> {
-  $$KnowledgeTableTableFilterComposer({
+class $$KnowledgeTableFilterComposer
+    extends Composer<_$AppDatabase, $KnowledgeTable> {
+  $$KnowledgeTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -8704,22 +9282,22 @@ class $$KnowledgeTableTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  Expression<bool> knowledgeLogTableRefs(
-    Expression<bool> Function($$KnowledgeLogTableTableFilterComposer f) f,
+  Expression<bool> knowledgeLogsRefs(
+    Expression<bool> Function($$KnowledgeLogsTableFilterComposer f) f,
   ) {
-    final $$KnowledgeLogTableTableFilterComposer composer = $composerBuilder(
+    final $$KnowledgeLogsTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.knowledgeLogTable,
+      referencedTable: $db.knowledgeLogs,
       getReferencedColumn: (t) => t.knowledgeID,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$KnowledgeLogTableTableFilterComposer(
+          }) => $$KnowledgeLogsTableFilterComposer(
             $db: $db,
-            $table: $db.knowledgeLogTable,
+            $table: $db.knowledgeLogs,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -8753,11 +9331,36 @@ class $$KnowledgeTableTableFilterComposer
     );
     return f(composer);
   }
+
+  Expression<bool> mistakeKnowledgeLinkRefs(
+    Expression<bool> Function($$MistakeKnowledgeLinkTableFilterComposer f) f,
+  ) {
+    final $$MistakeKnowledgeLinkTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.mistakeKnowledgeLink,
+      getReferencedColumn: (t) => t.knowledgeId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MistakeKnowledgeLinkTableFilterComposer(
+            $db: $db,
+            $table: $db.mistakeKnowledgeLink,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
-class $$KnowledgeTableTableOrderingComposer
-    extends Composer<_$AppDatabase, $KnowledgeTableTable> {
-  $$KnowledgeTableTableOrderingComposer({
+class $$KnowledgeTableOrderingComposer
+    extends Composer<_$AppDatabase, $KnowledgeTable> {
+  $$KnowledgeTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -8790,9 +9393,9 @@ class $$KnowledgeTableTableOrderingComposer
   );
 }
 
-class $$KnowledgeTableTableAnnotationComposer
-    extends Composer<_$AppDatabase, $KnowledgeTableTable> {
-  $$KnowledgeTableTableAnnotationComposer({
+class $$KnowledgeTableAnnotationComposer
+    extends Composer<_$AppDatabase, $KnowledgeTable> {
+  $$KnowledgeTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -8814,29 +9417,28 @@ class $$KnowledgeTableTableAnnotationComposer
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
-  Expression<T> knowledgeLogTableRefs<T extends Object>(
-    Expression<T> Function($$KnowledgeLogTableTableAnnotationComposer a) f,
+  Expression<T> knowledgeLogsRefs<T extends Object>(
+    Expression<T> Function($$KnowledgeLogsTableAnnotationComposer a) f,
   ) {
-    final $$KnowledgeLogTableTableAnnotationComposer composer =
-        $composerBuilder(
-          composer: this,
-          getCurrentColumn: (t) => t.id,
-          referencedTable: $db.knowledgeLogTable,
-          getReferencedColumn: (t) => t.knowledgeID,
-          builder:
-              (
-                joinBuilder, {
-                $addJoinBuilderToRootComposer,
+    final $$KnowledgeLogsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.knowledgeLogs,
+      getReferencedColumn: (t) => t.knowledgeID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$KnowledgeLogsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.knowledgeLogs,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
                 $removeJoinBuilderFromRootComposer,
-              }) => $$KnowledgeLogTableTableAnnotationComposer(
-                $db: $db,
-                $table: $db.knowledgeLogTable,
-                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                joinBuilder: joinBuilder,
-                $removeJoinBuilderFromRootComposer:
-                    $removeJoinBuilderFromRootComposer,
-              ),
-        );
+          ),
+    );
     return f(composer);
   }
 
@@ -8864,39 +9466,64 @@ class $$KnowledgeTableTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> mistakeKnowledgeLinkRefs<T extends Object>(
+    Expression<T> Function($$MistakeKnowledgeLinkTableAnnotationComposer a) f,
+  ) {
+    final $$MistakeKnowledgeLinkTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.mistakeKnowledgeLink,
+          getReferencedColumn: (t) => t.knowledgeId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$MistakeKnowledgeLinkTableAnnotationComposer(
+                $db: $db,
+                $table: $db.mistakeKnowledgeLink,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
-class $$KnowledgeTableTableTableManager
+class $$KnowledgeTableTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $KnowledgeTableTable,
-          KnowledgeTableData,
-          $$KnowledgeTableTableFilterComposer,
-          $$KnowledgeTableTableOrderingComposer,
-          $$KnowledgeTableTableAnnotationComposer,
-          $$KnowledgeTableTableCreateCompanionBuilder,
-          $$KnowledgeTableTableUpdateCompanionBuilder,
-          (KnowledgeTableData, $$KnowledgeTableTableReferences),
-          KnowledgeTableData,
+          $KnowledgeTable,
+          KnowledgeData,
+          $$KnowledgeTableFilterComposer,
+          $$KnowledgeTableOrderingComposer,
+          $$KnowledgeTableAnnotationComposer,
+          $$KnowledgeTableCreateCompanionBuilder,
+          $$KnowledgeTableUpdateCompanionBuilder,
+          (KnowledgeData, $$KnowledgeTableReferences),
+          KnowledgeData,
           PrefetchHooks Function({
-            bool knowledgeLogTableRefs,
+            bool knowledgeLogsRefs,
             bool knowledgeTagLinkRefs,
+            bool mistakeKnowledgeLinkRefs,
           })
         > {
-  $$KnowledgeTableTableTableManager(
-    _$AppDatabase db,
-    $KnowledgeTableTable table,
-  ) : super(
+  $$KnowledgeTableTableManager(_$AppDatabase db, $KnowledgeTable table)
+    : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$KnowledgeTableTableFilterComposer($db: db, $table: table),
+              $$KnowledgeTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$KnowledgeTableTableOrderingComposer($db: db, $table: table),
+              $$KnowledgeTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$KnowledgeTableTableAnnotationComposer($db: db, $table: table),
+              $$KnowledgeTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
@@ -8904,7 +9531,7 @@ class $$KnowledgeTableTableTableManager
                 Value<String> head = const Value.absent(),
                 Value<String> body = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
-              }) => KnowledgeTableCompanion(
+              }) => KnowledgeCompanion(
                 id: id,
                 subject: subject,
                 head: head,
@@ -8918,7 +9545,7 @@ class $$KnowledgeTableTableTableManager
                 required String head,
                 required String body,
                 Value<DateTime> createdAt = const Value.absent(),
-              }) => KnowledgeTableCompanion.insert(
+              }) => KnowledgeCompanion.insert(
                 id: id,
                 subject: subject,
                 head: head,
@@ -8929,36 +9556,41 @@ class $$KnowledgeTableTableTableManager
               .map(
                 (e) => (
                   e.readTable(table),
-                  $$KnowledgeTableTableReferences(db, table, e),
+                  $$KnowledgeTableReferences(db, table, e),
                 ),
               )
               .toList(),
           prefetchHooksCallback:
-              ({knowledgeLogTableRefs = false, knowledgeTagLinkRefs = false}) {
+              ({
+                knowledgeLogsRefs = false,
+                knowledgeTagLinkRefs = false,
+                mistakeKnowledgeLinkRefs = false,
+              }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
-                    if (knowledgeLogTableRefs) db.knowledgeLogTable,
+                    if (knowledgeLogsRefs) db.knowledgeLogs,
                     if (knowledgeTagLinkRefs) db.knowledgeTagLink,
+                    if (mistakeKnowledgeLinkRefs) db.mistakeKnowledgeLink,
                   ],
                   addJoins: null,
                   getPrefetchedDataCallback: (items) async {
                     return [
-                      if (knowledgeLogTableRefs)
+                      if (knowledgeLogsRefs)
                         await $_getPrefetchedData<
-                          KnowledgeTableData,
-                          $KnowledgeTableTable,
-                          KnowledgeLogTableData
+                          KnowledgeData,
+                          $KnowledgeTable,
+                          KnowledgeLog
                         >(
                           currentTable: table,
-                          referencedTable: $$KnowledgeTableTableReferences
-                              ._knowledgeLogTableRefsTable(db),
+                          referencedTable: $$KnowledgeTableReferences
+                              ._knowledgeLogsRefsTable(db),
                           managerFromTypedResult: (p0) =>
-                              $$KnowledgeTableTableReferences(
+                              $$KnowledgeTableReferences(
                                 db,
                                 table,
                                 p0,
-                              ).knowledgeLogTableRefs,
+                              ).knowledgeLogsRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
                                 (e) => e.knowledgeID == item.id,
@@ -8967,15 +9599,15 @@ class $$KnowledgeTableTableTableManager
                         ),
                       if (knowledgeTagLinkRefs)
                         await $_getPrefetchedData<
-                          KnowledgeTableData,
-                          $KnowledgeTableTable,
+                          KnowledgeData,
+                          $KnowledgeTable,
                           KnowledgeTagLinkData
                         >(
                           currentTable: table,
-                          referencedTable: $$KnowledgeTableTableReferences
+                          referencedTable: $$KnowledgeTableReferences
                               ._knowledgeTagLinkRefsTable(db),
                           managerFromTypedResult: (p0) =>
-                              $$KnowledgeTableTableReferences(
+                              $$KnowledgeTableReferences(
                                 db,
                                 table,
                                 p0,
@@ -8983,6 +9615,27 @@ class $$KnowledgeTableTableTableManager
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
                                 (e) => e.knowledgeID == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (mistakeKnowledgeLinkRefs)
+                        await $_getPrefetchedData<
+                          KnowledgeData,
+                          $KnowledgeTable,
+                          MistakeKnowledgeLinkData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$KnowledgeTableReferences
+                              ._mistakeKnowledgeLinkRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$KnowledgeTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).mistakeKnowledgeLinkRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.knowledgeId == item.id,
                               ),
                           typedResults: items,
                         ),
@@ -8994,33 +9647,34 @@ class $$KnowledgeTableTableTableManager
       );
 }
 
-typedef $$KnowledgeTableTableProcessedTableManager =
+typedef $$KnowledgeTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $KnowledgeTableTable,
-      KnowledgeTableData,
-      $$KnowledgeTableTableFilterComposer,
-      $$KnowledgeTableTableOrderingComposer,
-      $$KnowledgeTableTableAnnotationComposer,
-      $$KnowledgeTableTableCreateCompanionBuilder,
-      $$KnowledgeTableTableUpdateCompanionBuilder,
-      (KnowledgeTableData, $$KnowledgeTableTableReferences),
-      KnowledgeTableData,
+      $KnowledgeTable,
+      KnowledgeData,
+      $$KnowledgeTableFilterComposer,
+      $$KnowledgeTableOrderingComposer,
+      $$KnowledgeTableAnnotationComposer,
+      $$KnowledgeTableCreateCompanionBuilder,
+      $$KnowledgeTableUpdateCompanionBuilder,
+      (KnowledgeData, $$KnowledgeTableReferences),
+      KnowledgeData,
       PrefetchHooks Function({
-        bool knowledgeLogTableRefs,
+        bool knowledgeLogsRefs,
         bool knowledgeTagLinkRefs,
+        bool mistakeKnowledgeLinkRefs,
       })
     >;
-typedef $$KnowledgeLogTableTableCreateCompanionBuilder =
-    KnowledgeLogTableCompanion Function({
+typedef $$KnowledgeLogsTableCreateCompanionBuilder =
+    KnowledgeLogsCompanion Function({
       Value<int> id,
       required int knowledgeID,
       Value<DateTime> time,
       required KnowledgeLogType type,
       Value<String?> notes,
     });
-typedef $$KnowledgeLogTableTableUpdateCompanionBuilder =
-    KnowledgeLogTableCompanion Function({
+typedef $$KnowledgeLogsTableUpdateCompanionBuilder =
+    KnowledgeLogsCompanion Function({
       Value<int> id,
       Value<int> knowledgeID,
       Value<DateTime> time,
@@ -9028,33 +9682,25 @@ typedef $$KnowledgeLogTableTableUpdateCompanionBuilder =
       Value<String?> notes,
     });
 
-final class $$KnowledgeLogTableTableReferences
-    extends
-        BaseReferences<
-          _$AppDatabase,
-          $KnowledgeLogTableTable,
-          KnowledgeLogTableData
-        > {
-  $$KnowledgeLogTableTableReferences(
+final class $$KnowledgeLogsTableReferences
+    extends BaseReferences<_$AppDatabase, $KnowledgeLogsTable, KnowledgeLog> {
+  $$KnowledgeLogsTableReferences(
     super.$_db,
     super.$_table,
     super.$_typedResult,
   );
 
-  static $KnowledgeTableTable _knowledgeIDTable(_$AppDatabase db) =>
-      db.knowledgeTable.createAlias(
-        $_aliasNameGenerator(
-          db.knowledgeLogTable.knowledgeID,
-          db.knowledgeTable.id,
-        ),
+  static $KnowledgeTable _knowledgeIDTable(_$AppDatabase db) =>
+      db.knowledge.createAlias(
+        $_aliasNameGenerator(db.knowledgeLogs.knowledgeID, db.knowledge.id),
       );
 
-  $$KnowledgeTableTableProcessedTableManager get knowledgeID {
+  $$KnowledgeTableProcessedTableManager get knowledgeID {
     final $_column = $_itemColumn<int>('knowledge_i_d')!;
 
-    final manager = $$KnowledgeTableTableTableManager(
+    final manager = $$KnowledgeTableTableManager(
       $_db,
-      $_db.knowledgeTable,
+      $_db.knowledge,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_knowledgeIDTable($_db));
     if (item == null) return manager;
@@ -9064,9 +9710,9 @@ final class $$KnowledgeLogTableTableReferences
   }
 }
 
-class $$KnowledgeLogTableTableFilterComposer
-    extends Composer<_$AppDatabase, $KnowledgeLogTableTable> {
-  $$KnowledgeLogTableTableFilterComposer({
+class $$KnowledgeLogsTableFilterComposer
+    extends Composer<_$AppDatabase, $KnowledgeLogsTable> {
+  $$KnowledgeLogsTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -9094,20 +9740,20 @@ class $$KnowledgeLogTableTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  $$KnowledgeTableTableFilterComposer get knowledgeID {
-    final $$KnowledgeTableTableFilterComposer composer = $composerBuilder(
+  $$KnowledgeTableFilterComposer get knowledgeID {
+    final $$KnowledgeTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.knowledgeID,
-      referencedTable: $db.knowledgeTable,
+      referencedTable: $db.knowledge,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$KnowledgeTableTableFilterComposer(
+          }) => $$KnowledgeTableFilterComposer(
             $db: $db,
-            $table: $db.knowledgeTable,
+            $table: $db.knowledge,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -9118,9 +9764,9 @@ class $$KnowledgeLogTableTableFilterComposer
   }
 }
 
-class $$KnowledgeLogTableTableOrderingComposer
-    extends Composer<_$AppDatabase, $KnowledgeLogTableTable> {
-  $$KnowledgeLogTableTableOrderingComposer({
+class $$KnowledgeLogsTableOrderingComposer
+    extends Composer<_$AppDatabase, $KnowledgeLogsTable> {
+  $$KnowledgeLogsTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -9147,20 +9793,20 @@ class $$KnowledgeLogTableTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  $$KnowledgeTableTableOrderingComposer get knowledgeID {
-    final $$KnowledgeTableTableOrderingComposer composer = $composerBuilder(
+  $$KnowledgeTableOrderingComposer get knowledgeID {
+    final $$KnowledgeTableOrderingComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.knowledgeID,
-      referencedTable: $db.knowledgeTable,
+      referencedTable: $db.knowledge,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$KnowledgeTableTableOrderingComposer(
+          }) => $$KnowledgeTableOrderingComposer(
             $db: $db,
-            $table: $db.knowledgeTable,
+            $table: $db.knowledge,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -9171,9 +9817,9 @@ class $$KnowledgeLogTableTableOrderingComposer
   }
 }
 
-class $$KnowledgeLogTableTableAnnotationComposer
-    extends Composer<_$AppDatabase, $KnowledgeLogTableTable> {
-  $$KnowledgeLogTableTableAnnotationComposer({
+class $$KnowledgeLogsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $KnowledgeLogsTable> {
+  $$KnowledgeLogsTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -9192,20 +9838,20 @@ class $$KnowledgeLogTableTableAnnotationComposer
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
 
-  $$KnowledgeTableTableAnnotationComposer get knowledgeID {
-    final $$KnowledgeTableTableAnnotationComposer composer = $composerBuilder(
+  $$KnowledgeTableAnnotationComposer get knowledgeID {
+    final $$KnowledgeTableAnnotationComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.knowledgeID,
-      referencedTable: $db.knowledgeTable,
+      referencedTable: $db.knowledge,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$KnowledgeTableTableAnnotationComposer(
+          }) => $$KnowledgeTableAnnotationComposer(
             $db: $db,
-            $table: $db.knowledgeTable,
+            $table: $db.knowledge,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -9216,37 +9862,32 @@ class $$KnowledgeLogTableTableAnnotationComposer
   }
 }
 
-class $$KnowledgeLogTableTableTableManager
+class $$KnowledgeLogsTableTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $KnowledgeLogTableTable,
-          KnowledgeLogTableData,
-          $$KnowledgeLogTableTableFilterComposer,
-          $$KnowledgeLogTableTableOrderingComposer,
-          $$KnowledgeLogTableTableAnnotationComposer,
-          $$KnowledgeLogTableTableCreateCompanionBuilder,
-          $$KnowledgeLogTableTableUpdateCompanionBuilder,
-          (KnowledgeLogTableData, $$KnowledgeLogTableTableReferences),
-          KnowledgeLogTableData,
+          $KnowledgeLogsTable,
+          KnowledgeLog,
+          $$KnowledgeLogsTableFilterComposer,
+          $$KnowledgeLogsTableOrderingComposer,
+          $$KnowledgeLogsTableAnnotationComposer,
+          $$KnowledgeLogsTableCreateCompanionBuilder,
+          $$KnowledgeLogsTableUpdateCompanionBuilder,
+          (KnowledgeLog, $$KnowledgeLogsTableReferences),
+          KnowledgeLog,
           PrefetchHooks Function({bool knowledgeID})
         > {
-  $$KnowledgeLogTableTableTableManager(
-    _$AppDatabase db,
-    $KnowledgeLogTableTable table,
-  ) : super(
+  $$KnowledgeLogsTableTableManager(_$AppDatabase db, $KnowledgeLogsTable table)
+    : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$KnowledgeLogTableTableFilterComposer($db: db, $table: table),
+              $$KnowledgeLogsTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$KnowledgeLogTableTableOrderingComposer($db: db, $table: table),
+              $$KnowledgeLogsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$KnowledgeLogTableTableAnnotationComposer(
-                $db: db,
-                $table: table,
-              ),
+              $$KnowledgeLogsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
@@ -9254,7 +9895,7 @@ class $$KnowledgeLogTableTableTableManager
                 Value<DateTime> time = const Value.absent(),
                 Value<KnowledgeLogType> type = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
-              }) => KnowledgeLogTableCompanion(
+              }) => KnowledgeLogsCompanion(
                 id: id,
                 knowledgeID: knowledgeID,
                 time: time,
@@ -9268,7 +9909,7 @@ class $$KnowledgeLogTableTableTableManager
                 Value<DateTime> time = const Value.absent(),
                 required KnowledgeLogType type,
                 Value<String?> notes = const Value.absent(),
-              }) => KnowledgeLogTableCompanion.insert(
+              }) => KnowledgeLogsCompanion.insert(
                 id: id,
                 knowledgeID: knowledgeID,
                 time: time,
@@ -9279,7 +9920,7 @@ class $$KnowledgeLogTableTableTableManager
               .map(
                 (e) => (
                   e.readTable(table),
-                  $$KnowledgeLogTableTableReferences(db, table, e),
+                  $$KnowledgeLogsTableReferences(db, table, e),
                 ),
               )
               .toList(),
@@ -9308,13 +9949,11 @@ class $$KnowledgeLogTableTableTableManager
                           state.withJoin(
                                 currentTable: table,
                                 currentColumn: table.knowledgeID,
-                                referencedTable:
-                                    $$KnowledgeLogTableTableReferences
-                                        ._knowledgeIDTable(db),
-                                referencedColumn:
-                                    $$KnowledgeLogTableTableReferences
-                                        ._knowledgeIDTable(db)
-                                        .id,
+                                referencedTable: $$KnowledgeLogsTableReferences
+                                    ._knowledgeIDTable(db),
+                                referencedColumn: $$KnowledgeLogsTableReferences
+                                    ._knowledgeIDTable(db)
+                                    .id,
                               )
                               as T;
                     }
@@ -9330,18 +9969,18 @@ class $$KnowledgeLogTableTableTableManager
       );
 }
 
-typedef $$KnowledgeLogTableTableProcessedTableManager =
+typedef $$KnowledgeLogsTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $KnowledgeLogTableTable,
-      KnowledgeLogTableData,
-      $$KnowledgeLogTableTableFilterComposer,
-      $$KnowledgeLogTableTableOrderingComposer,
-      $$KnowledgeLogTableTableAnnotationComposer,
-      $$KnowledgeLogTableTableCreateCompanionBuilder,
-      $$KnowledgeLogTableTableUpdateCompanionBuilder,
-      (KnowledgeLogTableData, $$KnowledgeLogTableTableReferences),
-      KnowledgeLogTableData,
+      $KnowledgeLogsTable,
+      KnowledgeLog,
+      $$KnowledgeLogsTableFilterComposer,
+      $$KnowledgeLogsTableOrderingComposer,
+      $$KnowledgeLogsTableAnnotationComposer,
+      $$KnowledgeLogsTableCreateCompanionBuilder,
+      $$KnowledgeLogsTableUpdateCompanionBuilder,
+      (KnowledgeLog, $$KnowledgeLogsTableReferences),
+      KnowledgeLog,
       PrefetchHooks Function({bool knowledgeID})
     >;
 typedef $$KnowledgeTagLinkTableCreateCompanionBuilder =
@@ -9370,20 +10009,17 @@ final class $$KnowledgeTagLinkTableReferences
     super.$_typedResult,
   );
 
-  static $KnowledgeTableTable _knowledgeIDTable(_$AppDatabase db) =>
-      db.knowledgeTable.createAlias(
-        $_aliasNameGenerator(
-          db.knowledgeTagLink.knowledgeID,
-          db.knowledgeTable.id,
-        ),
+  static $KnowledgeTable _knowledgeIDTable(_$AppDatabase db) =>
+      db.knowledge.createAlias(
+        $_aliasNameGenerator(db.knowledgeTagLink.knowledgeID, db.knowledge.id),
       );
 
-  $$KnowledgeTableTableProcessedTableManager get knowledgeID {
+  $$KnowledgeTableProcessedTableManager get knowledgeID {
     final $_column = $_itemColumn<int>('knowledge_i_d')!;
 
-    final manager = $$KnowledgeTableTableTableManager(
+    final manager = $$KnowledgeTableTableManager(
       $_db,
-      $_db.knowledgeTable,
+      $_db.knowledge,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_knowledgeIDTable($_db));
     if (item == null) return manager;
@@ -9420,20 +10056,20 @@ class $$KnowledgeTagLinkTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  $$KnowledgeTableTableFilterComposer get knowledgeID {
-    final $$KnowledgeTableTableFilterComposer composer = $composerBuilder(
+  $$KnowledgeTableFilterComposer get knowledgeID {
+    final $$KnowledgeTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.knowledgeID,
-      referencedTable: $db.knowledgeTable,
+      referencedTable: $db.knowledge,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$KnowledgeTableTableFilterComposer(
+          }) => $$KnowledgeTableFilterComposer(
             $db: $db,
-            $table: $db.knowledgeTable,
+            $table: $db.knowledge,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -9476,20 +10112,20 @@ class $$KnowledgeTagLinkTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  $$KnowledgeTableTableOrderingComposer get knowledgeID {
-    final $$KnowledgeTableTableOrderingComposer composer = $composerBuilder(
+  $$KnowledgeTableOrderingComposer get knowledgeID {
+    final $$KnowledgeTableOrderingComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.knowledgeID,
-      referencedTable: $db.knowledgeTable,
+      referencedTable: $db.knowledge,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$KnowledgeTableTableOrderingComposer(
+          }) => $$KnowledgeTableOrderingComposer(
             $db: $db,
-            $table: $db.knowledgeTable,
+            $table: $db.knowledge,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -9532,20 +10168,20 @@ class $$KnowledgeTagLinkTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  $$KnowledgeTableTableAnnotationComposer get knowledgeID {
-    final $$KnowledgeTableTableAnnotationComposer composer = $composerBuilder(
+  $$KnowledgeTableAnnotationComposer get knowledgeID {
+    final $$KnowledgeTableAnnotationComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.knowledgeID,
-      referencedTable: $db.knowledgeTable,
+      referencedTable: $db.knowledge,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$KnowledgeTableTableAnnotationComposer(
+          }) => $$KnowledgeTableAnnotationComposer(
             $db: $db,
-            $table: $db.knowledgeTable,
+            $table: $db.knowledge,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -9816,6 +10452,54 @@ final class $$MistakesTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$MistakeAnalysisTable, List<MistakeAnalysi>>
+  _mistakeAnalysisRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.mistakeAnalysis,
+    aliasName: $_aliasNameGenerator(db.mistakes.id, db.mistakeAnalysis.id),
+  );
+
+  $$MistakeAnalysisTableProcessedTableManager get mistakeAnalysisRefs {
+    final manager = $$MistakeAnalysisTableTableManager(
+      $_db,
+      $_db.mistakeAnalysis,
+    ).filter((f) => f.id.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _mistakeAnalysisRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $MistakeKnowledgeLinkTable,
+    List<MistakeKnowledgeLinkData>
+  >
+  _mistakeKnowledgeLinkRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.mistakeKnowledgeLink,
+        aliasName: $_aliasNameGenerator(
+          db.mistakes.id,
+          db.mistakeKnowledgeLink.mistakeId,
+        ),
+      );
+
+  $$MistakeKnowledgeLinkTableProcessedTableManager
+  get mistakeKnowledgeLinkRefs {
+    final manager = $$MistakeKnowledgeLinkTableTableManager(
+      $_db,
+      $_db.mistakeKnowledgeLink,
+    ).filter((f) => f.mistakeId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _mistakeKnowledgeLinkRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$MistakesTableFilterComposer
@@ -9949,6 +10633,56 @@ class $$MistakesTableFilterComposer
           }) => $$AnswersTableFilterComposer(
             $db: $db,
             $table: $db.answers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> mistakeAnalysisRefs(
+    Expression<bool> Function($$MistakeAnalysisTableFilterComposer f) f,
+  ) {
+    final $$MistakeAnalysisTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.mistakeAnalysis,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MistakeAnalysisTableFilterComposer(
+            $db: $db,
+            $table: $db.mistakeAnalysis,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> mistakeKnowledgeLinkRefs(
+    Expression<bool> Function($$MistakeKnowledgeLinkTableFilterComposer f) f,
+  ) {
+    final $$MistakeKnowledgeLinkTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.mistakeKnowledgeLink,
+      getReferencedColumn: (t) => t.mistakeId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MistakeKnowledgeLinkTableFilterComposer(
+            $db: $db,
+            $table: $db.mistakeKnowledgeLink,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -10129,6 +10863,57 @@ class $$MistakesTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> mistakeAnalysisRefs<T extends Object>(
+    Expression<T> Function($$MistakeAnalysisTableAnnotationComposer a) f,
+  ) {
+    final $$MistakeAnalysisTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.mistakeAnalysis,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MistakeAnalysisTableAnnotationComposer(
+            $db: $db,
+            $table: $db.mistakeAnalysis,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> mistakeKnowledgeLinkRefs<T extends Object>(
+    Expression<T> Function($$MistakeKnowledgeLinkTableAnnotationComposer a) f,
+  ) {
+    final $$MistakeKnowledgeLinkTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.mistakeKnowledgeLink,
+          getReferencedColumn: (t) => t.mistakeId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$MistakeKnowledgeLinkTableAnnotationComposer(
+                $db: $db,
+                $table: $db.mistakeKnowledgeLink,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$MistakesTableTableManager
@@ -10149,6 +10934,8 @@ class $$MistakesTableTableManager
             bool mistakeLogsRefs,
             bool mistakePicsLinkRefs,
             bool answersRefs,
+            bool mistakeAnalysisRefs,
+            bool mistakeKnowledgeLinkRefs,
           })
         > {
   $$MistakesTableTableManager(_$AppDatabase db, $MistakesTable table)
@@ -10208,6 +10995,8 @@ class $$MistakesTableTableManager
                 mistakeLogsRefs = false,
                 mistakePicsLinkRefs = false,
                 answersRefs = false,
+                mistakeAnalysisRefs = false,
+                mistakeKnowledgeLinkRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
@@ -10216,6 +11005,8 @@ class $$MistakesTableTableManager
                     if (mistakeLogsRefs) db.mistakeLogs,
                     if (mistakePicsLinkRefs) db.mistakePicsLink,
                     if (answersRefs) db.answers,
+                    if (mistakeAnalysisRefs) db.mistakeAnalysis,
+                    if (mistakeKnowledgeLinkRefs) db.mistakeKnowledgeLink,
                   ],
                   addJoins: null,
                   getPrefetchedDataCallback: (items) async {
@@ -10304,6 +11095,47 @@ class $$MistakesTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (mistakeAnalysisRefs)
+                        await $_getPrefetchedData<
+                          Mistake,
+                          $MistakesTable,
+                          MistakeAnalysi
+                        >(
+                          currentTable: table,
+                          referencedTable: $$MistakesTableReferences
+                              ._mistakeAnalysisRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$MistakesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).mistakeAnalysisRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) =>
+                                  referencedItems.where((e) => e.id == item.id),
+                          typedResults: items,
+                        ),
+                      if (mistakeKnowledgeLinkRefs)
+                        await $_getPrefetchedData<
+                          Mistake,
+                          $MistakesTable,
+                          MistakeKnowledgeLinkData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$MistakesTableReferences
+                              ._mistakeKnowledgeLinkRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$MistakesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).mistakeKnowledgeLinkRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.mistakeId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -10329,6 +11161,8 @@ typedef $$MistakesTableProcessedTableManager =
         bool mistakeLogsRefs,
         bool mistakePicsLinkRefs,
         bool answersRefs,
+        bool mistakeAnalysisRefs,
+        bool mistakeKnowledgeLinkRefs,
       })
     >;
 typedef $$MistakesTagLinkTableCreateCompanionBuilder =
@@ -11846,6 +12680,29 @@ final class $$AnswersTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$MistakeAnalysisTable, List<MistakeAnalysi>>
+  _mistakeAnalysisRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.mistakeAnalysis,
+    aliasName: $_aliasNameGenerator(
+      db.answers.id,
+      db.mistakeAnalysis.bestAnswer,
+    ),
+  );
+
+  $$MistakeAnalysisTableProcessedTableManager get mistakeAnalysisRefs {
+    final manager = $$MistakeAnalysisTableTableManager(
+      $_db,
+      $_db.mistakeAnalysis,
+    ).filter((f) => f.bestAnswer.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _mistakeAnalysisRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$AnswersTableFilterComposer
@@ -11946,6 +12803,31 @@ class $$AnswersTableFilterComposer
           }) => $$AnswerPicsLinkTableFilterComposer(
             $db: $db,
             $table: $db.answerPicsLink,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> mistakeAnalysisRefs(
+    Expression<bool> Function($$MistakeAnalysisTableFilterComposer f) f,
+  ) {
+    final $$MistakeAnalysisTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.mistakeAnalysis,
+      getReferencedColumn: (t) => t.bestAnswer,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MistakeAnalysisTableFilterComposer(
+            $db: $db,
+            $table: $db.mistakeAnalysis,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -12110,6 +12992,31 @@ class $$AnswersTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> mistakeAnalysisRefs<T extends Object>(
+    Expression<T> Function($$MistakeAnalysisTableAnnotationComposer a) f,
+  ) {
+    final $$MistakeAnalysisTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.mistakeAnalysis,
+      getReferencedColumn: (t) => t.bestAnswer,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MistakeAnalysisTableAnnotationComposer(
+            $db: $db,
+            $table: $db.mistakeAnalysis,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$AnswersTableTableManager
@@ -12129,6 +13036,7 @@ class $$AnswersTableTableManager
             bool mistakeId,
             bool answersTagsLinkRefs,
             bool answerPicsLinkRefs,
+            bool mistakeAnalysisRefs,
           })
         > {
   $$AnswersTableTableManager(_$AppDatabase db, $AnswersTable table)
@@ -12187,12 +13095,14 @@ class $$AnswersTableTableManager
                 mistakeId = false,
                 answersTagsLinkRefs = false,
                 answerPicsLinkRefs = false,
+                mistakeAnalysisRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (answersTagsLinkRefs) db.answersTagsLink,
                     if (answerPicsLinkRefs) db.answerPicsLink,
+                    if (mistakeAnalysisRefs) db.mistakeAnalysis,
                   ],
                   addJoins:
                       <
@@ -12270,6 +13180,27 @@ class $$AnswersTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (mistakeAnalysisRefs)
+                        await $_getPrefetchedData<
+                          Answer,
+                          $AnswersTable,
+                          MistakeAnalysi
+                        >(
+                          currentTable: table,
+                          referencedTable: $$AnswersTableReferences
+                              ._mistakeAnalysisRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$AnswersTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).mistakeAnalysisRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.bestAnswer == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -12294,6 +13225,7 @@ typedef $$AnswersTableProcessedTableManager =
         bool mistakeId,
         bool answersTagsLinkRefs,
         bool answerPicsLinkRefs,
+        bool mistakeAnalysisRefs,
       })
     >;
 typedef $$AnswersTagsLinkTableCreateCompanionBuilder =
@@ -13022,6 +13954,779 @@ typedef $$AnswerPicsLinkTableProcessedTableManager =
       AnswerPicsLinkData,
       PrefetchHooks Function({bool answerID, bool picID})
     >;
+typedef $$MistakeAnalysisTableCreateCompanionBuilder =
+    MistakeAnalysisCompanion Function({
+      required int id,
+      required int bestAnswer,
+      Value<String?> reason,
+      Value<String?> analysis,
+      Value<int> rowid,
+    });
+typedef $$MistakeAnalysisTableUpdateCompanionBuilder =
+    MistakeAnalysisCompanion Function({
+      Value<int> id,
+      Value<int> bestAnswer,
+      Value<String?> reason,
+      Value<String?> analysis,
+      Value<int> rowid,
+    });
+
+final class $$MistakeAnalysisTableReferences
+    extends
+        BaseReferences<_$AppDatabase, $MistakeAnalysisTable, MistakeAnalysi> {
+  $$MistakeAnalysisTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $MistakesTable _idTable(_$AppDatabase db) => db.mistakes.createAlias(
+    $_aliasNameGenerator(db.mistakeAnalysis.id, db.mistakes.id),
+  );
+
+  $$MistakesTableProcessedTableManager get id {
+    final $_column = $_itemColumn<int>('id')!;
+
+    final manager = $$MistakesTableTableManager(
+      $_db,
+      $_db.mistakes,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_idTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $AnswersTable _bestAnswerTable(_$AppDatabase db) =>
+      db.answers.createAlias(
+        $_aliasNameGenerator(db.mistakeAnalysis.bestAnswer, db.answers.id),
+      );
+
+  $$AnswersTableProcessedTableManager get bestAnswer {
+    final $_column = $_itemColumn<int>('best_answer')!;
+
+    final manager = $$AnswersTableTableManager(
+      $_db,
+      $_db.answers,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_bestAnswerTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$MistakeAnalysisTableFilterComposer
+    extends Composer<_$AppDatabase, $MistakeAnalysisTable> {
+  $$MistakeAnalysisTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get reason => $composableBuilder(
+    column: $table.reason,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get analysis => $composableBuilder(
+    column: $table.analysis,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$MistakesTableFilterComposer get id {
+    final $$MistakesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.mistakes,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MistakesTableFilterComposer(
+            $db: $db,
+            $table: $db.mistakes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$AnswersTableFilterComposer get bestAnswer {
+    final $$AnswersTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.bestAnswer,
+      referencedTable: $db.answers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AnswersTableFilterComposer(
+            $db: $db,
+            $table: $db.answers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$MistakeAnalysisTableOrderingComposer
+    extends Composer<_$AppDatabase, $MistakeAnalysisTable> {
+  $$MistakeAnalysisTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get reason => $composableBuilder(
+    column: $table.reason,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get analysis => $composableBuilder(
+    column: $table.analysis,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$MistakesTableOrderingComposer get id {
+    final $$MistakesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.mistakes,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MistakesTableOrderingComposer(
+            $db: $db,
+            $table: $db.mistakes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$AnswersTableOrderingComposer get bestAnswer {
+    final $$AnswersTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.bestAnswer,
+      referencedTable: $db.answers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AnswersTableOrderingComposer(
+            $db: $db,
+            $table: $db.answers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$MistakeAnalysisTableAnnotationComposer
+    extends Composer<_$AppDatabase, $MistakeAnalysisTable> {
+  $$MistakeAnalysisTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get reason =>
+      $composableBuilder(column: $table.reason, builder: (column) => column);
+
+  GeneratedColumn<String> get analysis =>
+      $composableBuilder(column: $table.analysis, builder: (column) => column);
+
+  $$MistakesTableAnnotationComposer get id {
+    final $$MistakesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.mistakes,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MistakesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.mistakes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$AnswersTableAnnotationComposer get bestAnswer {
+    final $$AnswersTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.bestAnswer,
+      referencedTable: $db.answers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AnswersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.answers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$MistakeAnalysisTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $MistakeAnalysisTable,
+          MistakeAnalysi,
+          $$MistakeAnalysisTableFilterComposer,
+          $$MistakeAnalysisTableOrderingComposer,
+          $$MistakeAnalysisTableAnnotationComposer,
+          $$MistakeAnalysisTableCreateCompanionBuilder,
+          $$MistakeAnalysisTableUpdateCompanionBuilder,
+          (MistakeAnalysi, $$MistakeAnalysisTableReferences),
+          MistakeAnalysi,
+          PrefetchHooks Function({bool id, bool bestAnswer})
+        > {
+  $$MistakeAnalysisTableTableManager(
+    _$AppDatabase db,
+    $MistakeAnalysisTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$MistakeAnalysisTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$MistakeAnalysisTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$MistakeAnalysisTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> bestAnswer = const Value.absent(),
+                Value<String?> reason = const Value.absent(),
+                Value<String?> analysis = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => MistakeAnalysisCompanion(
+                id: id,
+                bestAnswer: bestAnswer,
+                reason: reason,
+                analysis: analysis,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required int id,
+                required int bestAnswer,
+                Value<String?> reason = const Value.absent(),
+                Value<String?> analysis = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => MistakeAnalysisCompanion.insert(
+                id: id,
+                bestAnswer: bestAnswer,
+                reason: reason,
+                analysis: analysis,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$MistakeAnalysisTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({id = false, bestAnswer = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (id) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.id,
+                                referencedTable:
+                                    $$MistakeAnalysisTableReferences._idTable(
+                                      db,
+                                    ),
+                                referencedColumn:
+                                    $$MistakeAnalysisTableReferences
+                                        ._idTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+                    if (bestAnswer) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.bestAnswer,
+                                referencedTable:
+                                    $$MistakeAnalysisTableReferences
+                                        ._bestAnswerTable(db),
+                                referencedColumn:
+                                    $$MistakeAnalysisTableReferences
+                                        ._bestAnswerTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$MistakeAnalysisTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $MistakeAnalysisTable,
+      MistakeAnalysi,
+      $$MistakeAnalysisTableFilterComposer,
+      $$MistakeAnalysisTableOrderingComposer,
+      $$MistakeAnalysisTableAnnotationComposer,
+      $$MistakeAnalysisTableCreateCompanionBuilder,
+      $$MistakeAnalysisTableUpdateCompanionBuilder,
+      (MistakeAnalysi, $$MistakeAnalysisTableReferences),
+      MistakeAnalysi,
+      PrefetchHooks Function({bool id, bool bestAnswer})
+    >;
+typedef $$MistakeKnowledgeLinkTableCreateCompanionBuilder =
+    MistakeKnowledgeLinkCompanion Function({
+      required int mistakeId,
+      required int knowledgeId,
+      Value<int> rowid,
+    });
+typedef $$MistakeKnowledgeLinkTableUpdateCompanionBuilder =
+    MistakeKnowledgeLinkCompanion Function({
+      Value<int> mistakeId,
+      Value<int> knowledgeId,
+      Value<int> rowid,
+    });
+
+final class $$MistakeKnowledgeLinkTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $MistakeKnowledgeLinkTable,
+          MistakeKnowledgeLinkData
+        > {
+  $$MistakeKnowledgeLinkTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $MistakesTable _mistakeIdTable(_$AppDatabase db) =>
+      db.mistakes.createAlias(
+        $_aliasNameGenerator(db.mistakeKnowledgeLink.mistakeId, db.mistakes.id),
+      );
+
+  $$MistakesTableProcessedTableManager get mistakeId {
+    final $_column = $_itemColumn<int>('mistake_id')!;
+
+    final manager = $$MistakesTableTableManager(
+      $_db,
+      $_db.mistakes,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_mistakeIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $KnowledgeTable _knowledgeIdTable(_$AppDatabase db) =>
+      db.knowledge.createAlias(
+        $_aliasNameGenerator(
+          db.mistakeKnowledgeLink.knowledgeId,
+          db.knowledge.id,
+        ),
+      );
+
+  $$KnowledgeTableProcessedTableManager get knowledgeId {
+    final $_column = $_itemColumn<int>('knowledge_id')!;
+
+    final manager = $$KnowledgeTableTableManager(
+      $_db,
+      $_db.knowledge,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_knowledgeIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$MistakeKnowledgeLinkTableFilterComposer
+    extends Composer<_$AppDatabase, $MistakeKnowledgeLinkTable> {
+  $$MistakeKnowledgeLinkTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  $$MistakesTableFilterComposer get mistakeId {
+    final $$MistakesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.mistakeId,
+      referencedTable: $db.mistakes,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MistakesTableFilterComposer(
+            $db: $db,
+            $table: $db.mistakes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$KnowledgeTableFilterComposer get knowledgeId {
+    final $$KnowledgeTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.knowledgeId,
+      referencedTable: $db.knowledge,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$KnowledgeTableFilterComposer(
+            $db: $db,
+            $table: $db.knowledge,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$MistakeKnowledgeLinkTableOrderingComposer
+    extends Composer<_$AppDatabase, $MistakeKnowledgeLinkTable> {
+  $$MistakeKnowledgeLinkTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  $$MistakesTableOrderingComposer get mistakeId {
+    final $$MistakesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.mistakeId,
+      referencedTable: $db.mistakes,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MistakesTableOrderingComposer(
+            $db: $db,
+            $table: $db.mistakes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$KnowledgeTableOrderingComposer get knowledgeId {
+    final $$KnowledgeTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.knowledgeId,
+      referencedTable: $db.knowledge,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$KnowledgeTableOrderingComposer(
+            $db: $db,
+            $table: $db.knowledge,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$MistakeKnowledgeLinkTableAnnotationComposer
+    extends Composer<_$AppDatabase, $MistakeKnowledgeLinkTable> {
+  $$MistakeKnowledgeLinkTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  $$MistakesTableAnnotationComposer get mistakeId {
+    final $$MistakesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.mistakeId,
+      referencedTable: $db.mistakes,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MistakesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.mistakes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$KnowledgeTableAnnotationComposer get knowledgeId {
+    final $$KnowledgeTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.knowledgeId,
+      referencedTable: $db.knowledge,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$KnowledgeTableAnnotationComposer(
+            $db: $db,
+            $table: $db.knowledge,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$MistakeKnowledgeLinkTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $MistakeKnowledgeLinkTable,
+          MistakeKnowledgeLinkData,
+          $$MistakeKnowledgeLinkTableFilterComposer,
+          $$MistakeKnowledgeLinkTableOrderingComposer,
+          $$MistakeKnowledgeLinkTableAnnotationComposer,
+          $$MistakeKnowledgeLinkTableCreateCompanionBuilder,
+          $$MistakeKnowledgeLinkTableUpdateCompanionBuilder,
+          (MistakeKnowledgeLinkData, $$MistakeKnowledgeLinkTableReferences),
+          MistakeKnowledgeLinkData,
+          PrefetchHooks Function({bool mistakeId, bool knowledgeId})
+        > {
+  $$MistakeKnowledgeLinkTableTableManager(
+    _$AppDatabase db,
+    $MistakeKnowledgeLinkTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$MistakeKnowledgeLinkTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$MistakeKnowledgeLinkTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$MistakeKnowledgeLinkTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> mistakeId = const Value.absent(),
+                Value<int> knowledgeId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => MistakeKnowledgeLinkCompanion(
+                mistakeId: mistakeId,
+                knowledgeId: knowledgeId,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required int mistakeId,
+                required int knowledgeId,
+                Value<int> rowid = const Value.absent(),
+              }) => MistakeKnowledgeLinkCompanion.insert(
+                mistakeId: mistakeId,
+                knowledgeId: knowledgeId,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$MistakeKnowledgeLinkTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({mistakeId = false, knowledgeId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (mistakeId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.mistakeId,
+                                referencedTable:
+                                    $$MistakeKnowledgeLinkTableReferences
+                                        ._mistakeIdTable(db),
+                                referencedColumn:
+                                    $$MistakeKnowledgeLinkTableReferences
+                                        ._mistakeIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+                    if (knowledgeId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.knowledgeId,
+                                referencedTable:
+                                    $$MistakeKnowledgeLinkTableReferences
+                                        ._knowledgeIdTable(db),
+                                referencedColumn:
+                                    $$MistakeKnowledgeLinkTableReferences
+                                        ._knowledgeIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$MistakeKnowledgeLinkTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $MistakeKnowledgeLinkTable,
+      MistakeKnowledgeLinkData,
+      $$MistakeKnowledgeLinkTableFilterComposer,
+      $$MistakeKnowledgeLinkTableOrderingComposer,
+      $$MistakeKnowledgeLinkTableAnnotationComposer,
+      $$MistakeKnowledgeLinkTableCreateCompanionBuilder,
+      $$MistakeKnowledgeLinkTableUpdateCompanionBuilder,
+      (MistakeKnowledgeLinkData, $$MistakeKnowledgeLinkTableReferences),
+      MistakeKnowledgeLinkData,
+      PrefetchHooks Function({bool mistakeId, bool knowledgeId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -13039,10 +14744,10 @@ class $AppDatabaseManager {
       $$PhrasesTagLinkTableTableManager(_db, _db.phrasesTagLink);
   $$PhraseLogsTableTableManager get phraseLogs =>
       $$PhraseLogsTableTableManager(_db, _db.phraseLogs);
-  $$KnowledgeTableTableTableManager get knowledgeTable =>
-      $$KnowledgeTableTableTableManager(_db, _db.knowledgeTable);
-  $$KnowledgeLogTableTableTableManager get knowledgeLogTable =>
-      $$KnowledgeLogTableTableTableManager(_db, _db.knowledgeLogTable);
+  $$KnowledgeTableTableManager get knowledge =>
+      $$KnowledgeTableTableManager(_db, _db.knowledge);
+  $$KnowledgeLogsTableTableManager get knowledgeLogs =>
+      $$KnowledgeLogsTableTableManager(_db, _db.knowledgeLogs);
   $$KnowledgeTagLinkTableTableManager get knowledgeTagLink =>
       $$KnowledgeTagLinkTableTableManager(_db, _db.knowledgeTagLink);
   $$MistakesTableTableManager get mistakes =>
@@ -13061,4 +14766,8 @@ class $AppDatabaseManager {
       $$AnswersTagsLinkTableTableManager(_db, _db.answersTagsLink);
   $$AnswerPicsLinkTableTableManager get answerPicsLink =>
       $$AnswerPicsLinkTableTableManager(_db, _db.answerPicsLink);
+  $$MistakeAnalysisTableTableManager get mistakeAnalysis =>
+      $$MistakeAnalysisTableTableManager(_db, _db.mistakeAnalysis);
+  $$MistakeKnowledgeLinkTableTableManager get mistakeKnowledgeLink =>
+      $$MistakeKnowledgeLinkTableTableManager(_db, _db.mistakeKnowledgeLink);
 }

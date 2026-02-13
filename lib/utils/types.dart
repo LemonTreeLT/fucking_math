@@ -110,6 +110,25 @@ class Mistake {
     this.source,
     this.images = const [],
     this.tags = const [],
+    this.analysis,
+    this.knowledge = const [],
+  });
+
+  final MistakeAnalysis? analysis;
+  final List<Knowledge> knowledge;
+}
+
+class MistakeAnalysis {
+  final int mistakeId;
+  final int bestAnswerId;
+  final String? reason;
+  final String? analysis;
+
+  MistakeAnalysis({
+    required this.mistakeId,
+    required this.bestAnswerId,
+    this.reason,
+    this.analysis,
   });
 }
 

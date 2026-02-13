@@ -86,7 +86,8 @@ class _AnswerFormState extends GenericFormStateV3<AnswerForm> {
   Widget content() => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text("#${widget.mistakeID} 号错题的答案", style: TextStyle(fontSize: 32)),
+      Text("#${widget.mistakeID} 错题的答案", style: TextStyle(fontSize: 32)),
+      const SizedBox(height: 8),
       Expanded(
         child: Row(
           spacing: 8,
@@ -113,6 +114,7 @@ class _AnswerFormState extends GenericFormStateV3<AnswerForm> {
           maintainAnimation: true,
           maintainState: true,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             spacing: 8,
             children: [
               tInputer(controller: _sourceInputerController, labelText: "备注"),
@@ -191,7 +193,7 @@ class _AnswerFormState extends GenericFormStateV3<AnswerForm> {
     ],
   );
 
-  void _clearForm() => dev;
+  void _clearForm() => print(answers.last.tags);
 
   Future<void> _addAnswer() async {
     final MistakesProvider provider = context.read();
@@ -207,7 +209,7 @@ class _AnswerFormState extends GenericFormStateV3<AnswerForm> {
         ? await imgProvider.uploadImages(unsavedImages)
         : null;
 
-    provider.createAnswer(
+    await provider.createAnswer(
       widget.mistakeID,
       body,
       head: head,
@@ -217,7 +219,7 @@ class _AnswerFormState extends GenericFormStateV3<AnswerForm> {
       imageIds: imageIds,
     );
 
-    setState(() => _loadData());
+    await _loadData();
   }
 
   @override
@@ -229,11 +231,15 @@ class _AnswerFormState extends GenericFormStateV3<AnswerForm> {
     });
   }
 
-  Future<void> _loadData() async => answers =
-      (await context.read<MistakesProvider>().getAnswerOfMistakes(
-        widget.mistakeID,
-      )) ??
-      [];
+  Future<void> _loadData() async {
+    final fetchedAnswers = await context
+        .read<MistakesProvider>()
+        .getAnswerOfMistakes(widget.mistakeID);
+
+    if (!mounted) return;
+
+    setState(() => answers = fetchedAnswers ?? []);
+  }
 
   // TODO: 完整实现
   List<Answer> answers = [];
@@ -266,19 +272,32 @@ class AnswerListItem extends StatelessWidget {
   final List<Tag> tags;
 
   @override
-  Widget build(BuildContext context) => Row(
-    children: [
-      Center(child: _buildIdDisplay()),
-      Column(children: [_buildDescDisplay(), _buildTagsDisplay()]),
-    ],
+  Widget build(BuildContext context) => InkWell(
+    onTap: () {},
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Center(child: _buildIdDisplay()),
+          const SizedBox(width: 4),
+          Column(
+            spacing: 4,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [_buildDescDisplay(), _buildTagsDisplay()],
+          ),
+        ],
+      ),
+    ),
   );
 
-  Widget _buildIdDisplay() => Text("# $id");
+  Widget _buildIdDisplay() => Text("#$id", style: TextStyle(fontSize: 24));
 
   Widget _buildDescDisplay() => Text(desc);
 
-  Widget _buildTagsDisplay() =>
-      Row(children: tags.map((t) => TagBadge(tag: t)).toList());
+  Widget _buildTagsDisplay() => Row(
+    spacing: 4,
+    children: tags.map((t) => TagBadge(tag: t, scale: 0.7)).toList(),
+  );
 }
 
 final tInputer = FormBuilders.textField;

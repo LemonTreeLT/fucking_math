@@ -11,7 +11,7 @@ Tag dbTagToTag(db.Tag dbTag) => Tag(
 );
 
 Knowledge dbKnowledgeToKnowledge(
-  db.KnowledgeTableData dbKnowledge,
+  db.KnowledgeData dbKnowledge,
   List<Tag> tags, {
   int? editCount,
   String? note,

@@ -1,7 +1,8 @@
 import 'package:drift/drift.dart';
 import 'package:fucking_math/db/tables/tables_images.dart';
+import 'package:fucking_math/db/tables/tables_knowledge.dart';
 import 'package:fucking_math/db/tables/tables_tags.dart';
-import 'package:fucking_math/utils/types.dart';
+import 'package:fucking_math/utils/types.dart' show SubjectConverter;
 
 // Warning: This sturcture is designed more for math mistakes, may need adjustments for other subjects.
 // 错题表
@@ -40,6 +41,26 @@ class AnswersTagsLink extends Table {
 
   @override
   Set<Column> get primaryKey => {answerID, tagID};
+}
+
+class MistakeAnalysis extends Table {
+  IntColumn get id => integer().references(Mistakes, #id).unique()();
+
+  IntColumn get bestAnswer => integer().references(Answers, #id)();
+
+  /// 该字段为错因分析
+  TextColumn get reason => text().nullable()();
+
+  /// 该字段为易错点分析
+  TextColumn get analysis => text().nullable()();
+}
+
+class MistakeKnowledgeLink extends Table {
+  IntColumn get mistakeId => integer().references(Mistakes, #id)();
+  IntColumn get knowledgeId => integer().references(Knowledge, #id)();
+
+  @override
+  Set<Column> get primaryKey => {mistakeId, knowledgeId};
 }
 
 /// 回答正文链接图片表

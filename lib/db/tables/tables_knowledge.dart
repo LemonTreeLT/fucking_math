@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:fucking_math/db/tables/tables_tags.dart';
 import 'package:fucking_math/utils/types.dart';
 
-class KnowledgeTable extends Table {
+class Knowledge extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get subject => text().map(SubjectConverter)();
   TextColumn get head => text()();
@@ -10,16 +10,16 @@ class KnowledgeTable extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }
 
-class KnowledgeLogTable extends Table {
+class KnowledgeLogs extends Table {
   IntColumn get id => integer().autoIncrement()();
-  IntColumn get knowledgeID => integer().references(KnowledgeTable, #id)();
+  IntColumn get knowledgeID => integer().references(Knowledge, #id)();
   DateTimeColumn get time => dateTime().withDefault(currentDateAndTime)();
   TextColumn get type => text().map(EnumNameConverter(KnowledgeLogType.values))();
   TextColumn get notes => text().nullable()();
 }
 
 class KnowledgeTagLink extends Table {
-  IntColumn get knowledgeID => integer().references(KnowledgeTable, #id)();
+  IntColumn get knowledgeID => integer().references(Knowledge, #id)();
   IntColumn get tagID => integer().references(Tags, #id)();
 
   @override

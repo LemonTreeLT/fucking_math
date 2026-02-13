@@ -6,15 +6,20 @@ class TagBadge extends StatelessWidget {
   final VoidCallback? onTap;
   final BorderRadius borderRadius;
   final double fontSize;
+  final double scale;
+
   const TagBadge({
     super.key,
     required this.tag,
     this.onTap,
     this.borderRadius = const BorderRadius.all(Radius.circular(16)),
     this.fontSize = 12,
+    this.scale = 1.0,
   });
+
   @override
   Widget build(BuildContext context) {
+    // 这里的逻辑保持不变，依然清晰
     final badge = _buildBadgeContent();
     final interactiveBadge = _wrapWithInteraction(badge);
     return _wrapWithTooltip(interactiveBadge);
@@ -26,14 +31,20 @@ class TagBadge extends StatelessWidget {
         ? Color(tag.color!)
         : Colors.grey.shade300;
     final textColor = _getContrastingTextColor(bgColor);
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      // 3. 根据 scale 缩放内边距
+      padding: EdgeInsets.symmetric(
+        horizontal: 10 * scale,
+        vertical: 5 * scale,
+      ),
       decoration: BoxDecoration(color: bgColor, borderRadius: borderRadius),
       child: Text(
         tag.name,
         style: TextStyle(
           color: textColor,
-          fontSize: fontSize,
+          // 4. 根据 scale 缩放字体大小
+          fontSize: fontSize * scale,
           fontWeight: FontWeight.w500,
         ),
         overflow: TextOverflow.ellipsis,

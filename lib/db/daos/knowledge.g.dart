@@ -4,9 +4,8 @@ part of 'knowledge.dart';
 
 // ignore_for_file: type=lint
 mixin _$KnowledgeDaoMixin on DatabaseAccessor<AppDatabase> {
-  $KnowledgeTableTable get knowledgeTable => attachedDatabase.knowledgeTable;
-  $KnowledgeLogTableTable get knowledgeLogTable =>
-      attachedDatabase.knowledgeLogTable;
+  $KnowledgeTable get knowledge => attachedDatabase.knowledge;
+  $KnowledgeLogsTable get knowledgeLogs => attachedDatabase.knowledgeLogs;
   $TagsTable get tags => attachedDatabase.tags;
   $KnowledgeTagLinkTable get knowledgeTagLink =>
       attachedDatabase.knowledgeTagLink;

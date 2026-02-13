@@ -13,4 +13,8 @@ mixin _$MistakesDaoMixin on DatabaseAccessor<AppDatabase> {
   $AnswersTagsLinkTable get answersTagsLink => attachedDatabase.answersTagsLink;
   $AnswerPicsLinkTable get answerPicsLink => attachedDatabase.answerPicsLink;
   $MistakesTagLinkTable get mistakesTagLink => attachedDatabase.mistakesTagLink;
+  $MistakeAnalysisTable get mistakeAnalysis => attachedDatabase.mistakeAnalysis;
+  $KnowledgeTable get knowledge => attachedDatabase.knowledge;
+  $MistakeKnowledgeLinkTable get mistakeKnowledgeLink =>
+      attachedDatabase.mistakeKnowledgeLink;
 }

@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:fucking_math/db/app_database.dart';
 import 'package:fucking_math/db/tables/tables_images.dart';
+import 'package:fucking_math/db/tables/tables_knowledge.dart';
 import 'package:fucking_math/db/tables/tables_mistakes.dart';
 import 'package:fucking_math/db/tables/tables_tags.dart';
 import 'package:fucking_math/utils/types.dart' show Subject;
@@ -18,6 +19,9 @@ part 'mistake.g.dart';
     MistakesTagLink,
     Tags,
     Images,
+    MistakeAnalysis,
+    MistakeKnowledgeLink,
+    Knowledge,
   ],
 )
 class MistakesDao extends DatabaseAccessor<AppDatabase>
@@ -70,6 +74,10 @@ class MistakesDao extends DatabaseAccessor<AppDatabase>
     // 先删除关联表数据
     await (delete(mistakePicsLink)..where((l) => l.mistakeId.equals(id))).go();
     await (delete(mistakesTagLink)..where((l) => l.mistakeID.equals(id))).go();
+    await (delete(mistakeAnalysis)..where((t) => t.id.equals(id))).go();
+    await (delete(
+      mistakeKnowledgeLink,
+    )..where((t) => t.mistakeId.equals(id))).go();
 
     // 获取所有关联的答案 ID
     final answerIds = await (select(
@@ -349,4 +357,58 @@ class MistakesDao extends DatabaseAccessor<AppDatabase>
     if (mistakeIds.isEmpty) return [];
     return (select(mistakes)..where((m) => m.id.isIn(mistakeIds))).get();
   }
+  // ==================== MistakeAnalysis CRUD ====================
+
+  /// 创建或更新错因分析
+  Future<int> upsertMistakeAnalysis(MistakeAnalysisCompanion entry) =>
+      into(mistakeAnalysis).insert(entry, mode: InsertMode.replace);
+
+  /// 获取错因分析
+  Future<MistakeAnalysi?> getMistakeAnalysis(int mistakeId) => (select(
+    mistakeAnalysis,
+  )..where((t) => t.id.equals(mistakeId))).getSingleOrNull();
+
+  /// 删除错因分析
+  Future<int> deleteMistakeAnalysis(int mistakeId) =>
+      (delete(mistakeAnalysis)..where((t) => t.id.equals(mistakeId))).go();
+
+  // ==================== MistakeKnowledgeLink 关联操作 ====================
+
+  /// 关联知识点
+  Future<void> linkKnowledgeToMistake(int mistakeId, int knowledgeId) =>
+      into(mistakeKnowledgeLink).insert(
+        MistakeKnowledgeLinkCompanion.insert(
+          mistakeId: mistakeId,
+          knowledgeId: knowledgeId,
+        ),
+        mode: InsertMode.insertOrIgnore, // 忽略已存在的关联
+      );
+
+  /// 取消关联知识点
+  Future<int> unlinkKnowledgeFromMistake(int mistakeId, int knowledgeId) =>
+      (delete(mistakeKnowledgeLink)..where(
+            (t) =>
+                t.mistakeId.equals(mistakeId) &
+                t.knowledgeId.equals(knowledgeId),
+          ))
+          .go();
+
+  /// 获取错题关联的所有知识点
+  Future<List<KnowledgeData>> getKnowledgeByMistakeId(int mistakeId) {
+    final query = select(knowledge).join([
+      innerJoin(
+        mistakeKnowledgeLink,
+        mistakeKnowledgeLink.knowledgeId.equalsExp(knowledge.id),
+      ),
+    ])..where(mistakeKnowledgeLink.mistakeId.equals(mistakeId));
+
+    return query.map((row) => row.readTable(knowledge)).get();
+  }
+
+  /// 获取错题关联的所有知识点 ID
+  Future<List<int>> getKnowledgeIdsByMistakeId(int mistakeId) =>
+      (select(mistakeKnowledgeLink)
+            ..where((l) => l.mistakeId.equals(mistakeId)))
+          .map((l) => l.knowledgeId)
+          .get();
 }

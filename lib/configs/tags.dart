@@ -7,7 +7,8 @@ enum DefaultTag {
   correct("正确答案", "该答案被验证为正确", c: 0xFF66ED4E),
   unverified("未验证", "这个答案需要被验证，并手动标记正误", c: 0xfff5b031),
   best("最好答案", "这是在多解问题中的最优解", c: 0xff00d600),
-  available("可用解", "这是可以解决一个多解问题的一个解", c: 0xff299e7f);
+  available("可用解", "这是可以解决一个多解问题的一个解", c: 0xff299e7f),
+  wrong("错误答案", "该答案为一个错误答案", c: 0xffed5237);
 
   // -------------- ADD TAG ABOVE --------------
   // 字段定义

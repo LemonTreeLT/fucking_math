@@ -10,7 +10,7 @@ import 'package:fucking_math/db/tables/tables_knowledge.dart';
 import 'package:fucking_math/db/tables/tables_mistakes.dart';
 import 'package:fucking_math/db/tables/tables_tags.dart';
 
-import 'package:fucking_math/utils/types.dart';
+import 'package:fucking_math/utils/types.dart' show Subject, SubjectConverter;
 
 // 引入 dao 定义
 import 'daos/tag.dart';
@@ -38,8 +38,8 @@ part 'app_database.g.dart';
     Phrases,
     PhrasesTagLink,
     PhraseLogs,
-    KnowledgeTable,
-    KnowledgeLogTable,
+    Knowledge,
+    KnowledgeLogs,
     KnowledgeTagLink,
     Mistakes,
     MistakesTagLink,
@@ -49,6 +49,8 @@ part 'app_database.g.dart';
     AnswersTagsLink,
     AnswerPicsLink,
     Images,
+    MistakeAnalysis,
+    MistakeKnowledgeLink,
   ],
   daos: [TagsDao, WordsDao, KnowledgeDao, MistakesDao, PhrasesDao, ImagesDao],
 )
