@@ -30,6 +30,12 @@ class MistakesDao extends DatabaseAccessor<AppDatabase>
 
   // ==================== Mistakes 基础 CRUD ====================
 
+  Future<int> assignID() async {
+    final maxIdQuery = selectOnly(mistakes)..addColumns([mistakes.id.max()]);
+    final maxId = await maxIdQuery.map((row) => row.read(mistakes.id.max())).getSingle();
+    return (maxId ?? 0) + 1;
+  }
+
   /// 创建错题
   Future<int> createMistake(MistakesCompanion entry) =>
       into(mistakes).insert(entry);

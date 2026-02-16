@@ -76,6 +76,10 @@ class MistakesRepository {
   Future<void> deleteMistake(int mistakeId) async =>
       await _dao.deleteMistake(mistakeId);
 
+  /// 分配一个错题id
+  /// 查找是否存在为空的条目否则创建新的
+  Future<int> assignID() async => _dao.assignID();
+
   // ==================== 错题关联管理 ====================
 
   /// 移除错题的图片关联
@@ -226,6 +230,8 @@ class MistakesRepository {
   /// Find or create a mistake based on id
   /// - If id is null or 0, create new mistake
   /// - Otherwise, fetch existing mistake by id
+  ///   - If cthe specified mistake with id can not be found,
+  ///   - Create a new mistake
   Future<db.Mistake> _findOrCreateMistake(
     int? id,
     Subject subject,
@@ -236,14 +242,12 @@ class MistakesRepository {
     if (id != null && id > 0) {
       final existing = await _dao.getMistakeById(id);
       if (existing != null) return existing;
-      throw AppDatabaseException(
-        'Mistake with id $id not found for update operation.',
-      );
     }
 
     // Create new mistake
     final mistakeId = await _dao.createMistake(
       db.MistakesCompanion.insert(
+        id: (id != null && id > 0) ? Value(id) : const Value.absent(),
         subject: subject,
         questionHeader: head,
         questionBody: body,

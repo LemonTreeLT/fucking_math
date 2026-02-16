@@ -142,8 +142,8 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
 
   Future<void> _assignID() async {
     final provider = context.read<MistakesProvider>();
-    final newMistake = await provider.createMistakes(Subject.math, "", "");
-    setState(() => _mistakeId = newMistake?.id);
+    final newMistake = await provider.assignID();
+    setState(() => _mistakeId = newMistake);
   }
 
   void _showAssignedAlert() => ScaffoldMessenger.of(context).showSnackBar(
@@ -179,6 +179,7 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
       note: note,
       images: imageIDs,
       tags: tags?.toList(),
+      id: _mistakeId
     );
   }
 

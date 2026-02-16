@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:fuzzy/fuzzy.dart';
 
 abstract class BaseProvider extends ChangeNotifier {
   bool _isLoading = false;
@@ -31,7 +32,6 @@ abstract class BaseRepositoryProvider<T, R> extends BaseProvider
 }
 
 mixin ProviderActionNotifier on BaseProvider {
-
   /// 私有辅助方法：执行操作、处理状态、通知监听器
   /// 封装了 try-catch-finally 逻辑，并返回操作结果 T 或 null
   Future<T?> _runActionAndNotify<T>({
@@ -84,4 +84,62 @@ mixin ProviderActionNotifier on BaseProvider {
       errMsg: errMsg,
     );
   }
+}
+
+mixin FuzzySearchMixin<T, R> on BaseRepositoryProvider<T, R> {
+  Fuzzy<T>? _fuse;
+  List<T> _searchResults = [];
+  String _currentQuery = '';
+
+  @protected
+  List<WeightedKey<T>> get fuzzyKeys;
+
+  List<T> get filteredList => _currentQuery.isEmpty ? items : _searchResults;
+
+  @override
+  @protected
+  void setItems(List<T> newitems) {
+    super.setItems(newitems);
+
+    _fuse = Fuzzy<T>(
+      newitems,
+      options: FuzzyOptions(
+        keys: fuzzyKeys,
+        threshold: 0.4,
+        tokenize: true,
+        findAllMatches: true,
+      ),
+    );
+
+    if (_currentQuery.isNotEmpty) {
+      _runSearch(_currentQuery);
+    }
+  }
+
+  void search(String query) {
+    _currentQuery = query;
+    _runSearch(query);
+    notifyListeners();
+  }
+
+  void _runSearch(String query) {
+    if (query.isEmpty || _fuse == null) {
+      _searchResults = [];
+    } else {
+      final resutt = _fuse!.search(query);
+      _searchResults = resutt.map((r) => r.item).toList();
+    }
+  }
+}
+
+mixin SingleObjectSelectMixin<T> on ChangeNotifier {
+  T? _selectedItem;
+  T? get selectedItem => _selectedItem;
+
+  void select(T? item) {
+    _selectedItem = item;
+    notifyListeners();
+  }
+
+  bool isSelected(T? item) => _selectedItem == item;
 }

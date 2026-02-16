@@ -4,13 +4,22 @@ import 'package:fucking_math/extensions/list.dart';
 import 'package:fucking_math/providers/base_db_proivder.dart';
 import 'package:fucking_math/utils/repository/mistakes.dart';
 import 'package:fucking_math/utils/types.dart';
+import 'package:fuzzy/data/fuzzy_options.dart';
 
 class MistakesProvider
-    extends BaseRepositoryProvider<Mistake, MistakesRepository> {
+    extends BaseRepositoryProvider<Mistake, MistakesRepository>
+    with FuzzySearchMixin, SingleObjectSelectMixin<int> {
   MistakesProvider(AppDatabase db)
     : super(MistakesRepository(MistakesDao(db))) {
     loadMistakes();
   }
+
+  @override
+  List<WeightedKey<Mistake>> get fuzzyKeys => [
+    WeightedKey(name: 'subject', getter: (m) => m.subject.name, weight: 0.5),
+    WeightedKey(name: "head", getter: (m) => m.head, weight: 1.0),
+    WeightedKey(name: "body", getter: (m) => m.body, weight: 1.0),
+  ];
 
   Future<void> loadMistakes() async => justDoIt(
     action: () => rep.getAllMistakes(),
@@ -26,8 +35,9 @@ class MistakesProvider
     String? note,
     List<int> images = const [],
     List<int>? tags = const [],
+    int? id,
   }) async => justDoItNext(
-    action:() => rep.saveMistake(
+    action: () => rep.saveMistake(
       subject: subject,
       head: head,
       body: body,
@@ -35,6 +45,7 @@ class MistakesProvider
       tags: tags,
       imageIds: images,
       note: note,
+      id: id,
     ),
     onSucces: (save) =>
         setItems(items.withUpsert(save, (k) => k.id == save.id)),
@@ -68,4 +79,7 @@ class MistakesProvider
     action: () => rep.getAnswersByMistakeId(mistakeId),
     errMsg: "查询 $mistakeId 号错题时发生错误",
   );
+
+  Future<int?> assignID() =>
+      justDoItNext(action: rep.assignID, errMsg: "无法分配 ID");
 }
