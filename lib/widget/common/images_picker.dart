@@ -35,10 +35,7 @@ class ImagesPicker extends StatefulWidget {
 
 class ImagesPickerState extends State<ImagesPicker> {
   /// 存储已选择的图片列表
-  final List<GenFile> _images = [];
-
-  /// 获取图片列表的公开接口
-  List<GenFile> get images => _images;
+  List<GenFile> images = [];
 
   /// 是否正在拖拽中
   bool _isDragging = false;
@@ -83,7 +80,7 @@ class ImagesPickerState extends State<ImagesPicker> {
 
   /// 处理拖拽完成事件
   /// 过滤出图片文件并添加到列表中
-  void _onDragDone(DropDoneDetails details) => _images.addAll(
+  void _onDragDone(DropDoneDetails details) => images.addAll(
     details.files
         .where((f) => ImageHelper.isImageFile(f.name.toLowerCase()))
         .map((f) => (path: f.path, name: f.name)),
@@ -97,7 +94,7 @@ class ImagesPickerState extends State<ImagesPicker> {
     if (result == null) return; // 用户取消选择
 
     setState(
-      () => _images.addAll(
+      () => images.addAll(
         result.files.map((f) => (path: f.path ?? "", name: f.name)),
       ),
     );
@@ -114,11 +111,11 @@ class ImagesPickerState extends State<ImagesPicker> {
   /// 获取需要预览的图片路径列表
   /// 如果图片数量超过最大预览数，只返回前 maxPreviewedImage 个
   List<GenFile> _getPreviewPaths() => _isPathsTooLoog()
-      ? _images.getRange(0, widget.maxPreviewedImage).toList()
-      : _images;
+      ? images.getRange(0, widget.maxPreviewedImage).toList()
+      : images;
 
   /// 判断图片数量是否超过限制（这里硬编码为4）
-  bool _isPathsTooLoog() => _images.length >= 4;
+  bool _isPathsTooLoog() => images.length >= 4;
 }
 
 /// 图片预览组件

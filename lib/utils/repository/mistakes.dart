@@ -19,6 +19,7 @@ class MistakesRepository {
   ///
   /// - [id] 为 null 或 0 时创建新错题,否则更新已有错题
   /// - [tags] 和 [imageIds] 采用追加模式(不删除已有关联)
+  /// - [knowledgeIds] 采用替换模式(删除已有关联,重新添加)
   /// - 自动记录日志(创建时为 view,更新时为 view)
   Future<Mistake> saveMistake({
     int? id,
@@ -28,6 +29,7 @@ class MistakesRepository {
     String? source,
     List<int>? tags,
     List<int>? imageIds,
+    List<int>? knowledgeIds,
     String? note,
   }) async {
     final mistake = await _findOrCreateMistake(id, subject, head, body, source);
@@ -40,7 +42,9 @@ class MistakesRepository {
     if (imageIds != null && imageIds.isNotEmpty) {
       await _associatePicsToMistake(mistake.id, imageIds);
     }
-
+    if (knowledgeIds != null && knowledgeIds.isNotEmpty) {
+      await _associateKnowledgesToMistake(mistake.id, knowledgeIds);
+    }
     return await _buildCompleteMistake(mistake);
   }
 
@@ -109,6 +113,14 @@ class MistakesRepository {
       (await _dao.getPicsByMistakeId(
         mistakeId,
       )).map((img) => dbImageToImageStorage(img)).toList();
+
+  /// 获取错题的相关知识点
+  Future<List<Knowledge>> getMistakeKnowledge(int mistakeId) async {
+    final knowledgeList = await _dao.getKnowledgeByMistakeId(mistakeId);
+    return knowledgeList
+        .map((k) => dbKnowledgeToKnowledge(k, const []))
+        .toList();
+  }
 
   // ==================== 答案管理 ====================
 
@@ -336,7 +348,36 @@ class MistakesRepository {
     await Future.wait(futures);
   }
 
-  /// Add a log entry for a mistake
+  /// Associate knowledge to mistake (replace mode, clear existing then add new)
+  Future<void> _associateKnowledgesToMistake(
+    int mistakeId,
+    List<int> knowledgeIds,
+  ) async {
+    // Clear existing knowledge links
+    await _dao.deleteKnowledgeLinksByMistakeId(mistakeId);
+
+    // Add new knowledge links
+    final futures = knowledgeIds.map((knowledgeId) async {
+      try {
+        await _dao.linkKnowledgeToMistake(mistakeId, knowledgeId);
+      } on sqlite.SqliteException catch (e) {
+        switch (e.extendedResultCode) {
+          case sqlite.SqlExtendedError.SQLITE_CONSTRAINT_UNIQUE:
+            return; // Already associated, ignore
+          case sqlite.SqlExtendedError.SQLITE_CONSTRAINT_FOREIGNKEY:
+            throw KnowledgeOrMistakeNotFoundException(
+              e.message,
+              knowledgeId: knowledgeId,
+              mistakeId: mistakeId,
+            );
+          default:
+            rethrow;
+        }
+      }
+    });
+    await Future.wait(futures);
+  }
+
   Future<void> _addLog(
     int mistakeId,
     MistakeLogType type, {
@@ -359,6 +400,7 @@ class MistakesRepository {
       _dao.getLogsByMistakeIdAndType(mistake.id, MistakeLogType.answer),
       _dao.getPicsByMistakeId(mistake.id),
       _dao.getTagsByMistakeId(mistake.id),
+      _dao.getKnowledgeByMistakeId(mistake.id),
     ]);
 
     final state = MistakeState(
@@ -374,7 +416,13 @@ class MistakesRepository {
 
     final tags = results[5].map((tag) => dbTagToTag(tag as db.Tag)).toList();
 
-    return dbMistakeToMistake(mistake, state, images, tags);
+    final knowledge = (results[6] as List<db.KnowledgeData>)
+        .map((k) => dbKnowledgeToKnowledge(k, []))
+        .toList();
+
+    final latest = await _dao.getMistakeById(mistake.id);
+
+    return dbMistakeToMistake(latest!, state, images, tags, knowledge);
   }
 
   /// Find or create an answer based on id

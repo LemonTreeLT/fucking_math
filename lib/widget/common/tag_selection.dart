@@ -15,19 +15,18 @@ class TagSelectionArea extends StatefulWidget {
 class TagSelectionAreaState extends State<TagSelectionArea> {
   final MenuController _menuController = MenuController();
 
-  final Set<int> _selectedTagIds = {};
-  Set<int> get selectedTagIds => _selectedTagIds;
+  Set<int> selectedTagIds = {};
 
   List<Tag> _getAvailableTags(List<Tag> allTags) =>
-      allTags.where((tag) => !_selectedTagIds.contains(tag.id)).toList();
+      allTags.where((tag) => !selectedTagIds.contains(tag.id)).toList();
 
   List<Tag> _getSelectedTags(List<Tag> allTags) =>
-      allTags.where((tag) => _selectedTagIds.contains(tag.id)).toList();
+      allTags.where((tag) => selectedTagIds.contains(tag.id)).toList();
 
   void _toggleTag(int tagId) => setState(
-    () => _selectedTagIds.contains(tagId)
-        ? _selectedTagIds.remove(tagId)
-        : _selectedTagIds.add(tagId),
+    () => selectedTagIds.contains(tagId)
+        ? selectedTagIds.remove(tagId)
+        : selectedTagIds.add(tagId),
   );
 
   @override

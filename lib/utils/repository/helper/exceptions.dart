@@ -117,6 +117,19 @@ class ImageOrAnswerNotFoundException implements Exception {
       'Image or answer not found: $message, imageId: $imageId, answerId: $answerId';
 }
 
+class KnowledgeOrMistakeNotFoundException implements Exception {
+  final String message;
+  final int? knowledgeId;
+  final int? mistakeId;
+
+  KnowledgeOrMistakeNotFoundException(this.message,
+      {this.knowledgeId, this.mistakeId});
+
+  @override
+  String toString() =>
+      'Knowledge or mistake not found: $message, knowledgeId: $knowledgeId, mistakeId: $mistakeId';
+}
+
 /// 图片验证异常(文件不存在等业务逻辑错误)
 class ImageValidationException implements Exception {
   final String message;

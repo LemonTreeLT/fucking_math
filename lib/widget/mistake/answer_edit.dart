@@ -8,7 +8,6 @@ import 'package:fucking_math/widget/common/tag_badge.dart';
 import 'package:fucking_math/widget/common/tag_selection.dart';
 import 'package:fucking_math/widget/forms/base_form.dart';
 import 'package:fucking_math/widget/forms/form_builders.dart';
-import 'package:fucking_math/widget/ui_constants.dart';
 import 'package:provider/provider.dart';
 
 class ShowAnswerButtonWithPreview extends StatefulWidget {
@@ -22,28 +21,28 @@ class ShowAnswerButtonWithPreview extends StatefulWidget {
 
 class AnswerState extends State<ShowAnswerButtonWithPreview> {
   @override
-  Widget build(BuildContext context) => Container(
-    padding: EdgeInsets.all(8),
-    decoration: BoxDecoration(
-      border: BoxBorder.all(color: Colors.grey),
-      borderRadius: BorderRadius.circular(4),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [_buildHintText(), const Spacer(), _buildAnswerPreview()],
+  Widget build(BuildContext context) => InkWell(
+    onTap: widget.mistakeID != null ? _openAnswerEditingWindow : null,
+    child: Container(
+      padding: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        border: BoxBorder.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [_buildHintText(), const Spacer(), _buildAnswerPreview()],
+      ),
     ),
   );
 
   Widget _buildHintText() => Center(
-    child: widget.mistakeID != null
-        ? InkWell(
-            onTap: _openAnswerEditingWindow,
-            child: const Padding(
-              padding: EdgeInsets.all(4.0),
-              child: Text("点击以编辑答案", style: TextStyle(color: Colors.blue)),
-            ),
-          )
-        : const Text("分配 ID 以开始编辑答案"),
+    child: Text(
+      widget.mistakeID != null ? "点击以编辑答案" : "分配 ID 以开始编辑答案",
+      style: TextStyle(
+        color: widget.mistakeID != null ? Colors.blue : Colors.white,
+      ),
+    ),
   );
 
   void _openAnswerEditingWindow() {
@@ -68,9 +67,13 @@ class AnswerState extends State<ShowAnswerButtonWithPreview> {
         ),
       ),
     ),
-  ); // TODO: Warning: 该处 id = 10为占位符
+  );
 
-  Widget _buildAnswerPreview() => dev;
+  // TODO 预览已经编辑的条数
+  Widget _buildAnswerPreview() => Text(
+    "已添加 DEV 条答案",
+    style: const TextStyle(fontSize: 12, color: Colors.grey),
+  );
 }
 
 /// answer弹出窗口内容
@@ -117,7 +120,7 @@ class _AnswerFormState extends GenericFormStateV3<AnswerForm> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             spacing: 8,
             children: [
-              tInputer(controller: _sourceInputerController, labelText: "备注"),
+              tInputer(controller: _sourceInputerController, labelText: "来源"),
               ImagesPicker(key: _imageKey, height: 60),
               TagSelectionArea(key: _tagsKey),
             ],
@@ -292,7 +295,7 @@ class AnswerListItem extends StatelessWidget {
 
   Widget _buildIdDisplay() => Text("#$id", style: TextStyle(fontSize: 24));
 
-  Widget _buildDescDisplay() => Text(desc);
+  Widget _buildDescDisplay() => SizedBox(width: 150,child: Text(desc, overflow: TextOverflow.ellipsis));
 
   Widget _buildTagsDisplay() => Row(
     spacing: 4,

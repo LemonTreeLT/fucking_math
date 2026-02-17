@@ -4,6 +4,7 @@ import 'package:fucking_math/utils/types.dart';
 import 'package:fucking_math/widget/forms/base_form.dart';
 import 'package:fucking_math/widget/ui_constants.dart';
 import 'package:provider/provider.dart';
+import 'package:fucking_math/extensions/provider_getter.dart';
 
 class MistakesDisplay extends StatefulWidget {
   const MistakesDisplay({super.key});
@@ -25,7 +26,7 @@ class _MistakesDisplay extends GenericFormStateV2<MistakesDisplay> {
 
   Widget _buildList() => Consumer<MistakesProvider>(
     builder: (context, value, child) {
-      final provider = context.read<MistakesProvider>();
+      final provider = context.misRead;
 
       return ListView(
         children: provider.filteredList
@@ -43,8 +44,7 @@ class _MistakesDisplay extends GenericFormStateV2<MistakesDisplay> {
 
   Widget _buildSearchBar() => TextFormField(
     decoration: InputDecoration(hint: const Text("搜索")),
-    onChanged: (value) =>
-        setState(() => context.read<MistakesProvider>().search(value)),
+    onChanged: (value) => setState(() => context.misRead.search(value)),
   );
 
   Widget _buildActionButton() => Row(
@@ -56,9 +56,9 @@ class _MistakesDisplay extends GenericFormStateV2<MistakesDisplay> {
         icon: Icon(Icons.delete),
       ),
       ElevatedButton.icon(
-        onPressed: _edit,
-        label: const Text("编辑"),
-        icon: Icon(Icons.edit),
+        onPressed: _clearSelection,
+        label: const Text("清除选择"),
+        icon: Icon(Icons.clear),
       ),
     ],
   );
@@ -76,8 +76,7 @@ class _MistakesDisplay extends GenericFormStateV2<MistakesDisplay> {
   // TODO 实现删除错题逻辑
   void _delete() => dev;
 
-  // TODO 实现错题编辑逻辑
-  void _edit() => dev;
+  void _clearSelection() => context.read<MistakesProvider>().select(null);
 
   @override
   List<TextEditingController> get controllers => [];
@@ -102,8 +101,6 @@ class _MistakeListItem extends StatelessWidget {
     ),
     selected: selected,
     onTap: onTap,
-    shape: RoundedSuperellipseBorder(
-      borderRadius: BorderRadius.circular(16),
-    ),
+    shape: RoundedSuperellipseBorder(borderRadius: BorderRadius.circular(16)),
   );
 }

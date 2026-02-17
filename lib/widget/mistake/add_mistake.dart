@@ -7,6 +7,7 @@ import 'package:fucking_math/widget/common/tag_selection.dart';
 import 'package:fucking_math/widget/forms/base_form.dart';
 import 'package:fucking_math/widget/forms/form_builders.dart';
 import 'package:fucking_math/widget/mistake/answer_edit.dart';
+import 'package:fucking_math/widget/mistake/link_knowledge.dart';
 import 'package:provider/provider.dart';
 
 class AddMistake extends StatefulWidget {
@@ -23,6 +24,7 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
   final _noteInputerController = TextEditingController();
   final _imagesInputerKey = GlobalKey<ImagesPickerState>();
   final _tagKey = GlobalKey<TagSelectionAreaState>();
+  final _knowledgeKey = GlobalKey<KnowledgeLinkFormState>();
 
   Subject _selectedSubject = Subject.math;
 
@@ -61,7 +63,18 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
       // 区域4 - 右侧（占1/3）
       Expanded(
         flex: 1,
-        child: ShowAnswerButtonWithPreview(mistakeID: _mistakeId),
+        child: Column(
+          spacing: 8,
+          children: [
+            Expanded(child: ShowAnswerButtonWithPreview(mistakeID: _mistakeId)),
+            Expanded(
+              child: KnowledgeLinkButton(
+                key: _knowledgeKey,
+                mistakeID: _mistakeId,
+              ),
+            ),
+          ],
+        ),
       ),
     ],
   );
@@ -138,7 +151,26 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
   );
 
   // TODO: 实现清空表单
-  void _clearForm() {}
+  void _clearForm() => _setForm();
+
+  /// 设置表单内容
+  void _setForm({
+    int? id,
+    String? head,
+    String? body,
+    Set<int>? tags,
+    List<GenFile>? images,
+    String? source,
+    Subject subject = Subject.math,
+  }) => setState(() {
+    _titleInputerController.text = head ?? "";
+    _bodyInputerController.text = body ?? "";
+    _tagKey.currentState?.selectedTagIds = tags ?? {};
+    _selectedSubject = subject;
+    _imagesInputerKey.currentState?.images = images ?? [];
+    _sourceInputerController.text = source ?? "";
+    _mistakeId = id;
+  });
 
   Future<void> _assignID() async {
     final provider = context.read<MistakesProvider>();
@@ -162,6 +194,8 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
     final note = _noteInputerController.text.trim();
     final images = _imagesInputerKey.currentState?.images;
     final tags = _tagKey.currentState?.selectedTagIds;
+    final knowledgeIds = _knowledgeKey.currentState?.getSelectedKnowledgeIds
+        .toList();
 
     final MistakesProvider misProvider = context.read();
     final ImagesProvider imgProvider = context.read();
@@ -171,7 +205,7 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
       imageIDs = (await imgProvider.uploadImages(images)) ?? [];
     }
 
-    await misProvider.createMistakes(
+    final newID = (await misProvider.createMistakes(
       subject,
       head,
       body,
@@ -179,8 +213,11 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
       note: note,
       images: imageIDs,
       tags: tags?.toList(),
-      id: _mistakeId
-    );
+      knowledgeIds: knowledgeIds,
+      id: _mistakeId,
+    ))?.id;
+
+    setState(() => _mistakeId = newID);
   }
 
   @override

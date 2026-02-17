@@ -417,4 +417,9 @@ class MistakesDao extends DatabaseAccessor<AppDatabase>
             ..where((l) => l.mistakeId.equals(mistakeId)))
           .map((l) => l.knowledgeId)
           .get();
+
+  /// 删除错题的所有知识点关联
+  Future<int> deleteKnowledgeLinksByMistakeId(int mistakeId) =>
+      (delete(mistakeKnowledgeLink)..where((l) => l.mistakeId.equals(mistakeId)))
+          .go();
 }

@@ -43,6 +43,7 @@ Mistake dbMistakeToMistake(
   MistakeState state,
   List<ImageStorage> images,
   List<Tag> tags,
+  List<Knowledge> knowledge,
 ) => Mistake(
   id: dbMistake.id,
   subject: dbMistake.subject,
@@ -52,6 +53,7 @@ Mistake dbMistakeToMistake(
   state: state,
   images: images,
   tags: tags,
+  knowledge: knowledge,
 );
 
 /// 转换数据库 Answer 到应用 Answer

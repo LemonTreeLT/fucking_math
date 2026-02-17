@@ -16,6 +16,7 @@ class MistakesProvider
 
   @override
   List<WeightedKey<Mistake>> get fuzzyKeys => [
+    WeightedKey(name: 'id', getter: (m) => m.id.toString(), weight: 1.2),
     WeightedKey(name: 'subject', getter: (m) => m.subject.name, weight: 0.5),
     WeightedKey(name: "head", getter: (m) => m.head, weight: 1.0),
     WeightedKey(name: "body", getter: (m) => m.body, weight: 1.0),
@@ -35,6 +36,7 @@ class MistakesProvider
     String? note,
     List<int> images = const [],
     List<int>? tags = const [],
+    List<int>? knowledgeIds,
     int? id,
   }) async => justDoItNext(
     action: () => rep.saveMistake(
@@ -44,6 +46,7 @@ class MistakesProvider
       source: source,
       tags: tags,
       imageIds: images,
+      knowledgeIds: knowledgeIds,
       note: note,
       id: id,
     ),
@@ -78,6 +81,11 @@ class MistakesProvider
   Future<List<Answer>?> getAnswerOfMistakes(int mistakeId) => justDoItNext(
     action: () => rep.getAnswersByMistakeId(mistakeId),
     errMsg: "查询 $mistakeId 号错题时发生错误",
+  );
+
+  Future<List<Knowledge>?> getMistakeKnowledge(int mistakeId) => justDoItNext(
+    action: () => rep.getMistakeKnowledge(mistakeId),
+    errMsg: "获取错题 $mistakeId 的知识点失败",
   );
 
   Future<int?> assignID() =>
