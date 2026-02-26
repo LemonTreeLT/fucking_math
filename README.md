@@ -21,6 +21,7 @@
 - [ ] 重构：使用 SearchAnchor 重构 phrase 录入中的单词补全建议功能
 - [ ] 重构: tag selector 的弹出窗口
 - [ ] 重构: 知识点搜索部分
+- [ ] 加急: 完成基础配置文件加载与自定义数据库路径
 
 - [ ] 完成基本信息录入功能 <-- We are here
   - [x] 数据库搭建
@@ -83,7 +84,7 @@
 - **主语言**: Dart
 - **UI 框架**: Flutter
 - **数据库**: Drift + sqlite3
-- **工作模式**: UI -> Proivder -> Repository -> Dao -> DB
+- **工作模式**: UI -> Provider -> Repository -> Dao -> DB
 
 ## 贡献项目
 

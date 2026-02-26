@@ -233,6 +233,7 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
 }
 
 final tInputer = FormBuilders.textField;
+
 Widget sInputer(void Function(Subject?) onChanged) => FormBuilders.enumDropdown(
   label: '学科',
   items: Subject.values,

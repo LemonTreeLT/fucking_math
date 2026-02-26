@@ -79,7 +79,9 @@ class AnswerState extends State<ShowAnswerButtonWithPreview> {
 /// answer弹出窗口内容
 class AnswerForm extends StatefulWidget {
   const AnswerForm({super.key, required this.mistakeID});
+
   final int mistakeID;
+
   @override
   State<StatefulWidget> createState() => _AnswerFormState();
 }
@@ -246,6 +248,7 @@ class _AnswerFormState extends GenericFormStateV3<AnswerForm> {
 
   // TODO: 完整实现
   List<Answer> answers = [];
+
   Widget _buildAnswerList() => Container(
     decoration: BoxDecoration(
       border: Border.all(color: Colors.grey),
@@ -295,7 +298,8 @@ class AnswerListItem extends StatelessWidget {
 
   Widget _buildIdDisplay() => Text("#$id", style: TextStyle(fontSize: 24));
 
-  Widget _buildDescDisplay() => SizedBox(width: 150,child: Text(desc, overflow: TextOverflow.ellipsis));
+  Widget _buildDescDisplay() =>
+      SizedBox(width: 150, child: Text(desc, overflow: TextOverflow.ellipsis));
 
   Widget _buildTagsDisplay() => Row(
     spacing: 4,

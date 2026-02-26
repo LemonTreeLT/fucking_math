@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:fucking_math/utils/types.dart';
-import 'package:provider/provider.dart';
 import 'package:fucking_math/providers/knowledge.dart';
 import 'package:fucking_math/providers/mistakes.dart';
+import 'package:fucking_math/utils/types.dart';
+import 'package:fucking_math/widget/ui_constants.dart';
+import 'package:provider/provider.dart';
 
 class KnowledgeLinkButton extends StatefulWidget {
   const KnowledgeLinkButton({super.key, this.mistakeID});
@@ -15,6 +16,7 @@ class KnowledgeLinkButton extends StatefulWidget {
 
 class _KnowledgeLinkButtonState extends State<KnowledgeLinkButton> {
   int _linkedCount = 0;
+
   bool _isEnabled() => widget.mistakeID != null && widget.mistakeID! > 0;
 
   @override
@@ -102,15 +104,18 @@ class KnowledgeLinkForm extends StatefulWidget {
 }
 
 class KnowledgeLinkFormState extends State<KnowledgeLinkForm> {
-  late Set<int> selectedKnowledgeIds;
+  late Set<int> _selectedKnowledgeIds;
 
-  Set<int> get getSelectedKnowledgeIds => selectedKnowledgeIds;
+  Set<int> get getSelectedKnowledgeIds => _selectedKnowledgeIds;
 
   @override
   void initState() {
     super.initState();
-    selectedKnowledgeIds = <int>{};
-    _loadInitialSelection();
+    _selectedKnowledgeIds = <int>{};
+
+    Future.microtask(() {
+      if (mounted) _loadInitialSelection();
+    });
   }
 
   Future<void> _loadInitialSelection() async {
@@ -118,7 +123,9 @@ class KnowledgeLinkFormState extends State<KnowledgeLinkForm> {
     final knowledge = await provider.getMistakeKnowledge(widget.mistakeID);
 
     if (knowledge != null) {
-      setState(() => selectedKnowledgeIds = knowledge.map((k) => k.id).toSet());
+      setState(
+            () => _selectedKnowledgeIds = knowledge.map((k) => k.id).toSet(),
+      );
     }
   }
 
@@ -162,7 +169,7 @@ class KnowledgeLinkFormState extends State<KnowledgeLinkForm> {
   );
 
   Widget _buildKnowledgeCheckboxTile(Knowledge knowledge) => CheckboxListTile(
-    value: selectedKnowledgeIds.contains(knowledge.id),
+    value: _selectedKnowledgeIds.contains(knowledge.id),
     onChanged: (value) => _toggleKnowledge(knowledge.id, value ?? false),
     title: Text(knowledge.head),
     subtitle: Text(
@@ -174,39 +181,49 @@ class KnowledgeLinkFormState extends State<KnowledgeLinkForm> {
 
   void _toggleKnowledge(int knowledgeId, bool isSelected) => setState(
     () => isSelected
-        ? selectedKnowledgeIds.add(knowledgeId)
-        : selectedKnowledgeIds.remove(knowledgeId),
+        ? _selectedKnowledgeIds.add(knowledgeId)
+        : _selectedKnowledgeIds.remove(knowledgeId),
   );
 
   Widget _buildSelectedList() => Consumer<KnowledgeProvider>(
     builder: (context, knowledgeProvider, _) {
       final selected = knowledgeProvider.getItems
-          .where((k) => selectedKnowledgeIds.contains(k.id))
+          .where((k) => _selectedKnowledgeIds.contains(k.id))
           .toList();
 
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            '已选择',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-          ),
-          const SizedBox(height: 8),
-          Expanded(
-            child: ListView.builder(
-              itemCount: selected.length,
-              itemBuilder: (context, index) =>
-                  _buildSelectedChip(selected[index]),
+      return Container(
+        decoration: BoxDecoration(border: Border.all(color: grey),
+            borderRadius: BorderRadius.circular(8)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              '      已选择',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
-          ),
-        ],
+            const SizedBox(height: 8),
+            Expanded(
+              child: ListView.builder(
+                itemCount: selected.length,
+                itemBuilder: (context, index) =>
+                    _buildSelectedChip(selected[index]),
+              ),
+            ),
+          ],
+        ),
       );
     },
   );
 
-  Widget _buildSelectedChip(Knowledge knowledge) => Chip(
-    label: Text(knowledge.head),
-    onDeleted: () => _toggleKnowledge(knowledge.id, false),
+  Widget _buildSelectedChip(Knowledge knowledge) =>
+      ListTile(
+        title: Text(knowledge.head),
+        trailing: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => _toggleKnowledge(knowledge.id, false),
+        ),
+        dense: true, // 使布局更紧凑，高度接近 Chip
+        visualDensity: VisualDensity.compact,
   );
 
   Widget _buildActionButtons() => Row(

@@ -1,0 +1,21 @@
+# 所有类的 path 字段均将被解析为绝对路径
+# 所有 path 字段均不包含文件名
+# 当特定字段的path被提供时，程序不再从默认路径下解析文件
+# 当任意字段解析失败时，程序将使用默认值
+#   Warning: 当输入无法创建的地址时程序会报错
+# Config 文件路径请在程序运行目录下使用 cfg.path 文件提供
+
+[Data]
+# 所有数据的默认存储路径, 默认为用户文档下的 Fucking Math
+# path = ""
+
+[Database]
+# 数据库路径
+# path = ""
+
+# 数据库名称
+# name = "i like math anyway.sqlite.db"
+
+[Image]
+# 图片文件夹路径
+# path = ""
