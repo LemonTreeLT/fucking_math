@@ -8,6 +8,7 @@ import 'package:fucking_math/widget/common/tag_badge.dart';
 import 'package:fucking_math/widget/common/tag_selection.dart';
 import 'package:fucking_math/widget/forms/base_form.dart';
 import 'package:fucking_math/widget/forms/form_builders.dart';
+import 'package:fucking_math/widget/ui_constants.dart';
 import 'package:provider/provider.dart';
 
 class ShowAnswerButtonWithPreview extends StatefulWidget {
@@ -115,7 +116,7 @@ class _AnswerFormState extends GenericFormStateV3<AnswerForm> {
       AnimatedSize(
         duration: Duration(milliseconds: 120),
         child: Visibility(
-          visible: _detailsVisable,
+          visible: _detailsVisible,
           maintainAnimation: true,
           maintainState: true,
           child: Column(
@@ -153,13 +154,13 @@ class _AnswerFormState extends GenericFormStateV3<AnswerForm> {
   final _imageKey = GlobalKey<ImagesPickerState>();
   final _tagsKey = GlobalKey<TagSelectionAreaState>();
 
-  bool _detailsVisable = false;
+  bool _detailsVisible = false;
 
   Widget _buildTitleInputer() =>
       tInputer(controller: _titleInputerController, labelText: "标题");
 
   Widget _buildOtherButton() => InkWell(
-    onTap: () => setState(() => _detailsVisable = !_detailsVisable),
+    onTap: () => setState(() => _detailsVisible = !_detailsVisible),
     child: Container(
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
@@ -198,7 +199,7 @@ class _AnswerFormState extends GenericFormStateV3<AnswerForm> {
     ],
   );
 
-  void _clearForm() => print(answers.last.tags);
+  void _clearForm() => dev;
 
   Future<void> _addAnswer() async {
     final MistakesProvider provider = context.read();

@@ -1,7 +1,7 @@
 import 'package:fucking_math/db/app_database.dart' show AppDatabase;
 import 'package:fucking_math/db/daos/mistake.dart';
 import 'package:fucking_math/extensions/list.dart';
-import 'package:fucking_math/providers/base_db_proivder.dart';
+import 'package:fucking_math/providers/base_db_provider.dart';
 import 'package:fucking_math/utils/repository/mistakes.dart';
 import 'package:fucking_math/utils/types.dart';
 import 'package:fuzzy/data/fuzzy_options.dart';
@@ -9,10 +9,7 @@ import 'package:fuzzy/data/fuzzy_options.dart';
 class MistakesProvider
     extends BaseRepositoryProvider<Mistake, MistakesRepository>
     with FuzzySearchMixin, SingleObjectSelectMixin<int> {
-  MistakesProvider(AppDatabase db)
-    : super(MistakesRepository(MistakesDao(db))) {
-    loadMistakes();
-  }
+  MistakesProvider(AppDatabase db) : super(MistakesRepository(MistakesDao(db)));
 
   @override
   List<WeightedKey<Mistake>> get fuzzyKeys => [
@@ -24,7 +21,7 @@ class MistakesProvider
 
   Future<void> loadMistakes() async => justDoIt(
     action: () => rep.getAllMistakes(),
-    onSucces: setItems,
+    onSuccess: setItems,
     errMsg: "加载错题失败",
   );
 
@@ -50,7 +47,7 @@ class MistakesProvider
       note: note,
       id: id,
     ),
-    onSucces: (save) =>
+    onSuccess: (save) =>
         setItems(items.withUpsert(save, (k) => k.id == save.id)),
     errMsg: "保存错题失败",
   );
@@ -90,4 +87,10 @@ class MistakesProvider
 
   Future<int?> assignID() =>
       justDoItNext(action: rep.assignID, errMsg: "无法分配 ID");
+
+  Future<void> removeMistakes(int id) => justDoItNext(
+    action: () => rep.deleteMistake(id),
+    errMsg: "删除 $id 错题失败",
+    onSuccess: (_) => setItems(items.where((m) => m.id != id).toList()),
+  );
 }

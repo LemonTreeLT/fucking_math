@@ -5,14 +5,19 @@ import 'package:fucking_math/configs/tags.dart';
 import 'package:fucking_math/db/tables/tables_images.dart';
 
 // --- 引入所有表格定义 ---
+import 'package:fucking_math/db/tables/tables_ai.dart';
 import 'package:fucking_math/db/tables/tables_english.dart';
 import 'package:fucking_math/db/tables/tables_knowledge.dart';
 import 'package:fucking_math/db/tables/tables_mistakes.dart';
 import 'package:fucking_math/db/tables/tables_tags.dart';
 
 import 'package:fucking_math/utils/types.dart' show Subject, SubjectConverter;
+import 'package:fucking_math/ai/types.dart' show Roles;
 
 // 引入 dao 定义
+import 'daos/ai_history.dart';
+import 'daos/ai_provider.dart';
+import 'daos/ai_prompt.dart';
 import 'daos/tag.dart';
 import 'daos/knowledge.dart';
 import 'daos/mistake.dart';
@@ -31,6 +36,10 @@ part 'app_database.g.dart';
 
 @DriftDatabase(
   tables: [
+    AiProviders,
+    AiHistories,
+    Session,
+    Prompts,
     Tags,
     Words,
     WordLogs,
@@ -52,7 +61,7 @@ part 'app_database.g.dart';
     MistakeAnalysis,
     MistakeKnowledgeLink,
   ],
-  daos: [TagsDao, WordsDao, KnowledgeDao, MistakesDao, PhrasesDao, ImagesDao],
+  daos: [AiProviderDao, AiHistoryDao, PromptDao, TagsDao, WordsDao, KnowledgeDao, MistakesDao, PhrasesDao, ImagesDao],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -64,6 +73,10 @@ class AppDatabase extends _$AppDatabase {
       LazyDatabase(() async => NativeDatabase(Config.dbFile));
 
   // DAO 访问器
+  @override
+  AiProviderDao get aiProviderDao => AiProviderDao(this);
+  @override
+  AiHistoryDao get aiHistoryDao => AiHistoryDao(this);
   @override
   TagsDao get tagsDao => TagsDao(this);
   @override

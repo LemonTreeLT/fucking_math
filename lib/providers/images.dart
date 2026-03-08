@@ -1,6 +1,6 @@
 import 'package:fucking_math/db/app_database.dart';
 import 'package:fucking_math/db/daos/images.dart';
-import 'package:fucking_math/providers/base_db_proivder.dart';
+import 'package:fucking_math/providers/base_db_provider.dart';
 import 'package:fucking_math/utils/image.dart';
 import 'package:fucking_math/utils/repository/images.dart';
 import 'package:fucking_math/utils/types.dart';

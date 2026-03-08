@@ -63,10 +63,12 @@ Custom `RouterConfig` class provides unified configuration for both GoRouter nav
   - `tables_mistakes.dart` - Mistakes, Answers, MistakeAnalysis, MistakePicsLink, AnswerPicsLink, MistakeLogs, AnswersTagsLink, MistakeKnowledgeLink
   - `tables_tags.dart` - Tags
   - `tables_images.dart` - Images
+  - `tables_ai.dart` - AiProviders, AiHistories, Session, Prompts
 
-- **DAOs** (`daos/`): `TagsDao`, `WordsDao`, `KnowledgeDao`, `MistakesDao`, `PhrasesDao`, `ImagesDao`
+- **DAOs** (`daos/`): `TagsDao`, `WordsDao`, `KnowledgeDao`, `MistakesDao`, `PhrasesDao`, `ImagesDao`, `AiProviderDao`, `AiHistoryDao`, `PromptDao`
   - Each DAO is auto-generated from its corresponding table definition
   - Always run `dart run build_runner build` after modifying table definitions or DAO methods
+  - AI DAOs note: Return Drift data classes (e.g., `SessionData`) which are converted to business types in Repository layer
 
 - **Database Initialization** (`app_database.dart`):
   - Schema version is always 1 until MVP (v0.1.0)
@@ -125,6 +127,53 @@ Repositories abstract database operations:
 - `form/` - Form validation utilities
 - `mixin/` - Reusable mixins (form_helper, provider_error_handle)
 - `repository/helper/` - Exception types and utility functions
+
+### AI Module (`lib/ai/`)
+
+**Status**: Core infrastructure implemented with Repository + DAO layer
+
+**Components**:
+
+- **Types** (`types.dart`):
+  - `Roles` enum - Message roles (user, system, tool, assistant)
+  - `AiProvider` - AI service provider configuration (name, baseUrl, apiKey, models)
+  - `Message` - Individual message with role, content, tool calls, timestamps
+  - `Session` - Conversation session metadata (id, title, createdAt)
+  - `Prompt` - Reusable prompt template with placeholder support (`{{key}}` syntax)
+  - `Conversation` - Complete conversation (session + messages)
+    - `toOpenAIFormat()` - Converts messages to OpenAI API format
+    - `addMessage()` - Immutable message appending
+
+- **Database** (`lib/db/tables/tables_ai.dart`):
+  - `AiProviders` - Store AI service configurations
+  - `AiHistories` - Store all messages and tool call history for audit/debugging
+  - `Session` - Store conversation sessions (one per user conversation)
+  - `Prompts` - Store prompt templates for reuse
+
+- **DAOs** (`lib/db/daos/`):
+  - `AiProviderDao` - Query/manage AI providers
+  - `AiHistoryDao` - Message CRUD + Session management
+    - Returns `SessionData` (Drift generated class)
+    - Session CRUD: create, getById, getByTitle, getAll, updateTitle, delete
+    - Query methods: getHistoryByProviderId, getRecentHistory, getHistoryByDateRange
+  - `PromptDao` - Prompt CRUD + search
+    - All standard CRUD operations
+    - Fuzzy search by name/description
+
+- **Repositories** (`lib/ai/repository/`):
+  - `AiProviderRepository` - High-level provider management (already existed)
+  - `AiHistoryRepository` - Message & Session management + data type conversion
+    - **Key methods**: `getConversation(sessionId, providerId)` - Fetch complete conversation
+    - Converts Drift types (`SessionData`) to business types (`Session`)
+    - Custom exception handling (not `AppDatabaseException`)
+  - `PromptRepository` - Prompt management with search
+
+- **Exception Handling** (`lib/utils/repository/helper/exceptions.dart`):
+  - `AiSessionNotFoundException` - Session not found
+  - `AiPromptNotFoundException` - Prompt not found
+  - `AiProviderNotFoundException` - Provider not found
+  - `AiHistoryException` - Business logic errors (not structural DB errors)
+  - **Important**: Use custom exceptions for business logic; reserve `AppDatabaseException` only for severe structural failures
 
 ## Code Patterns & Conventions
 
@@ -196,6 +245,37 @@ class MyItemsProvider extends BaseRepositoryProvider<MyItem, MyItemRepository>
 }
 ```
 
+### AI Module Repository Pattern
+
+The AI module uses a Repository layer that converts Drift types to business types:
+
+```dart
+class AiHistoryRepository {
+  final AiHistoryDao _dao;
+
+  // Business types (Session from ai/types.dart)
+  Future<Session?> getSessionById(int sessionId) async {
+    final dbSession = await _dao.getSessionById(sessionId); // Returns SessionData
+    if (dbSession == null) return null;
+    return _dbSessionToSession(dbSession); // Convert to Session
+  }
+
+  // Helper converts Drift SessionData to business Session
+  Session _dbSessionToSession(db.SessionData dbSession) => Session(
+    id: dbSession.id,
+    title: dbSession.title,
+    createdAt: dbSession.createdAt,
+  );
+}
+```
+
+**Key Points**:
+- DAOs return Drift generated classes (e.g., `SessionData`, `AiHistory`)
+- Repositories convert to business types (e.g., `Session` from `ai/types.dart`)
+- Use custom exceptions (`AiHistoryException`, `AiSessionNotFoundException`)
+- Never use `AppDatabaseException` for business logic errors
+- **Conversation retrieval**: Use `getConversation(sessionId, providerId)` to fetch complete conversation with all messages
+
 ## Important Notes
 
 ### Database Schema Changes
@@ -216,29 +296,40 @@ class MyItemsProvider extends BaseRepositoryProvider<MyItem, MyItemRepository>
 
 ```
 lib/
-├── db/                    # Database layer (Drift)
-│   ├── tables/           # Drift table definitions
-│   ├── daos/             # Data access objects
-│   └── app_database.dart # Database configuration
-├── pages/                # UI pages/screens
-│   ├── routers/          # Navigation shells
-│   ├── english/          # English module pages
-│   ├── mistakes/         # Mistakes module pages
-│   ├── knowledge/        # Knowledge module pages
-│   └── router_config.dart # Routing configuration
-├── providers/            # State management layer
-├── utils/                # Business logic & utilities
-│   ├── repository/       # Repository layer
-│   └── mixin/            # Reusable mixins
-├── widget/               # Reusable widgets & components
-│   ├── common/           # Common widgets (tag_selection, images_picker, etc.)
-│   ├── forms/            # Form-related widgets
-│   ├── inputs/           # Input widgets
-│   ├── navigation/       # Navigation widgets
-│   ├── mistake/          # Mistake-related widgets
-│   └── knowledge/        # Knowledge-related widgets
-├── configs/              # Configuration files
-├── extensions/           # Dart extensions
-└── main.dart             # App entry point
+├── ai/                       # AI module (LLM integration)
+│   ├── types.dart           # Business models (Message, Conversation, etc.)
+│   ├── client.dart          # AI API client
+│   ├── config/              # AI configuration
+│   ├── prompts.dart         # Prompt definitions
+│   ├── repository/          # Repository layer
+│   │   ├── ai_provider_repository.dart
+│   │   ├── ai_history_repository.dart
+│   │   └── ai_prompt_repository.dart
+│   ├── tools/               # AI tool implementations
+│   └── providers/           # (Planned) Provider layer for state management
+├── db/                      # Database layer (Drift)
+│   ├── tables/             # Drift table definitions
+│   ├── daos/               # Data access objects
+│   └── app_database.dart   # Database configuration
+├── pages/                  # UI pages/screens
+│   ├── routers/            # Navigation shells
+│   ├── english/            # English module pages
+│   ├── mistakes/           # Mistakes module pages
+│   ├── knowledge/          # Knowledge module pages
+│   └── router_config.dart  # Routing configuration
+├── providers/             # State management layer
+├── utils/                 # Business logic & utilities
+│   ├── repository/        # Repository layer
+│   └── mixin/             # Reusable mixins
+├── widget/                # Reusable widgets & components
+│   ├── common/            # Common widgets (tag_selection, images_picker, etc.)
+│   ├── forms/             # Form-related widgets
+│   ├── inputs/            # Input widgets
+│   ├── navigation/        # Navigation widgets
+│   ├── mistake/           # Mistake-related widgets
+│   └── knowledge/         # Knowledge-related widgets
+├── configs/               # Configuration files
+├── extensions/            # Dart extensions
+└── main.dart              # App entry point
 ```
 

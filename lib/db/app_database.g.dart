@@ -3,6 +3,2004 @@
 part of 'app_database.dart';
 
 // ignore_for_file: type=lint
+class $ImagesTable extends Images with TableInfo<$ImagesTable, Image> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ImagesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createAtMeta = const VerificationMeta(
+    'createAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createAt = GeneratedColumn<DateTime>(
+    'create_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _descMeta = const VerificationMeta('desc');
+  @override
+  late final GeneratedColumn<String> desc = GeneratedColumn<String>(
+    'desc',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _pathMeta = const VerificationMeta('path');
+  @override
+  late final GeneratedColumn<String> path = GeneratedColumn<String>(
+    'path',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, name, createAt, desc, path];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'images';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Image> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('create_at')) {
+      context.handle(
+        _createAtMeta,
+        createAt.isAcceptableOrUnknown(data['create_at']!, _createAtMeta),
+      );
+    }
+    if (data.containsKey('desc')) {
+      context.handle(
+        _descMeta,
+        desc.isAcceptableOrUnknown(data['desc']!, _descMeta),
+      );
+    }
+    if (data.containsKey('path')) {
+      context.handle(
+        _pathMeta,
+        path.isAcceptableOrUnknown(data['path']!, _pathMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Image map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Image(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      createAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}create_at'],
+      )!,
+      desc: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}desc'],
+      ),
+      path: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}path'],
+      ),
+    );
+  }
+
+  @override
+  $ImagesTable createAlias(String alias) {
+    return $ImagesTable(attachedDatabase, alias);
+  }
+}
+
+class Image extends DataClass implements Insertable<Image> {
+  final int id;
+  final String name;
+  final DateTime createAt;
+  final String? desc;
+  final String? path;
+  const Image({
+    required this.id,
+    required this.name,
+    required this.createAt,
+    this.desc,
+    this.path,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    map['create_at'] = Variable<DateTime>(createAt);
+    if (!nullToAbsent || desc != null) {
+      map['desc'] = Variable<String>(desc);
+    }
+    if (!nullToAbsent || path != null) {
+      map['path'] = Variable<String>(path);
+    }
+    return map;
+  }
+
+  ImagesCompanion toCompanion(bool nullToAbsent) {
+    return ImagesCompanion(
+      id: Value(id),
+      name: Value(name),
+      createAt: Value(createAt),
+      desc: desc == null && nullToAbsent ? const Value.absent() : Value(desc),
+      path: path == null && nullToAbsent ? const Value.absent() : Value(path),
+    );
+  }
+
+  factory Image.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Image(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      createAt: serializer.fromJson<DateTime>(json['createAt']),
+      desc: serializer.fromJson<String?>(json['desc']),
+      path: serializer.fromJson<String?>(json['path']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'createAt': serializer.toJson<DateTime>(createAt),
+      'desc': serializer.toJson<String?>(desc),
+      'path': serializer.toJson<String?>(path),
+    };
+  }
+
+  Image copyWith({
+    int? id,
+    String? name,
+    DateTime? createAt,
+    Value<String?> desc = const Value.absent(),
+    Value<String?> path = const Value.absent(),
+  }) => Image(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    createAt: createAt ?? this.createAt,
+    desc: desc.present ? desc.value : this.desc,
+    path: path.present ? path.value : this.path,
+  );
+  Image copyWithCompanion(ImagesCompanion data) {
+    return Image(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      createAt: data.createAt.present ? data.createAt.value : this.createAt,
+      desc: data.desc.present ? data.desc.value : this.desc,
+      path: data.path.present ? data.path.value : this.path,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Image(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('createAt: $createAt, ')
+          ..write('desc: $desc, ')
+          ..write('path: $path')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, name, createAt, desc, path);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Image &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.createAt == this.createAt &&
+          other.desc == this.desc &&
+          other.path == this.path);
+}
+
+class ImagesCompanion extends UpdateCompanion<Image> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<DateTime> createAt;
+  final Value<String?> desc;
+  final Value<String?> path;
+  const ImagesCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.createAt = const Value.absent(),
+    this.desc = const Value.absent(),
+    this.path = const Value.absent(),
+  });
+  ImagesCompanion.insert({
+    this.id = const Value.absent(),
+    required String name,
+    this.createAt = const Value.absent(),
+    this.desc = const Value.absent(),
+    this.path = const Value.absent(),
+  }) : name = Value(name);
+  static Insertable<Image> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<DateTime>? createAt,
+    Expression<String>? desc,
+    Expression<String>? path,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (createAt != null) 'create_at': createAt,
+      if (desc != null) 'desc': desc,
+      if (path != null) 'path': path,
+    });
+  }
+
+  ImagesCompanion copyWith({
+    Value<int>? id,
+    Value<String>? name,
+    Value<DateTime>? createAt,
+    Value<String?>? desc,
+    Value<String?>? path,
+  }) {
+    return ImagesCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      createAt: createAt ?? this.createAt,
+      desc: desc ?? this.desc,
+      path: path ?? this.path,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (createAt.present) {
+      map['create_at'] = Variable<DateTime>(createAt.value);
+    }
+    if (desc.present) {
+      map['desc'] = Variable<String>(desc.value);
+    }
+    if (path.present) {
+      map['path'] = Variable<String>(path.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ImagesCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('createAt: $createAt, ')
+          ..write('desc: $desc, ')
+          ..write('path: $path')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $AiProvidersTable extends AiProviders
+    with TableInfo<$AiProvidersTable, AiProvider> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AiProvidersTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
+  );
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+    'description',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _baseUrlMeta = const VerificationMeta(
+    'baseUrl',
+  );
+  @override
+  late final GeneratedColumn<String> baseUrl = GeneratedColumn<String>(
+    'base_url',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _apiKeyMeta = const VerificationMeta('apiKey');
+  @override
+  late final GeneratedColumn<String> apiKey = GeneratedColumn<String>(
+    'api_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _iconIdMeta = const VerificationMeta('iconId');
+  @override
+  late final GeneratedColumn<int> iconId = GeneratedColumn<int>(
+    'icon_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES images (id)',
+    ),
+  );
+  static const VerificationMeta _isActiveMeta = const VerificationMeta(
+    'isActive',
+  );
+  @override
+  late final GeneratedColumn<bool> isActive = GeneratedColumn<bool>(
+    'is_active',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_active" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    description,
+    baseUrl,
+    apiKey,
+    iconId,
+    isActive,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'ai_providers';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AiProvider> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
+          _descriptionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('base_url')) {
+      context.handle(
+        _baseUrlMeta,
+        baseUrl.isAcceptableOrUnknown(data['base_url']!, _baseUrlMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_baseUrlMeta);
+    }
+    if (data.containsKey('api_key')) {
+      context.handle(
+        _apiKeyMeta,
+        apiKey.isAcceptableOrUnknown(data['api_key']!, _apiKeyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_apiKeyMeta);
+    }
+    if (data.containsKey('icon_id')) {
+      context.handle(
+        _iconIdMeta,
+        iconId.isAcceptableOrUnknown(data['icon_id']!, _iconIdMeta),
+      );
+    }
+    if (data.containsKey('is_active')) {
+      context.handle(
+        _isActiveMeta,
+        isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AiProvider map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AiProvider(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      ),
+      baseUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}base_url'],
+      )!,
+      apiKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}api_key'],
+      )!,
+      iconId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}icon_id'],
+      ),
+      isActive: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_active'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $AiProvidersTable createAlias(String alias) {
+    return $AiProvidersTable(attachedDatabase, alias);
+  }
+}
+
+class AiProvider extends DataClass implements Insertable<AiProvider> {
+  final int id;
+  final String name;
+  final String? description;
+  final String baseUrl;
+  final String apiKey;
+  final int? iconId;
+  final bool isActive;
+  final DateTime createdAt;
+  const AiProvider({
+    required this.id,
+    required this.name,
+    this.description,
+    required this.baseUrl,
+    required this.apiKey,
+    this.iconId,
+    required this.isActive,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String>(description);
+    }
+    map['base_url'] = Variable<String>(baseUrl);
+    map['api_key'] = Variable<String>(apiKey);
+    if (!nullToAbsent || iconId != null) {
+      map['icon_id'] = Variable<int>(iconId);
+    }
+    map['is_active'] = Variable<bool>(isActive);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  AiProvidersCompanion toCompanion(bool nullToAbsent) {
+    return AiProvidersCompanion(
+      id: Value(id),
+      name: Value(name),
+      description: description == null && nullToAbsent
+          ? const Value.absent()
+          : Value(description),
+      baseUrl: Value(baseUrl),
+      apiKey: Value(apiKey),
+      iconId: iconId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(iconId),
+      isActive: Value(isActive),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory AiProvider.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AiProvider(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      description: serializer.fromJson<String?>(json['description']),
+      baseUrl: serializer.fromJson<String>(json['baseUrl']),
+      apiKey: serializer.fromJson<String>(json['apiKey']),
+      iconId: serializer.fromJson<int?>(json['iconId']),
+      isActive: serializer.fromJson<bool>(json['isActive']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'description': serializer.toJson<String?>(description),
+      'baseUrl': serializer.toJson<String>(baseUrl),
+      'apiKey': serializer.toJson<String>(apiKey),
+      'iconId': serializer.toJson<int?>(iconId),
+      'isActive': serializer.toJson<bool>(isActive),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  AiProvider copyWith({
+    int? id,
+    String? name,
+    Value<String?> description = const Value.absent(),
+    String? baseUrl,
+    String? apiKey,
+    Value<int?> iconId = const Value.absent(),
+    bool? isActive,
+    DateTime? createdAt,
+  }) => AiProvider(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    description: description.present ? description.value : this.description,
+    baseUrl: baseUrl ?? this.baseUrl,
+    apiKey: apiKey ?? this.apiKey,
+    iconId: iconId.present ? iconId.value : this.iconId,
+    isActive: isActive ?? this.isActive,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  AiProvider copyWithCompanion(AiProvidersCompanion data) {
+    return AiProvider(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
+      baseUrl: data.baseUrl.present ? data.baseUrl.value : this.baseUrl,
+      apiKey: data.apiKey.present ? data.apiKey.value : this.apiKey,
+      iconId: data.iconId.present ? data.iconId.value : this.iconId,
+      isActive: data.isActive.present ? data.isActive.value : this.isActive,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AiProvider(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('description: $description, ')
+          ..write('baseUrl: $baseUrl, ')
+          ..write('apiKey: $apiKey, ')
+          ..write('iconId: $iconId, ')
+          ..write('isActive: $isActive, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    name,
+    description,
+    baseUrl,
+    apiKey,
+    iconId,
+    isActive,
+    createdAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AiProvider &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.description == this.description &&
+          other.baseUrl == this.baseUrl &&
+          other.apiKey == this.apiKey &&
+          other.iconId == this.iconId &&
+          other.isActive == this.isActive &&
+          other.createdAt == this.createdAt);
+}
+
+class AiProvidersCompanion extends UpdateCompanion<AiProvider> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<String?> description;
+  final Value<String> baseUrl;
+  final Value<String> apiKey;
+  final Value<int?> iconId;
+  final Value<bool> isActive;
+  final Value<DateTime> createdAt;
+  const AiProvidersCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.description = const Value.absent(),
+    this.baseUrl = const Value.absent(),
+    this.apiKey = const Value.absent(),
+    this.iconId = const Value.absent(),
+    this.isActive = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  });
+  AiProvidersCompanion.insert({
+    this.id = const Value.absent(),
+    required String name,
+    this.description = const Value.absent(),
+    required String baseUrl,
+    required String apiKey,
+    this.iconId = const Value.absent(),
+    this.isActive = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  }) : name = Value(name),
+       baseUrl = Value(baseUrl),
+       apiKey = Value(apiKey);
+  static Insertable<AiProvider> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<String>? description,
+    Expression<String>? baseUrl,
+    Expression<String>? apiKey,
+    Expression<int>? iconId,
+    Expression<bool>? isActive,
+    Expression<DateTime>? createdAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (description != null) 'description': description,
+      if (baseUrl != null) 'base_url': baseUrl,
+      if (apiKey != null) 'api_key': apiKey,
+      if (iconId != null) 'icon_id': iconId,
+      if (isActive != null) 'is_active': isActive,
+      if (createdAt != null) 'created_at': createdAt,
+    });
+  }
+
+  AiProvidersCompanion copyWith({
+    Value<int>? id,
+    Value<String>? name,
+    Value<String?>? description,
+    Value<String>? baseUrl,
+    Value<String>? apiKey,
+    Value<int?>? iconId,
+    Value<bool>? isActive,
+    Value<DateTime>? createdAt,
+  }) {
+    return AiProvidersCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      baseUrl: baseUrl ?? this.baseUrl,
+      apiKey: apiKey ?? this.apiKey,
+      iconId: iconId ?? this.iconId,
+      isActive: isActive ?? this.isActive,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (baseUrl.present) {
+      map['base_url'] = Variable<String>(baseUrl.value);
+    }
+    if (apiKey.present) {
+      map['api_key'] = Variable<String>(apiKey.value);
+    }
+    if (iconId.present) {
+      map['icon_id'] = Variable<int>(iconId.value);
+    }
+    if (isActive.present) {
+      map['is_active'] = Variable<bool>(isActive.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AiProvidersCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('description: $description, ')
+          ..write('baseUrl: $baseUrl, ')
+          ..write('apiKey: $apiKey, ')
+          ..write('iconId: $iconId, ')
+          ..write('isActive: $isActive, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SessionTable extends Session with TableInfo<$SessionTable, SessionData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SessionTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, title, createdAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'session';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SessionData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  SessionData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SessionData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $SessionTable createAlias(String alias) {
+    return $SessionTable(attachedDatabase, alias);
+  }
+}
+
+class SessionData extends DataClass implements Insertable<SessionData> {
+  final int id;
+  final String? title;
+  final DateTime createdAt;
+  const SessionData({required this.id, this.title, required this.createdAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    if (!nullToAbsent || title != null) {
+      map['title'] = Variable<String>(title);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  SessionCompanion toCompanion(bool nullToAbsent) {
+    return SessionCompanion(
+      id: Value(id),
+      title: title == null && nullToAbsent
+          ? const Value.absent()
+          : Value(title),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory SessionData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SessionData(
+      id: serializer.fromJson<int>(json['id']),
+      title: serializer.fromJson<String?>(json['title']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'title': serializer.toJson<String?>(title),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  SessionData copyWith({
+    int? id,
+    Value<String?> title = const Value.absent(),
+    DateTime? createdAt,
+  }) => SessionData(
+    id: id ?? this.id,
+    title: title.present ? title.value : this.title,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  SessionData copyWithCompanion(SessionCompanion data) {
+    return SessionData(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SessionData(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, title, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SessionData &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.createdAt == this.createdAt);
+}
+
+class SessionCompanion extends UpdateCompanion<SessionData> {
+  final Value<int> id;
+  final Value<String?> title;
+  final Value<DateTime> createdAt;
+  const SessionCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  });
+  SessionCompanion.insert({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  });
+  static Insertable<SessionData> custom({
+    Expression<int>? id,
+    Expression<String>? title,
+    Expression<DateTime>? createdAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (createdAt != null) 'created_at': createdAt,
+    });
+  }
+
+  SessionCompanion copyWith({
+    Value<int>? id,
+    Value<String?>? title,
+    Value<DateTime>? createdAt,
+  }) {
+    return SessionCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SessionCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $AiHistoriesTable extends AiHistories
+    with TableInfo<$AiHistoriesTable, AiHistory> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AiHistoriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _sourceIdMeta = const VerificationMeta(
+    'sourceId',
+  );
+  @override
+  late final GeneratedColumn<int> sourceId = GeneratedColumn<int>(
+    'source_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES ai_histories (id)',
+    ),
+  );
+  static const VerificationMeta _providerIdMeta = const VerificationMeta(
+    'providerId',
+  );
+  @override
+  late final GeneratedColumn<int> providerId = GeneratedColumn<int>(
+    'provider_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES ai_providers (id)',
+    ),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<Roles, String> role =
+      GeneratedColumn<String>(
+        'role',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<Roles>($AiHistoriesTable.$converterrole);
+  static const VerificationMeta _sessionIdMeta = const VerificationMeta(
+    'sessionId',
+  );
+  @override
+  late final GeneratedColumn<int> sessionId = GeneratedColumn<int>(
+    'session_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES session (id)',
+    ),
+  );
+  static const VerificationMeta _contentMeta = const VerificationMeta(
+    'content',
+  );
+  @override
+  late final GeneratedColumn<String> content = GeneratedColumn<String>(
+    'content',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _toolCallsMeta = const VerificationMeta(
+    'toolCalls',
+  );
+  @override
+  late final GeneratedColumn<String> toolCalls = GeneratedColumn<String>(
+    'tool_calls',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _toolCallIdMeta = const VerificationMeta(
+    'toolCallId',
+  );
+  @override
+  late final GeneratedColumn<String> toolCallId = GeneratedColumn<String>(
+    'tool_call_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _tokensMeta = const VerificationMeta('tokens');
+  @override
+  late final GeneratedColumn<int> tokens = GeneratedColumn<int>(
+    'tokens',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    sourceId,
+    providerId,
+    role,
+    sessionId,
+    content,
+    toolCalls,
+    toolCallId,
+    tokens,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'ai_histories';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AiHistory> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('source_id')) {
+      context.handle(
+        _sourceIdMeta,
+        sourceId.isAcceptableOrUnknown(data['source_id']!, _sourceIdMeta),
+      );
+    }
+    if (data.containsKey('provider_id')) {
+      context.handle(
+        _providerIdMeta,
+        providerId.isAcceptableOrUnknown(data['provider_id']!, _providerIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_providerIdMeta);
+    }
+    if (data.containsKey('session_id')) {
+      context.handle(
+        _sessionIdMeta,
+        sessionId.isAcceptableOrUnknown(data['session_id']!, _sessionIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sessionIdMeta);
+    }
+    if (data.containsKey('content')) {
+      context.handle(
+        _contentMeta,
+        content.isAcceptableOrUnknown(data['content']!, _contentMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_contentMeta);
+    }
+    if (data.containsKey('tool_calls')) {
+      context.handle(
+        _toolCallsMeta,
+        toolCalls.isAcceptableOrUnknown(data['tool_calls']!, _toolCallsMeta),
+      );
+    }
+    if (data.containsKey('tool_call_id')) {
+      context.handle(
+        _toolCallIdMeta,
+        toolCallId.isAcceptableOrUnknown(
+          data['tool_call_id']!,
+          _toolCallIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('tokens')) {
+      context.handle(
+        _tokensMeta,
+        tokens.isAcceptableOrUnknown(data['tokens']!, _tokensMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AiHistory map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AiHistory(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      sourceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}source_id'],
+      ),
+      providerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}provider_id'],
+      )!,
+      role: $AiHistoriesTable.$converterrole.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}role'],
+        )!,
+      ),
+      sessionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}session_id'],
+      )!,
+      content: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}content'],
+      )!,
+      toolCalls: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tool_calls'],
+      ),
+      toolCallId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tool_call_id'],
+      ),
+      tokens: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}tokens'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $AiHistoriesTable createAlias(String alias) {
+    return $AiHistoriesTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<Roles, String, String> $converterrole =
+      EnumNameConverter(Roles.values);
+}
+
+class AiHistory extends DataClass implements Insertable<AiHistory> {
+  final int id;
+
+  /// 该字段不为空是表示这是对id为sourceId的记录的覆写
+  final int? sourceId;
+  final int providerId;
+  final Roles role;
+  final int sessionId;
+  final String content;
+  final String? toolCalls;
+  final String? toolCallId;
+  final int? tokens;
+  final DateTime createdAt;
+  const AiHistory({
+    required this.id,
+    this.sourceId,
+    required this.providerId,
+    required this.role,
+    required this.sessionId,
+    required this.content,
+    this.toolCalls,
+    this.toolCallId,
+    this.tokens,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    if (!nullToAbsent || sourceId != null) {
+      map['source_id'] = Variable<int>(sourceId);
+    }
+    map['provider_id'] = Variable<int>(providerId);
+    {
+      map['role'] = Variable<String>(
+        $AiHistoriesTable.$converterrole.toSql(role),
+      );
+    }
+    map['session_id'] = Variable<int>(sessionId);
+    map['content'] = Variable<String>(content);
+    if (!nullToAbsent || toolCalls != null) {
+      map['tool_calls'] = Variable<String>(toolCalls);
+    }
+    if (!nullToAbsent || toolCallId != null) {
+      map['tool_call_id'] = Variable<String>(toolCallId);
+    }
+    if (!nullToAbsent || tokens != null) {
+      map['tokens'] = Variable<int>(tokens);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  AiHistoriesCompanion toCompanion(bool nullToAbsent) {
+    return AiHistoriesCompanion(
+      id: Value(id),
+      sourceId: sourceId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sourceId),
+      providerId: Value(providerId),
+      role: Value(role),
+      sessionId: Value(sessionId),
+      content: Value(content),
+      toolCalls: toolCalls == null && nullToAbsent
+          ? const Value.absent()
+          : Value(toolCalls),
+      toolCallId: toolCallId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(toolCallId),
+      tokens: tokens == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tokens),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory AiHistory.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AiHistory(
+      id: serializer.fromJson<int>(json['id']),
+      sourceId: serializer.fromJson<int?>(json['sourceId']),
+      providerId: serializer.fromJson<int>(json['providerId']),
+      role: $AiHistoriesTable.$converterrole.fromJson(
+        serializer.fromJson<String>(json['role']),
+      ),
+      sessionId: serializer.fromJson<int>(json['sessionId']),
+      content: serializer.fromJson<String>(json['content']),
+      toolCalls: serializer.fromJson<String?>(json['toolCalls']),
+      toolCallId: serializer.fromJson<String?>(json['toolCallId']),
+      tokens: serializer.fromJson<int?>(json['tokens']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'sourceId': serializer.toJson<int?>(sourceId),
+      'providerId': serializer.toJson<int>(providerId),
+      'role': serializer.toJson<String>(
+        $AiHistoriesTable.$converterrole.toJson(role),
+      ),
+      'sessionId': serializer.toJson<int>(sessionId),
+      'content': serializer.toJson<String>(content),
+      'toolCalls': serializer.toJson<String?>(toolCalls),
+      'toolCallId': serializer.toJson<String?>(toolCallId),
+      'tokens': serializer.toJson<int?>(tokens),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  AiHistory copyWith({
+    int? id,
+    Value<int?> sourceId = const Value.absent(),
+    int? providerId,
+    Roles? role,
+    int? sessionId,
+    String? content,
+    Value<String?> toolCalls = const Value.absent(),
+    Value<String?> toolCallId = const Value.absent(),
+    Value<int?> tokens = const Value.absent(),
+    DateTime? createdAt,
+  }) => AiHistory(
+    id: id ?? this.id,
+    sourceId: sourceId.present ? sourceId.value : this.sourceId,
+    providerId: providerId ?? this.providerId,
+    role: role ?? this.role,
+    sessionId: sessionId ?? this.sessionId,
+    content: content ?? this.content,
+    toolCalls: toolCalls.present ? toolCalls.value : this.toolCalls,
+    toolCallId: toolCallId.present ? toolCallId.value : this.toolCallId,
+    tokens: tokens.present ? tokens.value : this.tokens,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  AiHistory copyWithCompanion(AiHistoriesCompanion data) {
+    return AiHistory(
+      id: data.id.present ? data.id.value : this.id,
+      sourceId: data.sourceId.present ? data.sourceId.value : this.sourceId,
+      providerId: data.providerId.present
+          ? data.providerId.value
+          : this.providerId,
+      role: data.role.present ? data.role.value : this.role,
+      sessionId: data.sessionId.present ? data.sessionId.value : this.sessionId,
+      content: data.content.present ? data.content.value : this.content,
+      toolCalls: data.toolCalls.present ? data.toolCalls.value : this.toolCalls,
+      toolCallId: data.toolCallId.present
+          ? data.toolCallId.value
+          : this.toolCallId,
+      tokens: data.tokens.present ? data.tokens.value : this.tokens,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AiHistory(')
+          ..write('id: $id, ')
+          ..write('sourceId: $sourceId, ')
+          ..write('providerId: $providerId, ')
+          ..write('role: $role, ')
+          ..write('sessionId: $sessionId, ')
+          ..write('content: $content, ')
+          ..write('toolCalls: $toolCalls, ')
+          ..write('toolCallId: $toolCallId, ')
+          ..write('tokens: $tokens, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    sourceId,
+    providerId,
+    role,
+    sessionId,
+    content,
+    toolCalls,
+    toolCallId,
+    tokens,
+    createdAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AiHistory &&
+          other.id == this.id &&
+          other.sourceId == this.sourceId &&
+          other.providerId == this.providerId &&
+          other.role == this.role &&
+          other.sessionId == this.sessionId &&
+          other.content == this.content &&
+          other.toolCalls == this.toolCalls &&
+          other.toolCallId == this.toolCallId &&
+          other.tokens == this.tokens &&
+          other.createdAt == this.createdAt);
+}
+
+class AiHistoriesCompanion extends UpdateCompanion<AiHistory> {
+  final Value<int> id;
+  final Value<int?> sourceId;
+  final Value<int> providerId;
+  final Value<Roles> role;
+  final Value<int> sessionId;
+  final Value<String> content;
+  final Value<String?> toolCalls;
+  final Value<String?> toolCallId;
+  final Value<int?> tokens;
+  final Value<DateTime> createdAt;
+  const AiHistoriesCompanion({
+    this.id = const Value.absent(),
+    this.sourceId = const Value.absent(),
+    this.providerId = const Value.absent(),
+    this.role = const Value.absent(),
+    this.sessionId = const Value.absent(),
+    this.content = const Value.absent(),
+    this.toolCalls = const Value.absent(),
+    this.toolCallId = const Value.absent(),
+    this.tokens = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  });
+  AiHistoriesCompanion.insert({
+    this.id = const Value.absent(),
+    this.sourceId = const Value.absent(),
+    required int providerId,
+    required Roles role,
+    required int sessionId,
+    required String content,
+    this.toolCalls = const Value.absent(),
+    this.toolCallId = const Value.absent(),
+    this.tokens = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  }) : providerId = Value(providerId),
+       role = Value(role),
+       sessionId = Value(sessionId),
+       content = Value(content);
+  static Insertable<AiHistory> custom({
+    Expression<int>? id,
+    Expression<int>? sourceId,
+    Expression<int>? providerId,
+    Expression<String>? role,
+    Expression<int>? sessionId,
+    Expression<String>? content,
+    Expression<String>? toolCalls,
+    Expression<String>? toolCallId,
+    Expression<int>? tokens,
+    Expression<DateTime>? createdAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (sourceId != null) 'source_id': sourceId,
+      if (providerId != null) 'provider_id': providerId,
+      if (role != null) 'role': role,
+      if (sessionId != null) 'session_id': sessionId,
+      if (content != null) 'content': content,
+      if (toolCalls != null) 'tool_calls': toolCalls,
+      if (toolCallId != null) 'tool_call_id': toolCallId,
+      if (tokens != null) 'tokens': tokens,
+      if (createdAt != null) 'created_at': createdAt,
+    });
+  }
+
+  AiHistoriesCompanion copyWith({
+    Value<int>? id,
+    Value<int?>? sourceId,
+    Value<int>? providerId,
+    Value<Roles>? role,
+    Value<int>? sessionId,
+    Value<String>? content,
+    Value<String?>? toolCalls,
+    Value<String?>? toolCallId,
+    Value<int?>? tokens,
+    Value<DateTime>? createdAt,
+  }) {
+    return AiHistoriesCompanion(
+      id: id ?? this.id,
+      sourceId: sourceId ?? this.sourceId,
+      providerId: providerId ?? this.providerId,
+      role: role ?? this.role,
+      sessionId: sessionId ?? this.sessionId,
+      content: content ?? this.content,
+      toolCalls: toolCalls ?? this.toolCalls,
+      toolCallId: toolCallId ?? this.toolCallId,
+      tokens: tokens ?? this.tokens,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (sourceId.present) {
+      map['source_id'] = Variable<int>(sourceId.value);
+    }
+    if (providerId.present) {
+      map['provider_id'] = Variable<int>(providerId.value);
+    }
+    if (role.present) {
+      map['role'] = Variable<String>(
+        $AiHistoriesTable.$converterrole.toSql(role.value),
+      );
+    }
+    if (sessionId.present) {
+      map['session_id'] = Variable<int>(sessionId.value);
+    }
+    if (content.present) {
+      map['content'] = Variable<String>(content.value);
+    }
+    if (toolCalls.present) {
+      map['tool_calls'] = Variable<String>(toolCalls.value);
+    }
+    if (toolCallId.present) {
+      map['tool_call_id'] = Variable<String>(toolCallId.value);
+    }
+    if (tokens.present) {
+      map['tokens'] = Variable<int>(tokens.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AiHistoriesCompanion(')
+          ..write('id: $id, ')
+          ..write('sourceId: $sourceId, ')
+          ..write('providerId: $providerId, ')
+          ..write('role: $role, ')
+          ..write('sessionId: $sessionId, ')
+          ..write('content: $content, ')
+          ..write('toolCalls: $toolCalls, ')
+          ..write('toolCallId: $toolCallId, ')
+          ..write('tokens: $tokens, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $PromptsTable extends Prompts with TableInfo<$PromptsTable, Prompt> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PromptsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _descMeta = const VerificationMeta('desc');
+  @override
+  late final GeneratedColumn<String> desc = GeneratedColumn<String>(
+    'desc',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _contentMeta = const VerificationMeta(
+    'content',
+  );
+  @override
+  late final GeneratedColumn<String> content = GeneratedColumn<String>(
+    'content',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, name, desc, content];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'prompts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Prompt> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    }
+    if (data.containsKey('desc')) {
+      context.handle(
+        _descMeta,
+        desc.isAcceptableOrUnknown(data['desc']!, _descMeta),
+      );
+    }
+    if (data.containsKey('content')) {
+      context.handle(
+        _contentMeta,
+        content.isAcceptableOrUnknown(data['content']!, _contentMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_contentMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Prompt map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Prompt(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      ),
+      desc: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}desc'],
+      ),
+      content: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}content'],
+      )!,
+    );
+  }
+
+  @override
+  $PromptsTable createAlias(String alias) {
+    return $PromptsTable(attachedDatabase, alias);
+  }
+}
+
+class Prompt extends DataClass implements Insertable<Prompt> {
+  final int id;
+  final String? name;
+  final String? desc;
+
+  /// 使用{{key}}添加可被替换内容
+  final String content;
+  const Prompt({required this.id, this.name, this.desc, required this.content});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    if (!nullToAbsent || name != null) {
+      map['name'] = Variable<String>(name);
+    }
+    if (!nullToAbsent || desc != null) {
+      map['desc'] = Variable<String>(desc);
+    }
+    map['content'] = Variable<String>(content);
+    return map;
+  }
+
+  PromptsCompanion toCompanion(bool nullToAbsent) {
+    return PromptsCompanion(
+      id: Value(id),
+      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+      desc: desc == null && nullToAbsent ? const Value.absent() : Value(desc),
+      content: Value(content),
+    );
+  }
+
+  factory Prompt.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Prompt(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String?>(json['name']),
+      desc: serializer.fromJson<String?>(json['desc']),
+      content: serializer.fromJson<String>(json['content']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String?>(name),
+      'desc': serializer.toJson<String?>(desc),
+      'content': serializer.toJson<String>(content),
+    };
+  }
+
+  Prompt copyWith({
+    int? id,
+    Value<String?> name = const Value.absent(),
+    Value<String?> desc = const Value.absent(),
+    String? content,
+  }) => Prompt(
+    id: id ?? this.id,
+    name: name.present ? name.value : this.name,
+    desc: desc.present ? desc.value : this.desc,
+    content: content ?? this.content,
+  );
+  Prompt copyWithCompanion(PromptsCompanion data) {
+    return Prompt(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      desc: data.desc.present ? data.desc.value : this.desc,
+      content: data.content.present ? data.content.value : this.content,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Prompt(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('desc: $desc, ')
+          ..write('content: $content')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, name, desc, content);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Prompt &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.desc == this.desc &&
+          other.content == this.content);
+}
+
+class PromptsCompanion extends UpdateCompanion<Prompt> {
+  final Value<int> id;
+  final Value<String?> name;
+  final Value<String?> desc;
+  final Value<String> content;
+  const PromptsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.desc = const Value.absent(),
+    this.content = const Value.absent(),
+  });
+  PromptsCompanion.insert({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.desc = const Value.absent(),
+    required String content,
+  }) : content = Value(content);
+  static Insertable<Prompt> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<String>? desc,
+    Expression<String>? content,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (desc != null) 'desc': desc,
+      if (content != null) 'content': content,
+    });
+  }
+
+  PromptsCompanion copyWith({
+    Value<int>? id,
+    Value<String?>? name,
+    Value<String?>? desc,
+    Value<String>? content,
+  }) {
+    return PromptsCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      desc: desc ?? this.desc,
+      content: content ?? this.content,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (desc.present) {
+      map['desc'] = Variable<String>(desc.value);
+    }
+    if (content.present) {
+      map['content'] = Variable<String>(content.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PromptsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('desc: $desc, ')
+          ..write('content: $content')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -4123,341 +6121,6 @@ class MistakeLogsCompanion extends UpdateCompanion<MistakeLog> {
   }
 }
 
-class $ImagesTable extends Images with TableInfo<$ImagesTable, Image> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $ImagesTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-    'id',
-    aliasedName,
-    false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
-  );
-  static const VerificationMeta _nameMeta = const VerificationMeta('name');
-  @override
-  late final GeneratedColumn<String> name = GeneratedColumn<String>(
-    'name',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _createAtMeta = const VerificationMeta(
-    'createAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> createAt = GeneratedColumn<DateTime>(
-    'create_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-    defaultValue: currentDateAndTime,
-  );
-  static const VerificationMeta _descMeta = const VerificationMeta('desc');
-  @override
-  late final GeneratedColumn<String> desc = GeneratedColumn<String>(
-    'desc',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _pathMeta = const VerificationMeta('path');
-  @override
-  late final GeneratedColumn<String> path = GeneratedColumn<String>(
-    'path',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [id, name, createAt, desc, path];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'images';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<Image> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('name')) {
-      context.handle(
-        _nameMeta,
-        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_nameMeta);
-    }
-    if (data.containsKey('create_at')) {
-      context.handle(
-        _createAtMeta,
-        createAt.isAcceptableOrUnknown(data['create_at']!, _createAtMeta),
-      );
-    }
-    if (data.containsKey('desc')) {
-      context.handle(
-        _descMeta,
-        desc.isAcceptableOrUnknown(data['desc']!, _descMeta),
-      );
-    }
-    if (data.containsKey('path')) {
-      context.handle(
-        _pathMeta,
-        path.isAcceptableOrUnknown(data['path']!, _pathMeta),
-      );
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  Image map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Image(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}id'],
-      )!,
-      name: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}name'],
-      )!,
-      createAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}create_at'],
-      )!,
-      desc: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}desc'],
-      ),
-      path: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}path'],
-      ),
-    );
-  }
-
-  @override
-  $ImagesTable createAlias(String alias) {
-    return $ImagesTable(attachedDatabase, alias);
-  }
-}
-
-class Image extends DataClass implements Insertable<Image> {
-  final int id;
-  final String name;
-  final DateTime createAt;
-  final String? desc;
-  final String? path;
-  const Image({
-    required this.id,
-    required this.name,
-    required this.createAt,
-    this.desc,
-    this.path,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['name'] = Variable<String>(name);
-    map['create_at'] = Variable<DateTime>(createAt);
-    if (!nullToAbsent || desc != null) {
-      map['desc'] = Variable<String>(desc);
-    }
-    if (!nullToAbsent || path != null) {
-      map['path'] = Variable<String>(path);
-    }
-    return map;
-  }
-
-  ImagesCompanion toCompanion(bool nullToAbsent) {
-    return ImagesCompanion(
-      id: Value(id),
-      name: Value(name),
-      createAt: Value(createAt),
-      desc: desc == null && nullToAbsent ? const Value.absent() : Value(desc),
-      path: path == null && nullToAbsent ? const Value.absent() : Value(path),
-    );
-  }
-
-  factory Image.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Image(
-      id: serializer.fromJson<int>(json['id']),
-      name: serializer.fromJson<String>(json['name']),
-      createAt: serializer.fromJson<DateTime>(json['createAt']),
-      desc: serializer.fromJson<String?>(json['desc']),
-      path: serializer.fromJson<String?>(json['path']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'name': serializer.toJson<String>(name),
-      'createAt': serializer.toJson<DateTime>(createAt),
-      'desc': serializer.toJson<String?>(desc),
-      'path': serializer.toJson<String?>(path),
-    };
-  }
-
-  Image copyWith({
-    int? id,
-    String? name,
-    DateTime? createAt,
-    Value<String?> desc = const Value.absent(),
-    Value<String?> path = const Value.absent(),
-  }) => Image(
-    id: id ?? this.id,
-    name: name ?? this.name,
-    createAt: createAt ?? this.createAt,
-    desc: desc.present ? desc.value : this.desc,
-    path: path.present ? path.value : this.path,
-  );
-  Image copyWithCompanion(ImagesCompanion data) {
-    return Image(
-      id: data.id.present ? data.id.value : this.id,
-      name: data.name.present ? data.name.value : this.name,
-      createAt: data.createAt.present ? data.createAt.value : this.createAt,
-      desc: data.desc.present ? data.desc.value : this.desc,
-      path: data.path.present ? data.path.value : this.path,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('Image(')
-          ..write('id: $id, ')
-          ..write('name: $name, ')
-          ..write('createAt: $createAt, ')
-          ..write('desc: $desc, ')
-          ..write('path: $path')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(id, name, createAt, desc, path);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is Image &&
-          other.id == this.id &&
-          other.name == this.name &&
-          other.createAt == this.createAt &&
-          other.desc == this.desc &&
-          other.path == this.path);
-}
-
-class ImagesCompanion extends UpdateCompanion<Image> {
-  final Value<int> id;
-  final Value<String> name;
-  final Value<DateTime> createAt;
-  final Value<String?> desc;
-  final Value<String?> path;
-  const ImagesCompanion({
-    this.id = const Value.absent(),
-    this.name = const Value.absent(),
-    this.createAt = const Value.absent(),
-    this.desc = const Value.absent(),
-    this.path = const Value.absent(),
-  });
-  ImagesCompanion.insert({
-    this.id = const Value.absent(),
-    required String name,
-    this.createAt = const Value.absent(),
-    this.desc = const Value.absent(),
-    this.path = const Value.absent(),
-  }) : name = Value(name);
-  static Insertable<Image> custom({
-    Expression<int>? id,
-    Expression<String>? name,
-    Expression<DateTime>? createAt,
-    Expression<String>? desc,
-    Expression<String>? path,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (name != null) 'name': name,
-      if (createAt != null) 'create_at': createAt,
-      if (desc != null) 'desc': desc,
-      if (path != null) 'path': path,
-    });
-  }
-
-  ImagesCompanion copyWith({
-    Value<int>? id,
-    Value<String>? name,
-    Value<DateTime>? createAt,
-    Value<String?>? desc,
-    Value<String?>? path,
-  }) {
-    return ImagesCompanion(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      createAt: createAt ?? this.createAt,
-      desc: desc ?? this.desc,
-      path: path ?? this.path,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
-    if (name.present) {
-      map['name'] = Variable<String>(name.value);
-    }
-    if (createAt.present) {
-      map['create_at'] = Variable<DateTime>(createAt.value);
-    }
-    if (desc.present) {
-      map['desc'] = Variable<String>(desc.value);
-    }
-    if (path.present) {
-      map['path'] = Variable<String>(path.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('ImagesCompanion(')
-          ..write('id: $id, ')
-          ..write('name: $name, ')
-          ..write('createAt: $createAt, ')
-          ..write('desc: $desc, ')
-          ..write('path: $path')
-          ..write(')'))
-        .toString();
-  }
-}
-
 class $MistakePicsLinkTable extends MistakePicsLink
     with TableInfo<$MistakePicsLinkTable, MistakePicsLinkData> {
   @override
@@ -6083,6 +7746,11 @@ class MistakeKnowledgeLinkCompanion
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
+  late final $ImagesTable images = $ImagesTable(this);
+  late final $AiProvidersTable aiProviders = $AiProvidersTable(this);
+  late final $SessionTable session = $SessionTable(this);
+  late final $AiHistoriesTable aiHistories = $AiHistoriesTable(this);
+  late final $PromptsTable prompts = $PromptsTable(this);
   late final $TagsTable tags = $TagsTable(this);
   late final $WordsTable words = $WordsTable(this);
   late final $WordLogsTable wordLogs = $WordLogsTable(this);
@@ -6100,7 +7768,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     this,
   );
   late final $MistakeLogsTable mistakeLogs = $MistakeLogsTable(this);
-  late final $ImagesTable images = $ImagesTable(this);
   late final $MistakePicsLinkTable mistakePicsLink = $MistakePicsLinkTable(
     this,
   );
@@ -6114,6 +7781,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final $MistakeKnowledgeLinkTable mistakeKnowledgeLink =
       $MistakeKnowledgeLinkTable(this);
+  late final AiProviderDao aiProviderDao = AiProviderDao(this as AppDatabase);
+  late final AiHistoryDao aiHistoryDao = AiHistoryDao(this as AppDatabase);
+  late final PromptDao promptDao = PromptDao(this as AppDatabase);
   late final TagsDao tagsDao = TagsDao(this as AppDatabase);
   late final WordsDao wordsDao = WordsDao(this as AppDatabase);
   late final KnowledgeDao knowledgeDao = KnowledgeDao(this as AppDatabase);
@@ -6125,6 +7795,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
+    images,
+    aiProviders,
+    session,
+    aiHistories,
+    prompts,
     tags,
     words,
     wordLogs,
@@ -6138,7 +7813,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     mistakes,
     mistakesTagLink,
     mistakeLogs,
-    images,
     mistakePicsLink,
     answers,
     answersTagsLink,
@@ -6148,6 +7822,1980 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   ];
 }
 
+typedef $$ImagesTableCreateCompanionBuilder =
+    ImagesCompanion Function({
+      Value<int> id,
+      required String name,
+      Value<DateTime> createAt,
+      Value<String?> desc,
+      Value<String?> path,
+    });
+typedef $$ImagesTableUpdateCompanionBuilder =
+    ImagesCompanion Function({
+      Value<int> id,
+      Value<String> name,
+      Value<DateTime> createAt,
+      Value<String?> desc,
+      Value<String?> path,
+    });
+
+final class $$ImagesTableReferences
+    extends BaseReferences<_$AppDatabase, $ImagesTable, Image> {
+  $$ImagesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$AiProvidersTable, List<AiProvider>>
+  _aiProvidersRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.aiProviders,
+    aliasName: $_aliasNameGenerator(db.images.id, db.aiProviders.iconId),
+  );
+
+  $$AiProvidersTableProcessedTableManager get aiProvidersRefs {
+    final manager = $$AiProvidersTableTableManager(
+      $_db,
+      $_db.aiProviders,
+    ).filter((f) => f.iconId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_aiProvidersRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$MistakePicsLinkTable, List<MistakePicsLinkData>>
+  _mistakePicsLinkRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.mistakePicsLink,
+    aliasName: $_aliasNameGenerator(db.images.id, db.mistakePicsLink.picId),
+  );
+
+  $$MistakePicsLinkTableProcessedTableManager get mistakePicsLinkRefs {
+    final manager = $$MistakePicsLinkTableTableManager(
+      $_db,
+      $_db.mistakePicsLink,
+    ).filter((f) => f.picId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _mistakePicsLinkRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$AnswerPicsLinkTable, List<AnswerPicsLinkData>>
+  _answerPicsLinkRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.answerPicsLink,
+    aliasName: $_aliasNameGenerator(db.images.id, db.answerPicsLink.picID),
+  );
+
+  $$AnswerPicsLinkTableProcessedTableManager get answerPicsLinkRefs {
+    final manager = $$AnswerPicsLinkTableTableManager(
+      $_db,
+      $_db.answerPicsLink,
+    ).filter((f) => f.picID.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_answerPicsLinkRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$ImagesTableFilterComposer
+    extends Composer<_$AppDatabase, $ImagesTable> {
+  $$ImagesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createAt => $composableBuilder(
+    column: $table.createAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get desc => $composableBuilder(
+    column: $table.desc,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get path => $composableBuilder(
+    column: $table.path,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> aiProvidersRefs(
+    Expression<bool> Function($$AiProvidersTableFilterComposer f) f,
+  ) {
+    final $$AiProvidersTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.aiProviders,
+      getReferencedColumn: (t) => t.iconId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AiProvidersTableFilterComposer(
+            $db: $db,
+            $table: $db.aiProviders,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> mistakePicsLinkRefs(
+    Expression<bool> Function($$MistakePicsLinkTableFilterComposer f) f,
+  ) {
+    final $$MistakePicsLinkTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.mistakePicsLink,
+      getReferencedColumn: (t) => t.picId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MistakePicsLinkTableFilterComposer(
+            $db: $db,
+            $table: $db.mistakePicsLink,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> answerPicsLinkRefs(
+    Expression<bool> Function($$AnswerPicsLinkTableFilterComposer f) f,
+  ) {
+    final $$AnswerPicsLinkTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.answerPicsLink,
+      getReferencedColumn: (t) => t.picID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AnswerPicsLinkTableFilterComposer(
+            $db: $db,
+            $table: $db.answerPicsLink,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$ImagesTableOrderingComposer
+    extends Composer<_$AppDatabase, $ImagesTable> {
+  $$ImagesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createAt => $composableBuilder(
+    column: $table.createAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get desc => $composableBuilder(
+    column: $table.desc,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get path => $composableBuilder(
+    column: $table.path,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ImagesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ImagesTable> {
+  $$ImagesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createAt =>
+      $composableBuilder(column: $table.createAt, builder: (column) => column);
+
+  GeneratedColumn<String> get desc =>
+      $composableBuilder(column: $table.desc, builder: (column) => column);
+
+  GeneratedColumn<String> get path =>
+      $composableBuilder(column: $table.path, builder: (column) => column);
+
+  Expression<T> aiProvidersRefs<T extends Object>(
+    Expression<T> Function($$AiProvidersTableAnnotationComposer a) f,
+  ) {
+    final $$AiProvidersTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.aiProviders,
+      getReferencedColumn: (t) => t.iconId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AiProvidersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.aiProviders,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> mistakePicsLinkRefs<T extends Object>(
+    Expression<T> Function($$MistakePicsLinkTableAnnotationComposer a) f,
+  ) {
+    final $$MistakePicsLinkTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.mistakePicsLink,
+      getReferencedColumn: (t) => t.picId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MistakePicsLinkTableAnnotationComposer(
+            $db: $db,
+            $table: $db.mistakePicsLink,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> answerPicsLinkRefs<T extends Object>(
+    Expression<T> Function($$AnswerPicsLinkTableAnnotationComposer a) f,
+  ) {
+    final $$AnswerPicsLinkTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.answerPicsLink,
+      getReferencedColumn: (t) => t.picID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AnswerPicsLinkTableAnnotationComposer(
+            $db: $db,
+            $table: $db.answerPicsLink,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$ImagesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ImagesTable,
+          Image,
+          $$ImagesTableFilterComposer,
+          $$ImagesTableOrderingComposer,
+          $$ImagesTableAnnotationComposer,
+          $$ImagesTableCreateCompanionBuilder,
+          $$ImagesTableUpdateCompanionBuilder,
+          (Image, $$ImagesTableReferences),
+          Image,
+          PrefetchHooks Function({
+            bool aiProvidersRefs,
+            bool mistakePicsLinkRefs,
+            bool answerPicsLinkRefs,
+          })
+        > {
+  $$ImagesTableTableManager(_$AppDatabase db, $ImagesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ImagesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ImagesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ImagesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<DateTime> createAt = const Value.absent(),
+                Value<String?> desc = const Value.absent(),
+                Value<String?> path = const Value.absent(),
+              }) => ImagesCompanion(
+                id: id,
+                name: name,
+                createAt: createAt,
+                desc: desc,
+                path: path,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String name,
+                Value<DateTime> createAt = const Value.absent(),
+                Value<String?> desc = const Value.absent(),
+                Value<String?> path = const Value.absent(),
+              }) => ImagesCompanion.insert(
+                id: id,
+                name: name,
+                createAt: createAt,
+                desc: desc,
+                path: path,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) =>
+                    (e.readTable(table), $$ImagesTableReferences(db, table, e)),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({
+                aiProvidersRefs = false,
+                mistakePicsLinkRefs = false,
+                answerPicsLinkRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (aiProvidersRefs) db.aiProviders,
+                    if (mistakePicsLinkRefs) db.mistakePicsLink,
+                    if (answerPicsLinkRefs) db.answerPicsLink,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (aiProvidersRefs)
+                        await $_getPrefetchedData<
+                          Image,
+                          $ImagesTable,
+                          AiProvider
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ImagesTableReferences
+                              ._aiProvidersRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ImagesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).aiProvidersRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.iconId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (mistakePicsLinkRefs)
+                        await $_getPrefetchedData<
+                          Image,
+                          $ImagesTable,
+                          MistakePicsLinkData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ImagesTableReferences
+                              ._mistakePicsLinkRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ImagesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).mistakePicsLinkRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.picId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (answerPicsLinkRefs)
+                        await $_getPrefetchedData<
+                          Image,
+                          $ImagesTable,
+                          AnswerPicsLinkData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ImagesTableReferences
+                              ._answerPicsLinkRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ImagesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).answerPicsLinkRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.picID == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$ImagesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ImagesTable,
+      Image,
+      $$ImagesTableFilterComposer,
+      $$ImagesTableOrderingComposer,
+      $$ImagesTableAnnotationComposer,
+      $$ImagesTableCreateCompanionBuilder,
+      $$ImagesTableUpdateCompanionBuilder,
+      (Image, $$ImagesTableReferences),
+      Image,
+      PrefetchHooks Function({
+        bool aiProvidersRefs,
+        bool mistakePicsLinkRefs,
+        bool answerPicsLinkRefs,
+      })
+    >;
+typedef $$AiProvidersTableCreateCompanionBuilder =
+    AiProvidersCompanion Function({
+      Value<int> id,
+      required String name,
+      Value<String?> description,
+      required String baseUrl,
+      required String apiKey,
+      Value<int?> iconId,
+      Value<bool> isActive,
+      Value<DateTime> createdAt,
+    });
+typedef $$AiProvidersTableUpdateCompanionBuilder =
+    AiProvidersCompanion Function({
+      Value<int> id,
+      Value<String> name,
+      Value<String?> description,
+      Value<String> baseUrl,
+      Value<String> apiKey,
+      Value<int?> iconId,
+      Value<bool> isActive,
+      Value<DateTime> createdAt,
+    });
+
+final class $$AiProvidersTableReferences
+    extends BaseReferences<_$AppDatabase, $AiProvidersTable, AiProvider> {
+  $$AiProvidersTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $ImagesTable _iconIdTable(_$AppDatabase db) => db.images.createAlias(
+    $_aliasNameGenerator(db.aiProviders.iconId, db.images.id),
+  );
+
+  $$ImagesTableProcessedTableManager? get iconId {
+    final $_column = $_itemColumn<int>('icon_id');
+    if ($_column == null) return null;
+    final manager = $$ImagesTableTableManager(
+      $_db,
+      $_db.images,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_iconIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<$AiHistoriesTable, List<AiHistory>>
+  _aiHistoriesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.aiHistories,
+    aliasName: $_aliasNameGenerator(
+      db.aiProviders.id,
+      db.aiHistories.providerId,
+    ),
+  );
+
+  $$AiHistoriesTableProcessedTableManager get aiHistoriesRefs {
+    final manager = $$AiHistoriesTableTableManager(
+      $_db,
+      $_db.aiHistories,
+    ).filter((f) => f.providerId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_aiHistoriesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$AiProvidersTableFilterComposer
+    extends Composer<_$AppDatabase, $AiProvidersTable> {
+  $$AiProvidersTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get baseUrl => $composableBuilder(
+    column: $table.baseUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get apiKey => $composableBuilder(
+    column: $table.apiKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$ImagesTableFilterComposer get iconId {
+    final $$ImagesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.iconId,
+      referencedTable: $db.images,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ImagesTableFilterComposer(
+            $db: $db,
+            $table: $db.images,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> aiHistoriesRefs(
+    Expression<bool> Function($$AiHistoriesTableFilterComposer f) f,
+  ) {
+    final $$AiHistoriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.aiHistories,
+      getReferencedColumn: (t) => t.providerId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AiHistoriesTableFilterComposer(
+            $db: $db,
+            $table: $db.aiHistories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$AiProvidersTableOrderingComposer
+    extends Composer<_$AppDatabase, $AiProvidersTable> {
+  $$AiProvidersTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get baseUrl => $composableBuilder(
+    column: $table.baseUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get apiKey => $composableBuilder(
+    column: $table.apiKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$ImagesTableOrderingComposer get iconId {
+    final $$ImagesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.iconId,
+      referencedTable: $db.images,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ImagesTableOrderingComposer(
+            $db: $db,
+            $table: $db.images,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$AiProvidersTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AiProvidersTable> {
+  $$AiProvidersTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get baseUrl =>
+      $composableBuilder(column: $table.baseUrl, builder: (column) => column);
+
+  GeneratedColumn<String> get apiKey =>
+      $composableBuilder(column: $table.apiKey, builder: (column) => column);
+
+  GeneratedColumn<bool> get isActive =>
+      $composableBuilder(column: $table.isActive, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  $$ImagesTableAnnotationComposer get iconId {
+    final $$ImagesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.iconId,
+      referencedTable: $db.images,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ImagesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.images,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> aiHistoriesRefs<T extends Object>(
+    Expression<T> Function($$AiHistoriesTableAnnotationComposer a) f,
+  ) {
+    final $$AiHistoriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.aiHistories,
+      getReferencedColumn: (t) => t.providerId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AiHistoriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.aiHistories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$AiProvidersTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AiProvidersTable,
+          AiProvider,
+          $$AiProvidersTableFilterComposer,
+          $$AiProvidersTableOrderingComposer,
+          $$AiProvidersTableAnnotationComposer,
+          $$AiProvidersTableCreateCompanionBuilder,
+          $$AiProvidersTableUpdateCompanionBuilder,
+          (AiProvider, $$AiProvidersTableReferences),
+          AiProvider,
+          PrefetchHooks Function({bool iconId, bool aiHistoriesRefs})
+        > {
+  $$AiProvidersTableTableManager(_$AppDatabase db, $AiProvidersTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AiProvidersTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AiProvidersTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AiProvidersTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String?> description = const Value.absent(),
+                Value<String> baseUrl = const Value.absent(),
+                Value<String> apiKey = const Value.absent(),
+                Value<int?> iconId = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+              }) => AiProvidersCompanion(
+                id: id,
+                name: name,
+                description: description,
+                baseUrl: baseUrl,
+                apiKey: apiKey,
+                iconId: iconId,
+                isActive: isActive,
+                createdAt: createdAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String name,
+                Value<String?> description = const Value.absent(),
+                required String baseUrl,
+                required String apiKey,
+                Value<int?> iconId = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+              }) => AiProvidersCompanion.insert(
+                id: id,
+                name: name,
+                description: description,
+                baseUrl: baseUrl,
+                apiKey: apiKey,
+                iconId: iconId,
+                isActive: isActive,
+                createdAt: createdAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$AiProvidersTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({iconId = false, aiHistoriesRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (aiHistoriesRefs) db.aiHistories],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (iconId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.iconId,
+                                referencedTable: $$AiProvidersTableReferences
+                                    ._iconIdTable(db),
+                                referencedColumn: $$AiProvidersTableReferences
+                                    ._iconIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (aiHistoriesRefs)
+                    await $_getPrefetchedData<
+                      AiProvider,
+                      $AiProvidersTable,
+                      AiHistory
+                    >(
+                      currentTable: table,
+                      referencedTable: $$AiProvidersTableReferences
+                          ._aiHistoriesRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$AiProvidersTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).aiHistoriesRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.providerId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$AiProvidersTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AiProvidersTable,
+      AiProvider,
+      $$AiProvidersTableFilterComposer,
+      $$AiProvidersTableOrderingComposer,
+      $$AiProvidersTableAnnotationComposer,
+      $$AiProvidersTableCreateCompanionBuilder,
+      $$AiProvidersTableUpdateCompanionBuilder,
+      (AiProvider, $$AiProvidersTableReferences),
+      AiProvider,
+      PrefetchHooks Function({bool iconId, bool aiHistoriesRefs})
+    >;
+typedef $$SessionTableCreateCompanionBuilder =
+    SessionCompanion Function({
+      Value<int> id,
+      Value<String?> title,
+      Value<DateTime> createdAt,
+    });
+typedef $$SessionTableUpdateCompanionBuilder =
+    SessionCompanion Function({
+      Value<int> id,
+      Value<String?> title,
+      Value<DateTime> createdAt,
+    });
+
+final class $$SessionTableReferences
+    extends BaseReferences<_$AppDatabase, $SessionTable, SessionData> {
+  $$SessionTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$AiHistoriesTable, List<AiHistory>>
+  _aiHistoriesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.aiHistories,
+    aliasName: $_aliasNameGenerator(db.session.id, db.aiHistories.sessionId),
+  );
+
+  $$AiHistoriesTableProcessedTableManager get aiHistoriesRefs {
+    final manager = $$AiHistoriesTableTableManager(
+      $_db,
+      $_db.aiHistories,
+    ).filter((f) => f.sessionId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_aiHistoriesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$SessionTableFilterComposer
+    extends Composer<_$AppDatabase, $SessionTable> {
+  $$SessionTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> aiHistoriesRefs(
+    Expression<bool> Function($$AiHistoriesTableFilterComposer f) f,
+  ) {
+    final $$AiHistoriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.aiHistories,
+      getReferencedColumn: (t) => t.sessionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AiHistoriesTableFilterComposer(
+            $db: $db,
+            $table: $db.aiHistories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$SessionTableOrderingComposer
+    extends Composer<_$AppDatabase, $SessionTable> {
+  $$SessionTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SessionTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SessionTable> {
+  $$SessionTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  Expression<T> aiHistoriesRefs<T extends Object>(
+    Expression<T> Function($$AiHistoriesTableAnnotationComposer a) f,
+  ) {
+    final $$AiHistoriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.aiHistories,
+      getReferencedColumn: (t) => t.sessionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AiHistoriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.aiHistories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$SessionTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SessionTable,
+          SessionData,
+          $$SessionTableFilterComposer,
+          $$SessionTableOrderingComposer,
+          $$SessionTableAnnotationComposer,
+          $$SessionTableCreateCompanionBuilder,
+          $$SessionTableUpdateCompanionBuilder,
+          (SessionData, $$SessionTableReferences),
+          SessionData,
+          PrefetchHooks Function({bool aiHistoriesRefs})
+        > {
+  $$SessionTableTableManager(_$AppDatabase db, $SessionTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SessionTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SessionTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SessionTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String?> title = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+              }) =>
+                  SessionCompanion(id: id, title: title, createdAt: createdAt),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String?> title = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+              }) => SessionCompanion.insert(
+                id: id,
+                title: title,
+                createdAt: createdAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$SessionTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({aiHistoriesRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (aiHistoriesRefs) db.aiHistories],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (aiHistoriesRefs)
+                    await $_getPrefetchedData<
+                      SessionData,
+                      $SessionTable,
+                      AiHistory
+                    >(
+                      currentTable: table,
+                      referencedTable: $$SessionTableReferences
+                          ._aiHistoriesRefsTable(db),
+                      managerFromTypedResult: (p0) => $$SessionTableReferences(
+                        db,
+                        table,
+                        p0,
+                      ).aiHistoriesRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.sessionId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$SessionTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SessionTable,
+      SessionData,
+      $$SessionTableFilterComposer,
+      $$SessionTableOrderingComposer,
+      $$SessionTableAnnotationComposer,
+      $$SessionTableCreateCompanionBuilder,
+      $$SessionTableUpdateCompanionBuilder,
+      (SessionData, $$SessionTableReferences),
+      SessionData,
+      PrefetchHooks Function({bool aiHistoriesRefs})
+    >;
+typedef $$AiHistoriesTableCreateCompanionBuilder =
+    AiHistoriesCompanion Function({
+      Value<int> id,
+      Value<int?> sourceId,
+      required int providerId,
+      required Roles role,
+      required int sessionId,
+      required String content,
+      Value<String?> toolCalls,
+      Value<String?> toolCallId,
+      Value<int?> tokens,
+      Value<DateTime> createdAt,
+    });
+typedef $$AiHistoriesTableUpdateCompanionBuilder =
+    AiHistoriesCompanion Function({
+      Value<int> id,
+      Value<int?> sourceId,
+      Value<int> providerId,
+      Value<Roles> role,
+      Value<int> sessionId,
+      Value<String> content,
+      Value<String?> toolCalls,
+      Value<String?> toolCallId,
+      Value<int?> tokens,
+      Value<DateTime> createdAt,
+    });
+
+final class $$AiHistoriesTableReferences
+    extends BaseReferences<_$AppDatabase, $AiHistoriesTable, AiHistory> {
+  $$AiHistoriesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $AiHistoriesTable _sourceIdTable(_$AppDatabase db) =>
+      db.aiHistories.createAlias(
+        $_aliasNameGenerator(db.aiHistories.sourceId, db.aiHistories.id),
+      );
+
+  $$AiHistoriesTableProcessedTableManager? get sourceId {
+    final $_column = $_itemColumn<int>('source_id');
+    if ($_column == null) return null;
+    final manager = $$AiHistoriesTableTableManager(
+      $_db,
+      $_db.aiHistories,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_sourceIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $AiProvidersTable _providerIdTable(_$AppDatabase db) =>
+      db.aiProviders.createAlias(
+        $_aliasNameGenerator(db.aiHistories.providerId, db.aiProviders.id),
+      );
+
+  $$AiProvidersTableProcessedTableManager get providerId {
+    final $_column = $_itemColumn<int>('provider_id')!;
+
+    final manager = $$AiProvidersTableTableManager(
+      $_db,
+      $_db.aiProviders,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_providerIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $SessionTable _sessionIdTable(_$AppDatabase db) =>
+      db.session.createAlias(
+        $_aliasNameGenerator(db.aiHistories.sessionId, db.session.id),
+      );
+
+  $$SessionTableProcessedTableManager get sessionId {
+    final $_column = $_itemColumn<int>('session_id')!;
+
+    final manager = $$SessionTableTableManager(
+      $_db,
+      $_db.session,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_sessionIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$AiHistoriesTableFilterComposer
+    extends Composer<_$AppDatabase, $AiHistoriesTable> {
+  $$AiHistoriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<Roles, Roles, String> get role =>
+      $composableBuilder(
+        column: $table.role,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
+  ColumnFilters<String> get content => $composableBuilder(
+    column: $table.content,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get toolCalls => $composableBuilder(
+    column: $table.toolCalls,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get toolCallId => $composableBuilder(
+    column: $table.toolCallId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get tokens => $composableBuilder(
+    column: $table.tokens,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$AiHistoriesTableFilterComposer get sourceId {
+    final $$AiHistoriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.sourceId,
+      referencedTable: $db.aiHistories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AiHistoriesTableFilterComposer(
+            $db: $db,
+            $table: $db.aiHistories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$AiProvidersTableFilterComposer get providerId {
+    final $$AiProvidersTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.providerId,
+      referencedTable: $db.aiProviders,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AiProvidersTableFilterComposer(
+            $db: $db,
+            $table: $db.aiProviders,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$SessionTableFilterComposer get sessionId {
+    final $$SessionTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.sessionId,
+      referencedTable: $db.session,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SessionTableFilterComposer(
+            $db: $db,
+            $table: $db.session,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$AiHistoriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $AiHistoriesTable> {
+  $$AiHistoriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get role => $composableBuilder(
+    column: $table.role,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get content => $composableBuilder(
+    column: $table.content,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get toolCalls => $composableBuilder(
+    column: $table.toolCalls,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get toolCallId => $composableBuilder(
+    column: $table.toolCallId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get tokens => $composableBuilder(
+    column: $table.tokens,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$AiHistoriesTableOrderingComposer get sourceId {
+    final $$AiHistoriesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.sourceId,
+      referencedTable: $db.aiHistories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AiHistoriesTableOrderingComposer(
+            $db: $db,
+            $table: $db.aiHistories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$AiProvidersTableOrderingComposer get providerId {
+    final $$AiProvidersTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.providerId,
+      referencedTable: $db.aiProviders,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AiProvidersTableOrderingComposer(
+            $db: $db,
+            $table: $db.aiProviders,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$SessionTableOrderingComposer get sessionId {
+    final $$SessionTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.sessionId,
+      referencedTable: $db.session,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SessionTableOrderingComposer(
+            $db: $db,
+            $table: $db.session,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$AiHistoriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AiHistoriesTable> {
+  $$AiHistoriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<Roles, String> get role =>
+      $composableBuilder(column: $table.role, builder: (column) => column);
+
+  GeneratedColumn<String> get content =>
+      $composableBuilder(column: $table.content, builder: (column) => column);
+
+  GeneratedColumn<String> get toolCalls =>
+      $composableBuilder(column: $table.toolCalls, builder: (column) => column);
+
+  GeneratedColumn<String> get toolCallId => $composableBuilder(
+    column: $table.toolCallId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get tokens =>
+      $composableBuilder(column: $table.tokens, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  $$AiHistoriesTableAnnotationComposer get sourceId {
+    final $$AiHistoriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.sourceId,
+      referencedTable: $db.aiHistories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AiHistoriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.aiHistories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$AiProvidersTableAnnotationComposer get providerId {
+    final $$AiProvidersTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.providerId,
+      referencedTable: $db.aiProviders,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AiProvidersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.aiProviders,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$SessionTableAnnotationComposer get sessionId {
+    final $$SessionTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.sessionId,
+      referencedTable: $db.session,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SessionTableAnnotationComposer(
+            $db: $db,
+            $table: $db.session,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$AiHistoriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AiHistoriesTable,
+          AiHistory,
+          $$AiHistoriesTableFilterComposer,
+          $$AiHistoriesTableOrderingComposer,
+          $$AiHistoriesTableAnnotationComposer,
+          $$AiHistoriesTableCreateCompanionBuilder,
+          $$AiHistoriesTableUpdateCompanionBuilder,
+          (AiHistory, $$AiHistoriesTableReferences),
+          AiHistory,
+          PrefetchHooks Function({
+            bool sourceId,
+            bool providerId,
+            bool sessionId,
+          })
+        > {
+  $$AiHistoriesTableTableManager(_$AppDatabase db, $AiHistoriesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AiHistoriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AiHistoriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AiHistoriesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int?> sourceId = const Value.absent(),
+                Value<int> providerId = const Value.absent(),
+                Value<Roles> role = const Value.absent(),
+                Value<int> sessionId = const Value.absent(),
+                Value<String> content = const Value.absent(),
+                Value<String?> toolCalls = const Value.absent(),
+                Value<String?> toolCallId = const Value.absent(),
+                Value<int?> tokens = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+              }) => AiHistoriesCompanion(
+                id: id,
+                sourceId: sourceId,
+                providerId: providerId,
+                role: role,
+                sessionId: sessionId,
+                content: content,
+                toolCalls: toolCalls,
+                toolCallId: toolCallId,
+                tokens: tokens,
+                createdAt: createdAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int?> sourceId = const Value.absent(),
+                required int providerId,
+                required Roles role,
+                required int sessionId,
+                required String content,
+                Value<String?> toolCalls = const Value.absent(),
+                Value<String?> toolCallId = const Value.absent(),
+                Value<int?> tokens = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+              }) => AiHistoriesCompanion.insert(
+                id: id,
+                sourceId: sourceId,
+                providerId: providerId,
+                role: role,
+                sessionId: sessionId,
+                content: content,
+                toolCalls: toolCalls,
+                toolCallId: toolCallId,
+                tokens: tokens,
+                createdAt: createdAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$AiHistoriesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({sourceId = false, providerId = false, sessionId = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (sourceId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.sourceId,
+                                    referencedTable:
+                                        $$AiHistoriesTableReferences
+                                            ._sourceIdTable(db),
+                                    referencedColumn:
+                                        $$AiHistoriesTableReferences
+                                            ._sourceIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (providerId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.providerId,
+                                    referencedTable:
+                                        $$AiHistoriesTableReferences
+                                            ._providerIdTable(db),
+                                    referencedColumn:
+                                        $$AiHistoriesTableReferences
+                                            ._providerIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (sessionId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.sessionId,
+                                    referencedTable:
+                                        $$AiHistoriesTableReferences
+                                            ._sessionIdTable(db),
+                                    referencedColumn:
+                                        $$AiHistoriesTableReferences
+                                            ._sessionIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$AiHistoriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AiHistoriesTable,
+      AiHistory,
+      $$AiHistoriesTableFilterComposer,
+      $$AiHistoriesTableOrderingComposer,
+      $$AiHistoriesTableAnnotationComposer,
+      $$AiHistoriesTableCreateCompanionBuilder,
+      $$AiHistoriesTableUpdateCompanionBuilder,
+      (AiHistory, $$AiHistoriesTableReferences),
+      AiHistory,
+      PrefetchHooks Function({bool sourceId, bool providerId, bool sessionId})
+    >;
+typedef $$PromptsTableCreateCompanionBuilder =
+    PromptsCompanion Function({
+      Value<int> id,
+      Value<String?> name,
+      Value<String?> desc,
+      required String content,
+    });
+typedef $$PromptsTableUpdateCompanionBuilder =
+    PromptsCompanion Function({
+      Value<int> id,
+      Value<String?> name,
+      Value<String?> desc,
+      Value<String> content,
+    });
+
+class $$PromptsTableFilterComposer
+    extends Composer<_$AppDatabase, $PromptsTable> {
+  $$PromptsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get desc => $composableBuilder(
+    column: $table.desc,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get content => $composableBuilder(
+    column: $table.content,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$PromptsTableOrderingComposer
+    extends Composer<_$AppDatabase, $PromptsTable> {
+  $$PromptsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get desc => $composableBuilder(
+    column: $table.desc,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get content => $composableBuilder(
+    column: $table.content,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$PromptsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $PromptsTable> {
+  $$PromptsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get desc =>
+      $composableBuilder(column: $table.desc, builder: (column) => column);
+
+  GeneratedColumn<String> get content =>
+      $composableBuilder(column: $table.content, builder: (column) => column);
+}
+
+class $$PromptsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $PromptsTable,
+          Prompt,
+          $$PromptsTableFilterComposer,
+          $$PromptsTableOrderingComposer,
+          $$PromptsTableAnnotationComposer,
+          $$PromptsTableCreateCompanionBuilder,
+          $$PromptsTableUpdateCompanionBuilder,
+          (Prompt, BaseReferences<_$AppDatabase, $PromptsTable, Prompt>),
+          Prompt,
+          PrefetchHooks Function()
+        > {
+  $$PromptsTableTableManager(_$AppDatabase db, $PromptsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$PromptsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PromptsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PromptsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String?> name = const Value.absent(),
+                Value<String?> desc = const Value.absent(),
+                Value<String> content = const Value.absent(),
+              }) => PromptsCompanion(
+                id: id,
+                name: name,
+                desc: desc,
+                content: content,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String?> name = const Value.absent(),
+                Value<String?> desc = const Value.absent(),
+                required String content,
+              }) => PromptsCompanion.insert(
+                id: id,
+                name: name,
+                desc: desc,
+                content: content,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$PromptsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $PromptsTable,
+      Prompt,
+      $$PromptsTableFilterComposer,
+      $$PromptsTableOrderingComposer,
+      $$PromptsTableAnnotationComposer,
+      $$PromptsTableCreateCompanionBuilder,
+      $$PromptsTableUpdateCompanionBuilder,
+      (Prompt, BaseReferences<_$AppDatabase, $PromptsTable, Prompt>),
+      Prompt,
+      PrefetchHooks Function()
+    >;
 typedef $$TagsTableCreateCompanionBuilder =
     TagsCompanion Function({
       Value<int> id,
@@ -11843,402 +15491,6 @@ typedef $$MistakeLogsTableProcessedTableManager =
       MistakeLog,
       PrefetchHooks Function({bool mistakeID})
     >;
-typedef $$ImagesTableCreateCompanionBuilder =
-    ImagesCompanion Function({
-      Value<int> id,
-      required String name,
-      Value<DateTime> createAt,
-      Value<String?> desc,
-      Value<String?> path,
-    });
-typedef $$ImagesTableUpdateCompanionBuilder =
-    ImagesCompanion Function({
-      Value<int> id,
-      Value<String> name,
-      Value<DateTime> createAt,
-      Value<String?> desc,
-      Value<String?> path,
-    });
-
-final class $$ImagesTableReferences
-    extends BaseReferences<_$AppDatabase, $ImagesTable, Image> {
-  $$ImagesTableReferences(super.$_db, super.$_table, super.$_typedResult);
-
-  static MultiTypedResultKey<$MistakePicsLinkTable, List<MistakePicsLinkData>>
-  _mistakePicsLinkRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
-    db.mistakePicsLink,
-    aliasName: $_aliasNameGenerator(db.images.id, db.mistakePicsLink.picId),
-  );
-
-  $$MistakePicsLinkTableProcessedTableManager get mistakePicsLinkRefs {
-    final manager = $$MistakePicsLinkTableTableManager(
-      $_db,
-      $_db.mistakePicsLink,
-    ).filter((f) => f.picId.id.sqlEquals($_itemColumn<int>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(
-      _mistakePicsLinkRefsTable($_db),
-    );
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
-    );
-  }
-
-  static MultiTypedResultKey<$AnswerPicsLinkTable, List<AnswerPicsLinkData>>
-  _answerPicsLinkRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
-    db.answerPicsLink,
-    aliasName: $_aliasNameGenerator(db.images.id, db.answerPicsLink.picID),
-  );
-
-  $$AnswerPicsLinkTableProcessedTableManager get answerPicsLinkRefs {
-    final manager = $$AnswerPicsLinkTableTableManager(
-      $_db,
-      $_db.answerPicsLink,
-    ).filter((f) => f.picID.id.sqlEquals($_itemColumn<int>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(_answerPicsLinkRefsTable($_db));
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
-    );
-  }
-}
-
-class $$ImagesTableFilterComposer
-    extends Composer<_$AppDatabase, $ImagesTable> {
-  $$ImagesTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get name => $composableBuilder(
-    column: $table.name,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get createAt => $composableBuilder(
-    column: $table.createAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get desc => $composableBuilder(
-    column: $table.desc,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get path => $composableBuilder(
-    column: $table.path,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  Expression<bool> mistakePicsLinkRefs(
-    Expression<bool> Function($$MistakePicsLinkTableFilterComposer f) f,
-  ) {
-    final $$MistakePicsLinkTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.mistakePicsLink,
-      getReferencedColumn: (t) => t.picId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$MistakePicsLinkTableFilterComposer(
-            $db: $db,
-            $table: $db.mistakePicsLink,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
-  Expression<bool> answerPicsLinkRefs(
-    Expression<bool> Function($$AnswerPicsLinkTableFilterComposer f) f,
-  ) {
-    final $$AnswerPicsLinkTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.answerPicsLink,
-      getReferencedColumn: (t) => t.picID,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$AnswerPicsLinkTableFilterComposer(
-            $db: $db,
-            $table: $db.answerPicsLink,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-}
-
-class $$ImagesTableOrderingComposer
-    extends Composer<_$AppDatabase, $ImagesTable> {
-  $$ImagesTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get name => $composableBuilder(
-    column: $table.name,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get createAt => $composableBuilder(
-    column: $table.createAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get desc => $composableBuilder(
-    column: $table.desc,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get path => $composableBuilder(
-    column: $table.path,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $$ImagesTableAnnotationComposer
-    extends Composer<_$AppDatabase, $ImagesTable> {
-  $$ImagesTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get name =>
-      $composableBuilder(column: $table.name, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get createAt =>
-      $composableBuilder(column: $table.createAt, builder: (column) => column);
-
-  GeneratedColumn<String> get desc =>
-      $composableBuilder(column: $table.desc, builder: (column) => column);
-
-  GeneratedColumn<String> get path =>
-      $composableBuilder(column: $table.path, builder: (column) => column);
-
-  Expression<T> mistakePicsLinkRefs<T extends Object>(
-    Expression<T> Function($$MistakePicsLinkTableAnnotationComposer a) f,
-  ) {
-    final $$MistakePicsLinkTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.mistakePicsLink,
-      getReferencedColumn: (t) => t.picId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$MistakePicsLinkTableAnnotationComposer(
-            $db: $db,
-            $table: $db.mistakePicsLink,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
-  Expression<T> answerPicsLinkRefs<T extends Object>(
-    Expression<T> Function($$AnswerPicsLinkTableAnnotationComposer a) f,
-  ) {
-    final $$AnswerPicsLinkTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.answerPicsLink,
-      getReferencedColumn: (t) => t.picID,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$AnswerPicsLinkTableAnnotationComposer(
-            $db: $db,
-            $table: $db.answerPicsLink,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-}
-
-class $$ImagesTableTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          $ImagesTable,
-          Image,
-          $$ImagesTableFilterComposer,
-          $$ImagesTableOrderingComposer,
-          $$ImagesTableAnnotationComposer,
-          $$ImagesTableCreateCompanionBuilder,
-          $$ImagesTableUpdateCompanionBuilder,
-          (Image, $$ImagesTableReferences),
-          Image,
-          PrefetchHooks Function({
-            bool mistakePicsLinkRefs,
-            bool answerPicsLinkRefs,
-          })
-        > {
-  $$ImagesTableTableManager(_$AppDatabase db, $ImagesTable table)
-    : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$ImagesTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$ImagesTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$ImagesTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                Value<String> name = const Value.absent(),
-                Value<DateTime> createAt = const Value.absent(),
-                Value<String?> desc = const Value.absent(),
-                Value<String?> path = const Value.absent(),
-              }) => ImagesCompanion(
-                id: id,
-                name: name,
-                createAt: createAt,
-                desc: desc,
-                path: path,
-              ),
-          createCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                required String name,
-                Value<DateTime> createAt = const Value.absent(),
-                Value<String?> desc = const Value.absent(),
-                Value<String?> path = const Value.absent(),
-              }) => ImagesCompanion.insert(
-                id: id,
-                name: name,
-                createAt: createAt,
-                desc: desc,
-                path: path,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map(
-                (e) =>
-                    (e.readTable(table), $$ImagesTableReferences(db, table, e)),
-              )
-              .toList(),
-          prefetchHooksCallback:
-              ({mistakePicsLinkRefs = false, answerPicsLinkRefs = false}) {
-                return PrefetchHooks(
-                  db: db,
-                  explicitlyWatchedTables: [
-                    if (mistakePicsLinkRefs) db.mistakePicsLink,
-                    if (answerPicsLinkRefs) db.answerPicsLink,
-                  ],
-                  addJoins: null,
-                  getPrefetchedDataCallback: (items) async {
-                    return [
-                      if (mistakePicsLinkRefs)
-                        await $_getPrefetchedData<
-                          Image,
-                          $ImagesTable,
-                          MistakePicsLinkData
-                        >(
-                          currentTable: table,
-                          referencedTable: $$ImagesTableReferences
-                              ._mistakePicsLinkRefsTable(db),
-                          managerFromTypedResult: (p0) =>
-                              $$ImagesTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).mistakePicsLinkRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.picId == item.id,
-                              ),
-                          typedResults: items,
-                        ),
-                      if (answerPicsLinkRefs)
-                        await $_getPrefetchedData<
-                          Image,
-                          $ImagesTable,
-                          AnswerPicsLinkData
-                        >(
-                          currentTable: table,
-                          referencedTable: $$ImagesTableReferences
-                              ._answerPicsLinkRefsTable(db),
-                          managerFromTypedResult: (p0) =>
-                              $$ImagesTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).answerPicsLinkRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.picID == item.id,
-                              ),
-                          typedResults: items,
-                        ),
-                    ];
-                  },
-                );
-              },
-        ),
-      );
-}
-
-typedef $$ImagesTableProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      $ImagesTable,
-      Image,
-      $$ImagesTableFilterComposer,
-      $$ImagesTableOrderingComposer,
-      $$ImagesTableAnnotationComposer,
-      $$ImagesTableCreateCompanionBuilder,
-      $$ImagesTableUpdateCompanionBuilder,
-      (Image, $$ImagesTableReferences),
-      Image,
-      PrefetchHooks Function({
-        bool mistakePicsLinkRefs,
-        bool answerPicsLinkRefs,
-      })
-    >;
 typedef $$MistakePicsLinkTableCreateCompanionBuilder =
     MistakePicsLinkCompanion Function({
       required int mistakeId,
@@ -14731,6 +17983,16 @@ typedef $$MistakeKnowledgeLinkTableProcessedTableManager =
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
+  $$ImagesTableTableManager get images =>
+      $$ImagesTableTableManager(_db, _db.images);
+  $$AiProvidersTableTableManager get aiProviders =>
+      $$AiProvidersTableTableManager(_db, _db.aiProviders);
+  $$SessionTableTableManager get session =>
+      $$SessionTableTableManager(_db, _db.session);
+  $$AiHistoriesTableTableManager get aiHistories =>
+      $$AiHistoriesTableTableManager(_db, _db.aiHistories);
+  $$PromptsTableTableManager get prompts =>
+      $$PromptsTableTableManager(_db, _db.prompts);
   $$TagsTableTableManager get tags => $$TagsTableTableManager(_db, _db.tags);
   $$WordsTableTableManager get words =>
       $$WordsTableTableManager(_db, _db.words);
@@ -14756,8 +18018,6 @@ class $AppDatabaseManager {
       $$MistakesTagLinkTableTableManager(_db, _db.mistakesTagLink);
   $$MistakeLogsTableTableManager get mistakeLogs =>
       $$MistakeLogsTableTableManager(_db, _db.mistakeLogs);
-  $$ImagesTableTableManager get images =>
-      $$ImagesTableTableManager(_db, _db.images);
   $$MistakePicsLinkTableTableManager get mistakePicsLink =>
       $$MistakePicsLinkTableTableManager(_db, _db.mistakePicsLink);
   $$AnswersTableTableManager get answers =>

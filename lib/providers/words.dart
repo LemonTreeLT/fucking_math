@@ -1,7 +1,7 @@
 import 'package:fucking_math/db/app_database.dart' show AppDatabase;
 import 'package:fucking_math/db/daos/word.dart';
 import 'package:fucking_math/extensions/list.dart';
-import 'package:fucking_math/providers/base_db_proivder.dart';
+import 'package:fucking_math/providers/base_db_provider.dart';
 import 'package:fucking_math/utils/repository/english.dart';
 
 import 'package:fucking_math/utils/types.dart';
@@ -25,7 +25,7 @@ class WordsProvider extends BaseRepositoryProvider<Word, WordsRepository> {
       tags: tags,
       note: note,
     ),
-    onSucces: (newWord) =>
+    onSuccess: (newWord) =>
         setItems(items.withUpsert(newWord, (t) => t.id == newWord.id)),
     errMsg: "添加单词失败",
   );
@@ -33,14 +33,14 @@ class WordsProvider extends BaseRepositoryProvider<Word, WordsRepository> {
   // --- 查询：加载所有单词  ---
   Future<void> loadWords() async => justDoIt<List<Word>>(
     action: () => rep.getAllWords(),
-    onSucces: setItems,
+    onSuccess: setItems,
     errMsg: "加载单词失败",
   );
 
   // --- 操作：删除单词  ---
   Future<void> deleteWord(int wordID) async => justDoIt<void>(
     action: () => rep.deleteWord(wordID),
-    onSucces: (_) =>
+    onSuccess: (_) =>
         setItems(items.where((wrod) => wrod.id != wordID).toList()),
     errMsg: "删除单词失败",
   );

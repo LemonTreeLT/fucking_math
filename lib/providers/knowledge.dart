@@ -1,5 +1,5 @@
 import 'package:fucking_math/db/daos/knowledge.dart';
-import 'package:fucking_math/providers/base_db_proivder.dart';
+import 'package:fucking_math/providers/base_db_provider.dart';
 import 'package:fucking_math/utils/repository/knowledge.dart';
 
 import 'package:fucking_math/db/app_database.dart' show AppDatabase;
@@ -14,7 +14,7 @@ class KnowledgeProvider
   // --- 查询：加载所有知识点 ---
   Future<void> loadKnowledge() async => justDoIt<List<Knowledge>>(
     action: () => rep.getAllKnowledge(),
-    onSucces: setItems,
+    onSuccess: setItems,
     errMsg: "加载知识点失败",
   );
 
@@ -22,21 +22,21 @@ class KnowledgeProvider
   Future<void> loadKnowledgeBySubject(Subject subject) async =>
       justDoIt<List<Knowledge>>(
         action: () => rep.getKnowledgeBySubject(subject),
-        onSucces: setItems,
+        onSuccess: setItems,
         errMsg: "加载学科知识点失败",
       );
 
   // --- 查询：搜索知识点 ---
   Future<void> searchKnowledge(String query) async => justDoIt<List<Knowledge>>(
     action: () => rep.searchKnowledge(query),
-    onSucces: setItems,
+    onSuccess: setItems,
     errMsg: "搜索知识点失败",
   );
 
   // --- 查询：根据标签获取知识点 ---
   Future<void> loadKnowledgeByTag(int tagId) async => justDoIt<List<Knowledge>>(
     action: () => rep.getKnowledgeByTag(tagId),
-    onSucces: setItems,
+    onSuccess: setItems,
     errMsg: "加载标签知识点失败",
   );
 
@@ -50,7 +50,7 @@ class KnowledgeProvider
   }) async => justDoIt<Knowledge>(
     action: () =>
         rep.saveKnowledge(subject, head, body, tags: tags, note: note),
-    onSucces: (savedKnowledge) => setItems(
+    onSuccess: (savedKnowledge) => setItems(
       items.withUpsert(savedKnowledge, (k) => k.id == savedKnowledge.id),
     ),
     errMsg: "保存知识点失败",
@@ -73,7 +73,7 @@ class KnowledgeProvider
   // --- 操作：删除知识点 ---
   Future<void> deleteKnowledge(int knowledgeId) async => justDoIt<void>(
     action: () => rep.deleteKnowledge(knowledgeId),
-    onSucces: (_) => setItems(items.where((k) => k.id != knowledgeId).toList()),
+    onSuccess: (_) => setItems(items.where((k) => k.id != knowledgeId).toList()),
     errMsg: "删除知识点失败",
   );
 }

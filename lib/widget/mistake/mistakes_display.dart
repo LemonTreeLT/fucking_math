@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:fucking_math/providers/mistakes.dart';
 import 'package:fucking_math/utils/types.dart';
 import 'package:fucking_math/widget/forms/base_form.dart';
-import 'package:fucking_math/widget/ui_constants.dart';
 import 'package:provider/provider.dart';
 import 'package:fucking_math/extensions/provider_getter.dart';
 
@@ -23,7 +22,6 @@ class _MistakesDisplay extends GenericFormStateV2<MistakesDisplay> {
       _buildActionButton(),
     ],
   );
-
   Widget _buildList() => Consumer<MistakesProvider>(
     builder: (context, value, child) {
       final provider = context.misRead;
@@ -73,8 +71,12 @@ class _MistakesDisplay extends GenericFormStateV2<MistakesDisplay> {
     });
   }
 
-  // TODO 实现删除错题逻辑
-  void _delete() => dev;
+  void _delete() {
+    final provider = context.misRead;
+    final selection = provider.selectedItem;
+
+    if (selection != null) provider.removeMistakes(selection);
+  }
 
   void _clearSelection() => context.read<MistakesProvider>().select(null);
 
@@ -91,8 +93,10 @@ class _MistakeListItem extends StatelessWidget {
   final bool selected;
 
   const _MistakeListItem(this.mistake, this.selected, this.onTap);
+
   @override
   Widget build(BuildContext context) => ListTile(
+    contentPadding: EdgeInsets.all(0),
     title: Text("# ${mistake.id}"),
     subtitle: Text(mistake.head),
     trailing: SizedBox(

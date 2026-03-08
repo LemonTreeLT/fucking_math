@@ -30,6 +30,7 @@ class TagOrPhraseNotFoundException implements Exception {
       'Phrase or tag not found: $message, phraseID: $phraseID, tagID: $tagID';
 }
 
+/// 数据库级错误，当且仅当数据库出现非常严重的结构性故障才抛出
 class AppDatabaseException implements Exception {
   final String message;
   final Object? originalError;
@@ -155,3 +156,55 @@ class ImageNotFoundException implements Exception {
       'ImageNotFoundException: $message'
       '${imageId != null ? ' (id: $imageId)' : ''}';
 }
+
+// ============ AI 模块异常 ============
+
+/// AI 提供商未找到异常
+class AiProviderNotFoundException implements Exception {
+  final String message;
+  final int? providerId;
+
+  AiProviderNotFoundException(this.message, {this.providerId});
+
+  @override
+  String toString() =>
+      'AiProviderNotFoundException: $message'
+      '${providerId != null ? ' (providerId: $providerId)' : ''}';
+}
+
+/// AI 会话未找到异常
+class AiSessionNotFoundException implements Exception {
+  final String message;
+  final int? sessionId;
+
+  AiSessionNotFoundException(this.message, {this.sessionId});
+
+  @override
+  String toString() =>
+      'AiSessionNotFoundException: $message'
+      '${sessionId != null ? ' (sessionId: $sessionId)' : ''}';
+}
+
+/// AI Prompt 未找到异常
+class AiPromptNotFoundException implements Exception {
+  final String message;
+  final int? promptId;
+
+  AiPromptNotFoundException(this.message, {this.promptId});
+
+  @override
+  String toString() =>
+      'AiPromptNotFoundException: $message'
+      '${promptId != null ? ' (promptId: $promptId)' : ''}';
+}
+
+/// AI 历史记录业务异常
+class AiHistoryException implements Exception {
+  final String message;
+
+  AiHistoryException(this.message);
+
+  @override
+  String toString() => 'AiHistoryException: $message';
+}
+

@@ -20,7 +20,7 @@ class Config {
     fontFamily: fontFamily,
     primarySwatch: Colors.yellow,
   );
-  static late final dbFileName;
+  static late final String dbFileName;
   static late final Directory defaultDataStorage;
   static late final File dbFile;
   static late final File configFile;
@@ -46,7 +46,7 @@ class Config {
     try {
       final content = await configFile.readAsString();
       config = TomlDocument.parse(content).toMap();
-    } on PathNotFoundException catch (e) {
+    } on PathNotFoundException {
       ByteData data = await rootBundle.load("assets/config.toml");
       List<int> bytes = data.buffer.asUint8List(
         data.offsetInBytes,
@@ -82,6 +82,14 @@ class Config {
         file: configFile,
         section: "Database",
         key: "name",
+        newValue: newValue,
+      );
+
+  static Future<void> saveGlobalResPath(String newValue) async =>
+      await TomlEditor.updateValue(
+        file: configFile,
+        section: "Data",
+        key: "path",
         newValue: newValue,
       );
 }

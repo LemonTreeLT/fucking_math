@@ -3,7 +3,7 @@
 import 'package:fucking_math/db/app_database.dart' show AppDatabase;
 import 'package:fucking_math/db/daos/tag.dart';
 import 'package:fucking_math/extensions/list.dart';
-import 'package:fucking_math/providers/base_db_proivder.dart';
+import 'package:fucking_math/providers/base_db_provider.dart';
 import 'package:fucking_math/utils/repository/tag.dart';
 import 'package:fucking_math/utils/types.dart';
 
@@ -30,7 +30,7 @@ class TagProvider extends BaseRepositoryProvider<Tag, TagRepository> {
   /// - 通过 [justDoIt] 处理的数据库异常将设置 [error] 状态
   Future<void> loadTags() async => justDoIt<List<Tag>>(
         action: () => rep.getAllTags(),
-        onSucces: setItems,
+        onSuccess: setItems,
         errMsg: "加载标签失败",
       );
 
@@ -69,7 +69,7 @@ class TagProvider extends BaseRepositoryProvider<Tag, TagRepository> {
         subject: subject,
         color: color,
       ),
-      onSucces: (savedTag) =>
+      onSuccess: (savedTag) =>
           setItems(items.withUpsert(savedTag, (t) => t.id == savedTag.id)),
       errMsg: "保存标签失败",
     );
@@ -96,7 +96,7 @@ class TagProvider extends BaseRepositoryProvider<Tag, TagRepository> {
 
     await justDoIt<Tag>(
       action: () => rep.upsertTag(tag),
-      onSucces: (savedTag) =>
+      onSuccess: (savedTag) =>
           setItems(items.withUpsert(savedTag, (t) => t.id == savedTag.id)),
       errMsg: "更新标签失败",
     );
@@ -113,7 +113,7 @@ class TagProvider extends BaseRepositoryProvider<Tag, TagRepository> {
   /// - 数据库异常通过 [justDoIt] 处理
   Future<void> deleteTag(int tagID) async => justDoIt<void>(
         action: () => rep.deleteTag(tagID),
-        onSucces: (_) => setItems(items.where((tag) => tag.id != tagID).toList()),
+        onSuccess: (_) => setItems(items.where((tag) => tag.id != tagID).toList()),
         errMsg: "删除标签失败",
       );
 }

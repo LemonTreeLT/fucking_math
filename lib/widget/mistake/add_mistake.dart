@@ -84,12 +84,13 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       _buildTitle(),
-
-      Row(children: [Expanded(child: TagSelectionArea())]),
+      Row(
+        children: [Expanded(child: TagSelectionArea(key: _tagKey))],
+      ),
       tInputer(
         controller: _bodyInputerController,
         labelText: "题干",
-        maxLines: 3,
+        maxLines: 3, 
         validator: (v) => _validateNotNull(v, "题干"),
       ),
     ],

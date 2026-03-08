@@ -23,7 +23,7 @@ abstract class BaseRepositoryProvider<T, R> extends BaseProvider
   @protected
   List<T> items = [];
   @protected
-  void setItems(List<T> newitems) => items = newitems;
+  void setItems(List<T> newItems) => items = newItems;
   @protected
   R rep;
   BaseRepositoryProvider(this.rep);
@@ -60,13 +60,13 @@ mixin ProviderActionNotifier on BaseProvider {
   @protected
   Future<void> justDoIt<T>({
     required Future<T> Function() action,
-    void Function(T result)? onSucces,
+    void Function(T result)? onSuccess,
     String? errMsg,
   }) async {
     // 调用辅助方法，忽略其返回值 (Future<void>)
     await _runActionAndNotify<T>(
       action: action,
-      onSuccess: onSucces,
+      onSuccess: onSuccess,
       errMsg: errMsg,
     );
   }
@@ -74,13 +74,13 @@ mixin ProviderActionNotifier on BaseProvider {
   @protected
   Future<T?> justDoItNext<T>({
     required Future<T> Function() action,
-    void Function(T result)? onSucces,
+    void Function(T result)? onSuccess,
     String? errMsg,
   }) async {
     // 直接返回辅助方法的结果 (Future<T?>)
     return _runActionAndNotify<T>(
       action: action,
-      onSuccess: onSucces,
+      onSuccess: onSuccess,
       errMsg: errMsg,
     );
   }
@@ -98,11 +98,11 @@ mixin FuzzySearchMixin<T, R> on BaseRepositoryProvider<T, R> {
 
   @override
   @protected
-  void setItems(List<T> newitems) {
-    super.setItems(newitems);
+  void setItems(List<T> newItems) {
+    super.setItems(newItems);
 
     _fuse = Fuzzy<T>(
-      newitems,
+      newItems,
       options: FuzzyOptions(
         keys: fuzzyKeys,
         threshold: 0.4,
@@ -114,6 +114,8 @@ mixin FuzzySearchMixin<T, R> on BaseRepositoryProvider<T, R> {
     if (_currentQuery.isNotEmpty) {
       _runSearch(_currentQuery);
     }
+    
+    notifyListeners();
   }
 
   void search(String query) {
@@ -126,8 +128,8 @@ mixin FuzzySearchMixin<T, R> on BaseRepositoryProvider<T, R> {
     if (query.isEmpty || _fuse == null) {
       _searchResults = [];
     } else {
-      final resutt = _fuse!.search(query);
-      _searchResults = resutt.map((r) => r.item).toList();
+      final result = _fuse!.search(query);
+      _searchResults = result.map((r) => r.item).toList();
     }
   }
 }

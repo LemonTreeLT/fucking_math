@@ -12,5 +12,8 @@
         "**/android": true
     },
     "java.format.enabled": false,
-    "java.completion.enabled": false
+    "java.completion.enabled": false,
+    "cSpell.words": [
+        "daos"
+    ]
 }

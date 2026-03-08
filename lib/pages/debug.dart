@@ -7,8 +7,13 @@ This file includes draft codes, rubbish, horrible logics and so on
 */
 
 import 'package:flutter/material.dart';
+import 'package:fucking_math/ai/client.dart';
+import 'package:fucking_math/ai/prompts.dart';
+import 'package:fucking_math/ai/types.dart';
+import 'package:fucking_math/configs/config.dart';
 import 'package:fucking_math/widget/mistake/mistakes_display.dart';
-import 'package:fucking_math/widget/ui_constants.dart';
+import 'package:get_it/get_it.dart';
+import 'package:toml/toml.dart';
 
 class Debug extends StatelessWidget {
   const Debug({super.key});
@@ -35,12 +40,7 @@ class Debug extends StatelessWidget {
   // ======================= LAYOUT CODES ABOVE =======================
 
   Widget _area2() => SearchBarApp();
-  Widget _area3() => ListView.builder(
-    itemCount: 20,
-    itemBuilder: (context, index) =>
-        ListTile(title: const Text("Title"), subtitle: const Text("Subtitle"),trailing: const Text("trailing"),),
-    
-  );
+  Widget _area3() => _AiTest();
 
   Widget _area1() => MistakesDisplay();
 
@@ -52,6 +52,65 @@ class Debug extends StatelessWidget {
           Text(text2 ?? "按钮的描述文本"),
         ],
       );
+}
+
+class _AiTest extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _AiTestState();
+}
+
+class _AiTestState extends State<StatefulWidget> {
+  @override
+  Widget build(BuildContext context) => Column(
+    children: [
+      Row(
+        children: [
+          ElevatedButton(onPressed: loadResponse, child: const Text("加载回复")),
+          ElevatedButton(
+            onPressed: loadApiConfig,
+            child: const Text("加载配置"),
+
+          ),
+        ],
+      ),
+      Text(response),
+    ],
+  );
+
+  String response = "没有回复";
+
+  Future<void> loadResponse() async {
+    final r = await GetIt.I.call<Assistant>().getResponse(
+      provider!,
+      getTest1(),
+      model: "gemini-flash-latest",
+    );
+    setState(() => response = r?.content ?? "");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadApiConfig();
+  }
+
+  AiProvider? provider;
+
+  Future<void> loadApiConfig() async {
+    final configContent = await Config.configFile.readAsString();
+    final config = TomlDocument.parse(configContent).toMap();
+    final apiKey = config['Debug']?['api_key'] as String?;
+    final baseApi = config['Debug']?['base_api'] as String?;
+
+    provider = AiProvider(
+      name: "debug",
+      baseUrl: baseApi ?? "",
+      apiKey: apiKey ?? "",
+      models: [],
+    );
+
+    debugPrint("Base api: $baseApi, Api key: ${apiKey?.substring(0, 10)}");
+  }
 }
 
 class SearchBarApp extends StatefulWidget {
