@@ -88,5 +88,8 @@ abstract class BaseAiTool {
     },
   };
 
+  /// Usage: 解析参数
+  ///        AiField arg1Field = AiField();
+  ///        final arg1 = AiField.getValue(args);
   Future<String> call(Map<String, dynamic> args);
 }

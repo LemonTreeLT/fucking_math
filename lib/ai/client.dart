@@ -55,7 +55,7 @@ class Assistant {
         // 6. 提取 Token 消耗 (OpenAI 协议中通常在 usage 字段)
         final int totalTokens = data['usage']?['total_tokens'] ?? 0;
 
-        debugPrint(aiContent);
+        debugPrint("[Ai] Response: $aiContent");
         // 7. 封装并返回 Message 对象
         return Message(
           providerId: provider.id ?? 0, // 如果 provider 未入库，暂时传 0 或处理逻辑

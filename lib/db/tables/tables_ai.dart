@@ -62,3 +62,10 @@ class Prompts extends Table {
   /// 使用{{key}}添加可被替换内容
   TextColumn get content => text()();
 }
+
+class AiHistoryImagesLink extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get historyId => integer().references(AiHistories, #id)();
+  IntColumn get imageId => integer().references(Images, #id)();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+}

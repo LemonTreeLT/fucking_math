@@ -1,15 +1,18 @@
 import 'package:drift/drift.dart';
 import 'package:fucking_math/db/daos/ai_history.dart';
+import 'package:fucking_math/db/daos/ai_history_images_link.dart';
 import 'package:fucking_math/db/app_database.dart' as db;
 import 'package:fucking_math/ai/types.dart';
 import 'package:fucking_math/utils/repository/helper/exceptions.dart';
+import 'package:fucking_math/utils/types.dart' show ImageStorage;
 
 /// AI 对话历史管理仓库层
 /// 负责消息历史和会话的 CRUD 操作，并提供数据转换功能
 class AiHistoryRepository {
   final AiHistoryDao _dao;
+  final AiHistoryImagesLinkDao _imageLinkDao;
 
-  AiHistoryRepository(this._dao);
+  AiHistoryRepository(this._dao, this._imageLinkDao);
 
   // ============ 历史消息 CRUD 操作 ============
 
@@ -22,6 +25,7 @@ class AiHistoryRepository {
     String? toolCalls,
     String? toolId,
     int? tokens,
+    List<int>? imageIds,
   }) async {
     try {
       final companion = db.AiHistoriesCompanion.insert(
@@ -33,7 +37,11 @@ class AiHistoryRepository {
         toolCallId: toolId != null ? Value(toolId) : const Value(null),
         tokens: tokens != null ? Value(tokens) : const Value(null),
       );
-      return await _dao.addMessage(companion);
+      final messageId = await _dao.addMessage(companion);
+      if (imageIds != null && imageIds.isNotEmpty) {
+        await _imageLinkDao.linkImagesToHistory(messageId, imageIds);
+      }
+      return messageId;
     } catch (e) {
       throw AiHistoryException('Failed to add message: $e');
     }
@@ -43,7 +51,7 @@ class AiHistoryRepository {
   Future<List<Message>> getHistoryByProviderId(int providerId) async {
     try {
       final dbMessages = await _dao.getHistoryByProviderId(providerId);
-      return dbMessages.map(_dbHistoryToMessage).toList();
+      return Future.wait(dbMessages.map(_dbHistoryToMessage));
     } catch (e) {
       throw AiHistoryException('Failed to get history by provider ID: $e');
     }
@@ -56,7 +64,7 @@ class AiHistoryRepository {
   ) async {
     try {
       final dbMessages = await _dao.getRecentHistoryByProviderId(providerId, limit);
-      return dbMessages.map(_dbHistoryToMessage).toList();
+      return Future.wait(dbMessages.map(_dbHistoryToMessage));
     } catch (e) {
       throw AiHistoryException('Failed to get recent history: $e');
     }
@@ -74,7 +82,7 @@ class AiHistoryRepository {
         startDate,
         endDate,
       );
-      return dbMessages.map(_dbHistoryToMessage).toList();
+      return Future.wait(dbMessages.map(_dbHistoryToMessage));
     } catch (e) {
       throw AiHistoryException('Failed to get history by date range: $e');
     }
@@ -204,7 +212,7 @@ class AiHistoryRepository {
       // 获取该会话中该提供商的所有历史消息
       final dbMessages =
           await _dao.getHistoryBySessionAndProvider(sessionId, providerId);
-      final messages = dbMessages.map(_dbHistoryToMessage).toList();
+      final messages = await Future.wait(dbMessages.map(_dbHistoryToMessage));
 
       return Conversation(
         session: _dbSessionToSession(dbSession),
@@ -219,20 +227,37 @@ class AiHistoryRepository {
 
   // ============ 数据类型转换 Helper 方法 ============
 
-  /// 将数据库 AiHistory 转换为 Message
-  Message _dbHistoryToMessage(db.AiHistory history) => Message(
-        id: history.id,
-        providerId: history.providerId,
-        role: history.role,
-        session: history.sessionId != 0
-            ? Session(id: history.sessionId)
-            : null,
-        content: history.content,
-        toolCalls: history.toolCalls,
-        toolId: history.toolCallId,
-        token: history.tokens,
-        createdAt: history.createdAt,
-      );
+  /// 将数据库 AiHistory 转换为 Message (async 用于加载关联的图片)
+  Future<Message> _dbHistoryToMessage(db.AiHistory history) async {
+    final dbImages = await _imageLinkDao.getImagesByHistoryId(history.id);
+    final images = dbImages.isNotEmpty
+        ? dbImages.map(_dbImageToImageStorage).toList()
+        : null;
+
+    return Message(
+      id: history.id,
+      providerId: history.providerId,
+      role: history.role,
+      session: history.sessionId != 0
+          ? Session(id: history.sessionId)
+          : null,
+      content: history.content,
+      toolCalls: history.toolCalls,
+      toolId: history.toolCallId,
+      token: history.tokens,
+      createdAt: history.createdAt,
+      images: images,
+    );
+  }
+
+  /// 将数据库 Image 转换为 ImageStorage
+  ImageStorage _dbImageToImageStorage(db.Image dbImage) => ImageStorage(
+    id: dbImage.id,
+    name: dbImage.name,
+    desc: dbImage.desc,
+    path: dbImage.path,
+    imagePath: dbImage.path ?? '',
+  );
 
   /// 将数据库 SessionData 转换为 types.Session
   Session _dbSessionToSession(db.SessionData dbSession) => Session(
@@ -240,4 +265,44 @@ class AiHistoryRepository {
         title: dbSession.title,
         createdAt: dbSession.createdAt,
       );
+
+  // ============ 图片关联管理操作 ============
+
+  /// 向现有消息添加图片
+  Future<void> addImagesToMessage(int messageId, List<int> imageIds) async {
+    try {
+      if (imageIds.isEmpty) return;
+      await _imageLinkDao.linkImagesToHistory(messageId, imageIds);
+    } catch (e) {
+      throw AiHistoryException('Failed to add images to message: $e');
+    }
+  }
+
+  /// 从消息中移除特定图片
+  Future<void> removeImageFromMessage(int messageId, int imageId) async {
+    try {
+      await _imageLinkDao.deleteImageLink(messageId, imageId);
+    } catch (e) {
+      throw AiHistoryException('Failed to remove image from message: $e');
+    }
+  }
+
+  /// 清空消息的所有图片
+  Future<void> clearMessageImages(int messageId) async {
+    try {
+      await _imageLinkDao.deleteAllLinksForHistory(messageId);
+    } catch (e) {
+      throw AiHistoryException('Failed to clear message images: $e');
+    }
+  }
+
+  /// 获取消息关联的所有图片
+  Future<List<ImageStorage>> getMessageImages(int messageId) async {
+    try {
+      final dbImages = await _imageLinkDao.getImagesByHistoryId(messageId);
+      return dbImages.map(_dbImageToImageStorage).toList();
+    } catch (e) {
+      throw AiHistoryException('Failed to get message images: $e');
+    }
+  }
 }

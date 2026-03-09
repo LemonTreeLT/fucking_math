@@ -2001,6 +2001,315 @@ class PromptsCompanion extends UpdateCompanion<Prompt> {
   }
 }
 
+class $AiHistoryImagesLinkTable extends AiHistoryImagesLink
+    with TableInfo<$AiHistoryImagesLinkTable, AiHistoryImagesLinkData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AiHistoryImagesLinkTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _historyIdMeta = const VerificationMeta(
+    'historyId',
+  );
+  @override
+  late final GeneratedColumn<int> historyId = GeneratedColumn<int>(
+    'history_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES ai_histories (id)',
+    ),
+  );
+  static const VerificationMeta _imageIdMeta = const VerificationMeta(
+    'imageId',
+  );
+  @override
+  late final GeneratedColumn<int> imageId = GeneratedColumn<int>(
+    'image_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES images (id)',
+    ),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, historyId, imageId, createdAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'ai_history_images_link';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AiHistoryImagesLinkData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('history_id')) {
+      context.handle(
+        _historyIdMeta,
+        historyId.isAcceptableOrUnknown(data['history_id']!, _historyIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_historyIdMeta);
+    }
+    if (data.containsKey('image_id')) {
+      context.handle(
+        _imageIdMeta,
+        imageId.isAcceptableOrUnknown(data['image_id']!, _imageIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_imageIdMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AiHistoryImagesLinkData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AiHistoryImagesLinkData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      historyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}history_id'],
+      )!,
+      imageId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}image_id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $AiHistoryImagesLinkTable createAlias(String alias) {
+    return $AiHistoryImagesLinkTable(attachedDatabase, alias);
+  }
+}
+
+class AiHistoryImagesLinkData extends DataClass
+    implements Insertable<AiHistoryImagesLinkData> {
+  final int id;
+  final int historyId;
+  final int imageId;
+  final DateTime createdAt;
+  const AiHistoryImagesLinkData({
+    required this.id,
+    required this.historyId,
+    required this.imageId,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['history_id'] = Variable<int>(historyId);
+    map['image_id'] = Variable<int>(imageId);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  AiHistoryImagesLinkCompanion toCompanion(bool nullToAbsent) {
+    return AiHistoryImagesLinkCompanion(
+      id: Value(id),
+      historyId: Value(historyId),
+      imageId: Value(imageId),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory AiHistoryImagesLinkData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AiHistoryImagesLinkData(
+      id: serializer.fromJson<int>(json['id']),
+      historyId: serializer.fromJson<int>(json['historyId']),
+      imageId: serializer.fromJson<int>(json['imageId']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'historyId': serializer.toJson<int>(historyId),
+      'imageId': serializer.toJson<int>(imageId),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  AiHistoryImagesLinkData copyWith({
+    int? id,
+    int? historyId,
+    int? imageId,
+    DateTime? createdAt,
+  }) => AiHistoryImagesLinkData(
+    id: id ?? this.id,
+    historyId: historyId ?? this.historyId,
+    imageId: imageId ?? this.imageId,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  AiHistoryImagesLinkData copyWithCompanion(AiHistoryImagesLinkCompanion data) {
+    return AiHistoryImagesLinkData(
+      id: data.id.present ? data.id.value : this.id,
+      historyId: data.historyId.present ? data.historyId.value : this.historyId,
+      imageId: data.imageId.present ? data.imageId.value : this.imageId,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AiHistoryImagesLinkData(')
+          ..write('id: $id, ')
+          ..write('historyId: $historyId, ')
+          ..write('imageId: $imageId, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, historyId, imageId, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AiHistoryImagesLinkData &&
+          other.id == this.id &&
+          other.historyId == this.historyId &&
+          other.imageId == this.imageId &&
+          other.createdAt == this.createdAt);
+}
+
+class AiHistoryImagesLinkCompanion
+    extends UpdateCompanion<AiHistoryImagesLinkData> {
+  final Value<int> id;
+  final Value<int> historyId;
+  final Value<int> imageId;
+  final Value<DateTime> createdAt;
+  const AiHistoryImagesLinkCompanion({
+    this.id = const Value.absent(),
+    this.historyId = const Value.absent(),
+    this.imageId = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  });
+  AiHistoryImagesLinkCompanion.insert({
+    this.id = const Value.absent(),
+    required int historyId,
+    required int imageId,
+    this.createdAt = const Value.absent(),
+  }) : historyId = Value(historyId),
+       imageId = Value(imageId);
+  static Insertable<AiHistoryImagesLinkData> custom({
+    Expression<int>? id,
+    Expression<int>? historyId,
+    Expression<int>? imageId,
+    Expression<DateTime>? createdAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (historyId != null) 'history_id': historyId,
+      if (imageId != null) 'image_id': imageId,
+      if (createdAt != null) 'created_at': createdAt,
+    });
+  }
+
+  AiHistoryImagesLinkCompanion copyWith({
+    Value<int>? id,
+    Value<int>? historyId,
+    Value<int>? imageId,
+    Value<DateTime>? createdAt,
+  }) {
+    return AiHistoryImagesLinkCompanion(
+      id: id ?? this.id,
+      historyId: historyId ?? this.historyId,
+      imageId: imageId ?? this.imageId,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (historyId.present) {
+      map['history_id'] = Variable<int>(historyId.value);
+    }
+    if (imageId.present) {
+      map['image_id'] = Variable<int>(imageId.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AiHistoryImagesLinkCompanion(')
+          ..write('id: $id, ')
+          ..write('historyId: $historyId, ')
+          ..write('imageId: $imageId, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -7751,6 +8060,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $SessionTable session = $SessionTable(this);
   late final $AiHistoriesTable aiHistories = $AiHistoriesTable(this);
   late final $PromptsTable prompts = $PromptsTable(this);
+  late final $AiHistoryImagesLinkTable aiHistoryImagesLink =
+      $AiHistoryImagesLinkTable(this);
   late final $TagsTable tags = $TagsTable(this);
   late final $WordsTable words = $WordsTable(this);
   late final $WordLogsTable wordLogs = $WordLogsTable(this);
@@ -7783,6 +8094,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $MistakeKnowledgeLinkTable(this);
   late final AiProviderDao aiProviderDao = AiProviderDao(this as AppDatabase);
   late final AiHistoryDao aiHistoryDao = AiHistoryDao(this as AppDatabase);
+  late final AiHistoryImagesLinkDao aiHistoryImagesLinkDao =
+      AiHistoryImagesLinkDao(this as AppDatabase);
   late final PromptDao promptDao = PromptDao(this as AppDatabase);
   late final TagsDao tagsDao = TagsDao(this as AppDatabase);
   late final WordsDao wordsDao = WordsDao(this as AppDatabase);
@@ -7800,6 +8113,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     session,
     aiHistories,
     prompts,
+    aiHistoryImagesLink,
     tags,
     words,
     wordLogs,
@@ -7856,6 +8170,33 @@ final class $$ImagesTableReferences
     ).filter((f) => f.iconId.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_aiProvidersRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $AiHistoryImagesLinkTable,
+    List<AiHistoryImagesLinkData>
+  >
+  _aiHistoryImagesLinkRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.aiHistoryImagesLink,
+        aliasName: $_aliasNameGenerator(
+          db.images.id,
+          db.aiHistoryImagesLink.imageId,
+        ),
+      );
+
+  $$AiHistoryImagesLinkTableProcessedTableManager get aiHistoryImagesLinkRefs {
+    final manager = $$AiHistoryImagesLinkTableTableManager(
+      $_db,
+      $_db.aiHistoryImagesLink,
+    ).filter((f) => f.imageId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _aiHistoryImagesLinkRefsTable($_db),
+    );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -7950,6 +8291,31 @@ class $$ImagesTableFilterComposer
           }) => $$AiProvidersTableFilterComposer(
             $db: $db,
             $table: $db.aiProviders,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> aiHistoryImagesLinkRefs(
+    Expression<bool> Function($$AiHistoryImagesLinkTableFilterComposer f) f,
+  ) {
+    final $$AiHistoryImagesLinkTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.aiHistoryImagesLink,
+      getReferencedColumn: (t) => t.imageId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AiHistoryImagesLinkTableFilterComposer(
+            $db: $db,
+            $table: $db.aiHistoryImagesLink,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -8094,6 +8460,32 @@ class $$ImagesTableAnnotationComposer
     return f(composer);
   }
 
+  Expression<T> aiHistoryImagesLinkRefs<T extends Object>(
+    Expression<T> Function($$AiHistoryImagesLinkTableAnnotationComposer a) f,
+  ) {
+    final $$AiHistoryImagesLinkTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.aiHistoryImagesLink,
+          getReferencedColumn: (t) => t.imageId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$AiHistoryImagesLinkTableAnnotationComposer(
+                $db: $db,
+                $table: $db.aiHistoryImagesLink,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
   Expression<T> mistakePicsLinkRefs<T extends Object>(
     Expression<T> Function($$MistakePicsLinkTableAnnotationComposer a) f,
   ) {
@@ -8160,6 +8552,7 @@ class $$ImagesTableTableManager
           Image,
           PrefetchHooks Function({
             bool aiProvidersRefs,
+            bool aiHistoryImagesLinkRefs,
             bool mistakePicsLinkRefs,
             bool answerPicsLinkRefs,
           })
@@ -8212,6 +8605,7 @@ class $$ImagesTableTableManager
           prefetchHooksCallback:
               ({
                 aiProvidersRefs = false,
+                aiHistoryImagesLinkRefs = false,
                 mistakePicsLinkRefs = false,
                 answerPicsLinkRefs = false,
               }) {
@@ -8219,6 +8613,7 @@ class $$ImagesTableTableManager
                   db: db,
                   explicitlyWatchedTables: [
                     if (aiProvidersRefs) db.aiProviders,
+                    if (aiHistoryImagesLinkRefs) db.aiHistoryImagesLink,
                     if (mistakePicsLinkRefs) db.mistakePicsLink,
                     if (answerPicsLinkRefs) db.answerPicsLink,
                   ],
@@ -8243,6 +8638,27 @@ class $$ImagesTableTableManager
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
                                 (e) => e.iconId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (aiHistoryImagesLinkRefs)
+                        await $_getPrefetchedData<
+                          Image,
+                          $ImagesTable,
+                          AiHistoryImagesLinkData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ImagesTableReferences
+                              ._aiHistoryImagesLinkRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ImagesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).aiHistoryImagesLinkRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.imageId == item.id,
                               ),
                           typedResults: items,
                         ),
@@ -8310,6 +8726,7 @@ typedef $$ImagesTableProcessedTableManager =
       Image,
       PrefetchHooks Function({
         bool aiProvidersRefs,
+        bool aiHistoryImagesLinkRefs,
         bool mistakePicsLinkRefs,
         bool answerPicsLinkRefs,
       })
@@ -9116,6 +9533,33 @@ final class $$AiHistoriesTableReferences
       manager.$state.copyWith(prefetchedData: [item]),
     );
   }
+
+  static MultiTypedResultKey<
+    $AiHistoryImagesLinkTable,
+    List<AiHistoryImagesLinkData>
+  >
+  _aiHistoryImagesLinkRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.aiHistoryImagesLink,
+        aliasName: $_aliasNameGenerator(
+          db.aiHistories.id,
+          db.aiHistoryImagesLink.historyId,
+        ),
+      );
+
+  $$AiHistoryImagesLinkTableProcessedTableManager get aiHistoryImagesLinkRefs {
+    final manager = $$AiHistoryImagesLinkTableTableManager(
+      $_db,
+      $_db.aiHistoryImagesLink,
+    ).filter((f) => f.historyId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _aiHistoryImagesLinkRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$AiHistoriesTableFilterComposer
@@ -9230,6 +9674,31 @@ class $$AiHistoriesTableFilterComposer
           ),
     );
     return composer;
+  }
+
+  Expression<bool> aiHistoryImagesLinkRefs(
+    Expression<bool> Function($$AiHistoryImagesLinkTableFilterComposer f) f,
+  ) {
+    final $$AiHistoryImagesLinkTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.aiHistoryImagesLink,
+      getReferencedColumn: (t) => t.historyId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AiHistoryImagesLinkTableFilterComposer(
+            $db: $db,
+            $table: $db.aiHistoryImagesLink,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
   }
 }
 
@@ -9447,6 +9916,32 @@ class $$AiHistoriesTableAnnotationComposer
     );
     return composer;
   }
+
+  Expression<T> aiHistoryImagesLinkRefs<T extends Object>(
+    Expression<T> Function($$AiHistoryImagesLinkTableAnnotationComposer a) f,
+  ) {
+    final $$AiHistoryImagesLinkTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.aiHistoryImagesLink,
+          getReferencedColumn: (t) => t.historyId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$AiHistoryImagesLinkTableAnnotationComposer(
+                $db: $db,
+                $table: $db.aiHistoryImagesLink,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$AiHistoriesTableTableManager
@@ -9466,6 +9961,7 @@ class $$AiHistoriesTableTableManager
             bool sourceId,
             bool providerId,
             bool sessionId,
+            bool aiHistoryImagesLinkRefs,
           })
         > {
   $$AiHistoriesTableTableManager(_$AppDatabase db, $AiHistoriesTable table)
@@ -9536,10 +10032,17 @@ class $$AiHistoriesTableTableManager
               )
               .toList(),
           prefetchHooksCallback:
-              ({sourceId = false, providerId = false, sessionId = false}) {
+              ({
+                sourceId = false,
+                providerId = false,
+                sessionId = false,
+                aiHistoryImagesLinkRefs = false,
+              }) {
                 return PrefetchHooks(
                   db: db,
-                  explicitlyWatchedTables: [],
+                  explicitlyWatchedTables: [
+                    if (aiHistoryImagesLinkRefs) db.aiHistoryImagesLink,
+                  ],
                   addJoins:
                       <
                         T extends TableManagerState<
@@ -9605,7 +10108,29 @@ class $$AiHistoriesTableTableManager
                         return state;
                       },
                   getPrefetchedDataCallback: (items) async {
-                    return [];
+                    return [
+                      if (aiHistoryImagesLinkRefs)
+                        await $_getPrefetchedData<
+                          AiHistory,
+                          $AiHistoriesTable,
+                          AiHistoryImagesLinkData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$AiHistoriesTableReferences
+                              ._aiHistoryImagesLinkRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$AiHistoriesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).aiHistoryImagesLinkRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.historyId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
                   },
                 );
               },
@@ -9625,7 +10150,12 @@ typedef $$AiHistoriesTableProcessedTableManager =
       $$AiHistoriesTableUpdateCompanionBuilder,
       (AiHistory, $$AiHistoriesTableReferences),
       AiHistory,
-      PrefetchHooks Function({bool sourceId, bool providerId, bool sessionId})
+      PrefetchHooks Function({
+        bool sourceId,
+        bool providerId,
+        bool sessionId,
+        bool aiHistoryImagesLinkRefs,
+      })
     >;
 typedef $$PromptsTableCreateCompanionBuilder =
     PromptsCompanion Function({
@@ -9795,6 +10325,411 @@ typedef $$PromptsTableProcessedTableManager =
       (Prompt, BaseReferences<_$AppDatabase, $PromptsTable, Prompt>),
       Prompt,
       PrefetchHooks Function()
+    >;
+typedef $$AiHistoryImagesLinkTableCreateCompanionBuilder =
+    AiHistoryImagesLinkCompanion Function({
+      Value<int> id,
+      required int historyId,
+      required int imageId,
+      Value<DateTime> createdAt,
+    });
+typedef $$AiHistoryImagesLinkTableUpdateCompanionBuilder =
+    AiHistoryImagesLinkCompanion Function({
+      Value<int> id,
+      Value<int> historyId,
+      Value<int> imageId,
+      Value<DateTime> createdAt,
+    });
+
+final class $$AiHistoryImagesLinkTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $AiHistoryImagesLinkTable,
+          AiHistoryImagesLinkData
+        > {
+  $$AiHistoryImagesLinkTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $AiHistoriesTable _historyIdTable(_$AppDatabase db) =>
+      db.aiHistories.createAlias(
+        $_aliasNameGenerator(
+          db.aiHistoryImagesLink.historyId,
+          db.aiHistories.id,
+        ),
+      );
+
+  $$AiHistoriesTableProcessedTableManager get historyId {
+    final $_column = $_itemColumn<int>('history_id')!;
+
+    final manager = $$AiHistoriesTableTableManager(
+      $_db,
+      $_db.aiHistories,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_historyIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $ImagesTable _imageIdTable(_$AppDatabase db) => db.images.createAlias(
+    $_aliasNameGenerator(db.aiHistoryImagesLink.imageId, db.images.id),
+  );
+
+  $$ImagesTableProcessedTableManager get imageId {
+    final $_column = $_itemColumn<int>('image_id')!;
+
+    final manager = $$ImagesTableTableManager(
+      $_db,
+      $_db.images,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_imageIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$AiHistoryImagesLinkTableFilterComposer
+    extends Composer<_$AppDatabase, $AiHistoryImagesLinkTable> {
+  $$AiHistoryImagesLinkTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$AiHistoriesTableFilterComposer get historyId {
+    final $$AiHistoriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.historyId,
+      referencedTable: $db.aiHistories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AiHistoriesTableFilterComposer(
+            $db: $db,
+            $table: $db.aiHistories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ImagesTableFilterComposer get imageId {
+    final $$ImagesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.imageId,
+      referencedTable: $db.images,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ImagesTableFilterComposer(
+            $db: $db,
+            $table: $db.images,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$AiHistoryImagesLinkTableOrderingComposer
+    extends Composer<_$AppDatabase, $AiHistoryImagesLinkTable> {
+  $$AiHistoryImagesLinkTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$AiHistoriesTableOrderingComposer get historyId {
+    final $$AiHistoriesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.historyId,
+      referencedTable: $db.aiHistories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AiHistoriesTableOrderingComposer(
+            $db: $db,
+            $table: $db.aiHistories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ImagesTableOrderingComposer get imageId {
+    final $$ImagesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.imageId,
+      referencedTable: $db.images,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ImagesTableOrderingComposer(
+            $db: $db,
+            $table: $db.images,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$AiHistoryImagesLinkTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AiHistoryImagesLinkTable> {
+  $$AiHistoryImagesLinkTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  $$AiHistoriesTableAnnotationComposer get historyId {
+    final $$AiHistoriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.historyId,
+      referencedTable: $db.aiHistories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AiHistoriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.aiHistories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ImagesTableAnnotationComposer get imageId {
+    final $$ImagesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.imageId,
+      referencedTable: $db.images,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ImagesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.images,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$AiHistoryImagesLinkTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AiHistoryImagesLinkTable,
+          AiHistoryImagesLinkData,
+          $$AiHistoryImagesLinkTableFilterComposer,
+          $$AiHistoryImagesLinkTableOrderingComposer,
+          $$AiHistoryImagesLinkTableAnnotationComposer,
+          $$AiHistoryImagesLinkTableCreateCompanionBuilder,
+          $$AiHistoryImagesLinkTableUpdateCompanionBuilder,
+          (AiHistoryImagesLinkData, $$AiHistoryImagesLinkTableReferences),
+          AiHistoryImagesLinkData,
+          PrefetchHooks Function({bool historyId, bool imageId})
+        > {
+  $$AiHistoryImagesLinkTableTableManager(
+    _$AppDatabase db,
+    $AiHistoryImagesLinkTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AiHistoryImagesLinkTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AiHistoryImagesLinkTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$AiHistoryImagesLinkTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> historyId = const Value.absent(),
+                Value<int> imageId = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+              }) => AiHistoryImagesLinkCompanion(
+                id: id,
+                historyId: historyId,
+                imageId: imageId,
+                createdAt: createdAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int historyId,
+                required int imageId,
+                Value<DateTime> createdAt = const Value.absent(),
+              }) => AiHistoryImagesLinkCompanion.insert(
+                id: id,
+                historyId: historyId,
+                imageId: imageId,
+                createdAt: createdAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$AiHistoryImagesLinkTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({historyId = false, imageId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (historyId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.historyId,
+                                referencedTable:
+                                    $$AiHistoryImagesLinkTableReferences
+                                        ._historyIdTable(db),
+                                referencedColumn:
+                                    $$AiHistoryImagesLinkTableReferences
+                                        ._historyIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+                    if (imageId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.imageId,
+                                referencedTable:
+                                    $$AiHistoryImagesLinkTableReferences
+                                        ._imageIdTable(db),
+                                referencedColumn:
+                                    $$AiHistoryImagesLinkTableReferences
+                                        ._imageIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$AiHistoryImagesLinkTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AiHistoryImagesLinkTable,
+      AiHistoryImagesLinkData,
+      $$AiHistoryImagesLinkTableFilterComposer,
+      $$AiHistoryImagesLinkTableOrderingComposer,
+      $$AiHistoryImagesLinkTableAnnotationComposer,
+      $$AiHistoryImagesLinkTableCreateCompanionBuilder,
+      $$AiHistoryImagesLinkTableUpdateCompanionBuilder,
+      (AiHistoryImagesLinkData, $$AiHistoryImagesLinkTableReferences),
+      AiHistoryImagesLinkData,
+      PrefetchHooks Function({bool historyId, bool imageId})
     >;
 typedef $$TagsTableCreateCompanionBuilder =
     TagsCompanion Function({
@@ -17993,6 +18928,8 @@ class $AppDatabaseManager {
       $$AiHistoriesTableTableManager(_db, _db.aiHistories);
   $$PromptsTableTableManager get prompts =>
       $$PromptsTableTableManager(_db, _db.prompts);
+  $$AiHistoryImagesLinkTableTableManager get aiHistoryImagesLink =>
+      $$AiHistoryImagesLinkTableTableManager(_db, _db.aiHistoryImagesLink);
   $$TagsTableTableManager get tags => $$TagsTableTableManager(_db, _db.tags);
   $$WordsTableTableManager get words =>
       $$WordsTableTableManager(_db, _db.words);

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:fucking_math/utils/types.dart' show ImageStorage;
 
 enum Roles { user, system, tool, assistant }
 
@@ -41,6 +42,7 @@ class Message {
 
   final int? token;
   final DateTime? createdAt;
+  final List<ImageStorage>? images;
 
   Message({
     this.id,
@@ -52,6 +54,7 @@ class Message {
     this.toolId,
     this.token,
     this.createdAt,
+    this.images,
   });
 }
 

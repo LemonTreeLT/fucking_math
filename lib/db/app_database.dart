@@ -16,6 +16,7 @@ import 'package:fucking_math/ai/types.dart' show Roles;
 
 // 引入 dao 定义
 import 'daos/ai_history.dart';
+import 'daos/ai_history_images_link.dart';
 import 'daos/ai_provider.dart';
 import 'daos/ai_prompt.dart';
 import 'daos/tag.dart';
@@ -40,6 +41,7 @@ part 'app_database.g.dart';
     AiHistories,
     Session,
     Prompts,
+    AiHistoryImagesLink,
     Tags,
     Words,
     WordLogs,
@@ -61,7 +63,7 @@ part 'app_database.g.dart';
     MistakeAnalysis,
     MistakeKnowledgeLink,
   ],
-  daos: [AiProviderDao, AiHistoryDao, PromptDao, TagsDao, WordsDao, KnowledgeDao, MistakesDao, PhrasesDao, ImagesDao],
+  daos: [AiProviderDao, AiHistoryDao, AiHistoryImagesLinkDao, PromptDao, TagsDao, WordsDao, KnowledgeDao, MistakesDao, PhrasesDao, ImagesDao],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -77,6 +79,9 @@ class AppDatabase extends _$AppDatabase {
   AiProviderDao get aiProviderDao => AiProviderDao(this);
   @override
   AiHistoryDao get aiHistoryDao => AiHistoryDao(this);
+  @override
+  AiHistoryImagesLinkDao get aiHistoryImagesLinkDao =>
+      AiHistoryImagesLinkDao(this);
   @override
   TagsDao get tagsDao => TagsDao(this);
   @override
