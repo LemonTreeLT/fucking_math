@@ -80,12 +80,12 @@ class _AiTestState extends State<StatefulWidget> {
   String response = "没有回复";
 
   Future<void> loadResponse() async {
-    final r = await GetIt.I.call<Assistant>().getResponse(
+    final r = await GetIt.I.call<Assistant>().getPureTextMessage(
       provider!,
       getTest1(),
       model: "gemini-flash-latest",
     );
-    setState(() => response = r?.content ?? "");
+    setState(() => response = r);
   }
 
   @override

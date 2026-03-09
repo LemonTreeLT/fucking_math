@@ -108,6 +108,27 @@ class Prompt {
   }
 }
 
+/// 底层 AI 响应数据类，与业务层 Message 解耦
+class AiResponse {
+  final String content;
+  final String? toolCalls;
+  final int? promptTokens;
+  final int? completionTokens;
+  final int? totalTokens;
+  final String? finishReason;
+  final String model;
+
+  AiResponse({
+    required this.content,
+    required this.model,
+    this.toolCalls,
+    this.promptTokens,
+    this.completionTokens,
+    this.totalTokens,
+    this.finishReason,
+  });
+}
+
 /// 代表一个完整的对话会话，包含会话信息和所有消息
 class Conversation {
   final Session session;
