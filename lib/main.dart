@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fucking_math/ai/client.dart';
 import 'package:fucking_math/ai/config/ai_config.dart';
+import 'package:fucking_math/ai/engine/ai_task_service.dart';
+import 'package:fucking_math/ai/repository/ai_history_repository.dart';
 import 'package:fucking_math/db/app_database.dart';
 import 'package:fucking_math/providers/images.dart';
 import 'package:fucking_math/providers/knowledge.dart';
@@ -42,6 +44,14 @@ void main() async {
   getIt.registerSingleton<AppDatabase>(database);
   getIt.registerSingleton(Dio());
   getIt.registerSingleton(Assistant());
+
+  final historyRepo = AiHistoryRepository(
+    database.aiHistoryDao,
+    database.aiHistoryImagesLinkDao,
+  );
+  final aiTaskService = AiTaskService(aiConfig, historyRepo);
+  getIt.registerSingleton<AiHistoryRepository>(historyRepo);
+  getIt.registerSingleton<AiTaskService>(aiTaskService);
 
   runApp(
     MultiProvider(

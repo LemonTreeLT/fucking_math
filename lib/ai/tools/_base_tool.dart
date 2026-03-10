@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:fucking_math/ai/engine/tool_context.dart';
 import 'package:fucking_math/utils/outputs.dart';
 
 /// 基础参数类型定义
@@ -29,6 +30,38 @@ class AiInt extends AiType<int> {
     "type": "integer",
     "description": description,
   };
+}
+
+class AiObject extends AiType<Map<String, dynamic>> {
+  final List<AiField> properties;
+
+  const AiObject(super.description, {required this.properties});
+
+  @override
+  Map<String, dynamic> toSchema() => {
+    "type": "object",
+    "description": description,
+    "properties": {for (var f in properties) f.name: f.type.toSchema()},
+    "required": properties
+        .where((f) => f.isRequired)
+        .map((f) => f.name)
+        .toList(),
+  };
+
+  @override
+  Map<String, dynamic> cast(dynamic value) {
+    if (value is! Map) return {};
+
+    // 递归解析：利用 AiField 自身的 getValue 逻辑来处理嵌套字段
+    // 这样嵌套字段也能享受 defaultValue 和 类型转换
+    final Map<String, dynamic> result = {};
+    final rawMap = Map<String, dynamic>.from(value);
+
+    for (var field in properties) {
+      result[field.name] = field.getValue(rawMap);
+    }
+    return result;
+  }
 }
 
 /// 强类型字段定义
@@ -91,5 +124,5 @@ abstract class BaseAiTool {
   /// Usage: 解析参数
   ///        AiField arg1Field = AiField();
   ///        final arg1 = AiField.getValue(args);
-  Future<String> call(Map<String, dynamic> args);
+  Future<String> call(Map<String, dynamic> args, [ToolContext? context]);
 }

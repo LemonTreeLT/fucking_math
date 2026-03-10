@@ -12,324 +12,179 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Build & Run
 - `flutter pub get` - Install dependencies
-- `flutter pub upgrade --major-versions` - Upgrade dependencies to latest major versions
 - `flutter run` - Run app in debug mode
-- `flutter run -d <device_id>` - Run on specific device
-- `dart run build_runner build` - Generate Drift database code (required after modifying database tables)
-- `dart run build_runner watch` - Watch mode for automatic code generation
+- `dart run build_runner build` - Generate Drift database code (required after modifying tables/DAOs)
 
 ### Analysis & Testing
-- `flutter analyze` - Run static analysis on Dart code
+- `flutter analyze` - Run static analysis
 - `flutter test` - Run all unit tests
-- `flutter test test/specific_test.dart` - Run specific test file
 
 ### Release
 - `flutter build <platform>` - Build for Android, iOS, Windows, Linux, or macOS
 
 ## Architecture
 
-The project follows a **4-layer architecture**:
+4-layer architecture:
 
 ```
-UI (Widgets)
-    ↓
-Provider (State Management + Business Logic)
-    ↓
-Repository (Data Abstraction)
-    ↓
-Dao (Database Access Objects from Drift)
-    ↓
-Database (SQLite via Drift)
+UI (Widgets) → Provider (State + Logic) → Repository (Abstraction) → DAO (Drift) → SQLite
 ```
 
-### Routing Structure (`lib/pages/router_config.dart`)
+### Routing (`lib/pages/router_config.dart`)
 
-Uses **GoRouter** with a shell-based navigation system. Three main modules have shell routes with nested sub-pages:
-
-- **English Module** (`/english_shell`): Word learning, editor
-- **Mistakes Module** (`/mistakes_shell`): Mistake practice, editor
-- **Knowledge Module** (`/knowledge_shell`): Knowledge review, editor
-- **Top-level routes**: Home, Tags Manager, Settings, Debug (debug mode only)
-
-Custom `RouterConfig` class provides unified configuration for both GoRouter navigation and NavRail bottom navigation.
+GoRouter with shell-based navigation. Three main modules: English (`/english_shell`), Mistakes (`/mistakes_shell`), Knowledge (`/knowledge_shell`). Top-level routes: Home, Tags Manager, Settings, Debug (debug mode only).
 
 ### Database (`lib/db/`)
 
-**Drift** is used for type-safe database access with SQLite. Key components:
+**Drift** for type-safe SQLite access.
 
-- **Tables** (`tables/`):
-  - `tables_english.dart` - Words, Phrases, WordLogs, PhraseLogs, WordTagLink, PhrasesTagLink
-  - `tables_knowledge.dart` - Knowledge, KnowledgeLogs, KnowledgeTagLink
-  - `tables_mistakes.dart` - Mistakes, Answers, MistakeAnalysis, MistakePicsLink, AnswerPicsLink, MistakeLogs, AnswersTagsLink, MistakeKnowledgeLink
-  - `tables_tags.dart` - Tags
-  - `tables_images.dart` - Images
-  - `tables_ai.dart` - AiProviders, AiHistories, Session, Prompts
-
-- **DAOs** (`daos/`): `TagsDao`, `WordsDao`, `KnowledgeDao`, `MistakesDao`, `PhrasesDao`, `ImagesDao`, `AiProviderDao`, `AiHistoryDao`, `PromptDao`
-  - Each DAO is auto-generated from its corresponding table definition
-  - Always run `dart run build_runner build` after modifying table definitions or DAO methods
-  - AI DAOs note: Return Drift data classes (e.g., `SessionData`) which are converted to business types in Repository layer
-
-- **Database Initialization** (`app_database.dart`):
-  - Schema version is always 1 until MVP (v0.1.0)
-  - Default tags are created on first run via `DefaultTag` enum (configured in `lib/configs/tags.dart`)
+- **Tables** (`tables/`): `tables_english.dart`, `tables_knowledge.dart`, `tables_mistakes.dart`, `tables_tags.dart`, `tables_images.dart`, `tables_ai.dart`
+- **DAOs** (`daos/`): `TagsDao`, `WordsDao`, `KnowledgeDao`, `MistakesDao`, `PhrasesDao`, `ImagesDao`, `AiProviderDao`, `AiHistoryDao`, `AiHistoryImagesLinkDao`, `PromptDao`
+  - DAOs return Drift data classes (e.g., `SessionData`), converted to business types in Repository layer
+  - Always run `dart run build_runner build` after modifying table/DAO definitions
+- **Schema version**: Always 1 until MVP (v0.1.0). Breaking changes may require deleting old database.
 
 ### Provider Pattern (`lib/providers/`)
 
-**Base Classes** (`base_db_proivder.dart`):
-
-- `BaseProvider` - Handles loading state and error messages
-  - `isLoading`, `error` getters
-  - Protected methods: `onLoading()`, `onStopLoading()`, `setError(msg)`, `clearError()`
-
-- `BaseRepositoryProvider<T, R>` - Extends BaseProvider with item management
-  - Holds a repository instance and list of items
-  - Protected methods: `setItems(list)`, `getItems` getter
-
-**Mixins**:
-
-- `ProviderActionNotifier` - Encapsulates try-catch-finally logic for async operations
-  - `justDoIt()` - Execute action, handle state/errors, notify listeners (returns void)
-  - `justDoItNext<T>()` - Same but returns the action result
-
-- `FuzzySearchMixin<T, R>` - Provides fuzzy search filtering
-  - `search(query)` - Updates search results
-  - `filteredList` getter - Returns filtered or full list
-  - Requires subclass to define `fuzzyKeys` property with `WeightedKey<T>` list
-
+- `BaseProvider` - Loading state + error handling (`isLoading`, `error`, `onLoading()`, `setError()`)
+- `BaseRepositoryProvider<T, R>` - Extends BaseProvider with item list management
+- `ProviderActionNotifier` mixin - `justDoIt()` (void) / `justDoItNext<T>()` (returns result) for async operations
+- `FuzzySearchMixin<T, R>` - `search(query)`, `filteredList`, requires `fuzzyKeys` getter
 - `SingleObjectSelectMixin<T>` - Single item selection state
-  - `select(item)`, `selectedItem` getter, `isSelected(item)` check
-
-**Provider Implementations**:
-- `WordsProvider`, `PhraseProvider`, `TagProvider`, `KnowledgeProvider`, `MistakesProvider`, `ImagesProvider`
-- All providers auto-load their data on creation
+- All providers auto-load data on creation
 
 ### Repository Pattern (`lib/utils/repository/`)
 
-Repositories abstract database operations:
-
-- Take a DAO in constructor
-- Provide public async methods for CRUD operations
-- Handle validation and error conversion
-- Example: `TagRepository(dao).upsertTag(tag)`, `saveTag(name, ...)`
-
-### Configuration (`lib/configs/`)
-
-- `config.dart` - App-wide settings, theme, database path
-- `tags.dart` - Default tags configuration (via `DefaultTag` enum)
-- `config_loader.dart` - TOML-based configuration loading
-
-### Utilities (`lib/utils/`)
-
-- `types.dart` - Subject enum and converter for Drift
-- `uuid.dart` - UUID generation helpers
-- `image.dart` - Image handling utilities
-- `form/` - Form validation utilities
-- `mixin/` - Reusable mixins (form_helper, provider_error_handle)
-- `repository/helper/` - Exception types and utility functions
+Repositories wrap DAOs with error handling and business logic. Take a DAO in constructor, provide async CRUD methods, handle validation and exception conversion.
 
 ### AI Module (`lib/ai/`)
 
-**Status**: Core infrastructure implemented with Repository + DAO layer
+#### Types (`types.dart`)
+- `Roles` enum (user, system, tool, assistant)
+- `AiProvider` - Business type for provider config (note: Drift also generates an `AiProvider` data class with non-null `id`)
+- `Message` - Message with role, content, toolCalls, toolId, images
+- `Session`, `Prompt`, `Conversation` (with `toOpenAIFormat()` and immutable `addMessage()`)
+- `AiResponse` - Raw API response data class
 
-**Components**:
+#### Repositories (`lib/ai/repository/`)
+- `AiProviderRepository` - Provider management
+- `AiHistoryRepository(AiHistoryDao, AiHistoryImagesLinkDao)` - Message & Session CRUD, type conversion, image management
+  - Key method: `getConversation(sessionId, providerId)` - Fetch complete conversation
+- `PromptRepository` - Prompt management with search
 
-- **Types** (`types.dart`):
-  - `Roles` enum - Message roles (user, system, tool, assistant)
-  - `AiProvider` - AI service provider configuration (name, baseUrl, apiKey, models)
-  - `Message` - Individual message with role, content, tool calls, timestamps
-  - `Session` - Conversation session metadata (id, title, createdAt)
-  - `Prompt` - Reusable prompt template with placeholder support (`{{key}}` syntax)
-  - `Conversation` - Complete conversation (session + messages)
-    - `toOpenAIFormat()` - Converts messages to OpenAI API format
-    - `addMessage()` - Immutable message appending
+#### Config (`lib/ai/config/ai_config.dart`)
+- `AiConfig` - Global singleton (ChangeNotifier), manages active AI provider
+- Exposes `activeProvider`, `baseUrl`, `apiKey`
 
-- **Database** (`lib/db/tables/tables_ai.dart`):
-  - `AiProviders` - Store AI service configurations
-  - `AiHistories` - Store all messages and tool call history for audit/debugging
-  - `Session` - Store conversation sessions (one per user conversation)
-  - `Prompts` - Store prompt templates for reuse
+#### Tools (`lib/ai/tools/`)
+- `BaseAiTool` (`_base_tool.dart`) - Abstract base with `name`, `description`, `fields`, `toJsonDefinition()`
+- `call(Map<String, dynamic> args, [ToolContext? context])` - Optional `ToolContext` for logging/interaction
+- `AiType` hierarchy (`AiString`, `AiInt`, `AiObject`) + `AiField` for typed parameter definitions
 
-- **DAOs** (`lib/db/daos/`):
-  - `AiProviderDao` - Query/manage AI providers
-  - `AiHistoryDao` - Message CRUD + Session management
-    - Returns `SessionData` (Drift generated class)
-    - Session CRUD: create, getById, getByTitle, getAll, updateTitle, delete
-    - Query methods: getHistoryByProviderId, getRecentHistory, getHistoryByDateRange
-  - `PromptDao` - Prompt CRUD + search
-    - All standard CRUD operations
-    - Fuzzy search by name/description
+#### Engine (`lib/ai/engine/`) - Task Execution Engine
 
-- **Repositories** (`lib/ai/repository/`):
-  - `AiProviderRepository` - High-level provider management (already existed)
-  - `AiHistoryRepository` - Message & Session management + data type conversion
-    - **Key methods**: `getConversation(sessionId, providerId)` - Fetch complete conversation
-    - Converts Drift types (`SessionData`) to business types (`Session`)
-    - Custom exception handling (not `AppDatabaseException`)
-  - `PromptRepository` - Prompt management with search
+Core execution engine implementing the self-managing loop: API request → tool parsing → user confirmation → tool execution → result persistence.
 
-- **Exception Handling** (`lib/utils/repository/helper/exceptions.dart`):
-  - `AiSessionNotFoundException` - Session not found
-  - `AiPromptNotFoundException` - Prompt not found
-  - `AiProviderNotFoundException` - Provider not found
-  - `AiHistoryException` - Business logic errors (not structural DB errors)
-  - **Important**: Use custom exceptions for business logic; reserve `AppDatabaseException` only for severe structural failures
+- **`TaskEvent`** (`task_event.dart`) - Sealed class event protocol for UI decoupling:
+  - `ThinkingEvent` - AI text response
+  - `ToolStartEvent` / `ToolEndEvent` - Tool execution lifecycle
+  - `LogEvent` - Tool internal logs
+  - `WaitUserEvent` - Suspends loop for user confirmation (via Completer)
+  - `ErrorEvent` / `DoneEvent` - Terminal states
+
+- **`ToolCall`** (`tool_context.dart`) - Parsed from `AiResponse.toolCalls` JSON string via `ToolCall.parseFromJson()`
+- **`ToolContext`** (`tool_context.dart`) - Injected into `BaseAiTool.call()`, provides `onLog` and `onConfirm` callbacks. `ToolContext.noop` for tests.
+
+- **`AiTaskProcessor`** (`ai_task_processor.dart`) - Core engine:
+  - Constructor: `taskId`, `providerId`, `sessionId`, `model`, `tools`, `systemPrompt?`, `aiConfig`, `historyRepo`, `maxIterations=10`
+  - `run()` - Starts the while loop. Loads conversation from DB, calls API, processes tool calls, persists all messages
+  - `events` stream - UI subscribes via StreamBuilder
+  - `respond(bool)` - Resumes from WaitUserEvent
+  - `interrupt()` - Cleanly stops the loop
+  - System prompt is prepended to API messages (not stored in DB)
+  - Single tool failure returns error text as result, doesn't interrupt the batch
+  - Provider config (baseUrl/apiKey) captured at `run()` start to prevent mid-task switching
+
+- **`AiTaskService`** (`ai_task_service.dart`) - Manages multiple processors:
+  - `startTask(sessionId, model, tools, systemPrompt?, maxIterations?)` - Creates & starts processor
+  - `getTask(taskId)` - Retrieve existing processor (UI reconnect)
+  - `cancelTask(taskId)` - Interrupt & remove
+  - `cleanupCompleted()` - Remove finished tasks
+
+#### Exception Handling (`lib/utils/repository/helper/exceptions.dart`)
+- `AiSessionNotFoundException`, `AiPromptNotFoundException`, `AiProviderNotFoundException`
+- `AiHistoryException` - Business logic errors
+- `AiTaskException` - Task engine errors (with optional `taskId`)
+- **Rule**: Use custom exceptions for business logic; reserve `AppDatabaseException` for severe structural DB failures
+
+### Configuration (`lib/configs/`)
+- `config.dart` - App-wide settings, theme, database path
+- `tags.dart` - Default tags via `DefaultTag` enum
+- `config_loader.dart` - TOML-based configuration loading
+
+### Utilities (`lib/utils/`)
+- `types.dart` - Subject enum, ImageStorage, Drift converters
+- `uuid.dart` - UUID generation (`getUuidV1()`)
+- `form/`, `mixin/`, `repository/helper/` - Form validation, reusable mixins, exception types
 
 ## Code Patterns & Conventions
 
 ### Adding a New Database Feature
+1. Define table in `lib/db/tables/tables_*.dart`
+2. Create DAO in `lib/db/daos/`, add to `@DriftDatabase` in `app_database.dart`
+3. Run `dart run build_runner build`
+4. Create Repository wrapping DAO with error handling
+5. Create Provider extending `BaseRepositoryProvider`, mix in `FuzzySearchMixin` if needed
 
-1. **Define Table** in `lib/db/tables/tables_*.dart`:
-   ```dart
-   @DataClassName("MyItem")
-   class MyTable extends Table {
-     IntColumn get id => integer().autoIncrement()();
-     TextColumn get name => text()();
-     // ... more columns
-   }
-   ```
+### Adding a New Page
+1. Create page in `lib/pages/<module>/`
+2. Update `lib/pages/router_config.dart`
+3. Create or reuse Provider, add widgets to `lib/widget/`
 
-2. **Create DAO** in `lib/db/daos/my_item.dart`:
-   ```dart
-   @DriftAccessor(tables: [MyTable])
-   class MyItemDao extends DatabaseAccessor<AppDatabase> {
-     MyItemDao(AppDatabase db) : super(db);
-     // Define queries here
-   }
-   ```
+### AI Tool Implementation
+Extend `BaseAiTool`, define `name`, `description`, `fields`, implement `call()`. Use optional `ToolContext` parameter for logging (`context?.onLog()`) and user confirmation (`context?.onConfirm()`).
 
-3. **Add to AppDatabase**:
-   - Import DAO in `app_database.dart`
-   - Add table to `@DriftDatabase(tables: [...], daos: [...])`
-   - Generate code: `dart run build_runner build`
-
-4. **Create Repository** in `lib/utils/repository/my_item.dart`:
-   - Wrap DAO operations with error handling
-   - Provide business-logic methods
-
-5. **Create Provider** in `lib/providers/my_items.dart`:
-   - Extend `BaseRepositoryProvider<MyItem, MyItemRepository>`
-   - Mix in `FuzzySearchMixin` if search is needed
-   - Implement `fuzzyKeys` getter
-   - Call `loadItems()` to fetch data
-
-### Adding a New Page/Feature
-
-1. Create page file in `lib/pages/<module>/` with appropriate Shell structure
-2. Update router config in `lib/pages/router_config.dart`
-3. Create or reuse provider in `lib/providers/`
-4. Add widgets to `lib/widget/`
-
-### Form Handling
-
-Common patterns in form widgets:
-- Use `BaseForm` or `FormBuilder` utilities from `lib/widget/forms/`
-- Mix `FormHelper` mixin for common form operations
-- Use `ProviderErrorHandle` mixin in widgets to display provider errors
-
-### Fuzzy Search Implementation
-
-When implementing search in a provider:
-```dart
-class MyItemsProvider extends BaseRepositoryProvider<MyItem, MyItemRepository>
-    with FuzzySearchMixin<MyItem, MyItemRepository> {
-
-  @override
-  List<WeightedKey<MyItem>> get fuzzyKeys => [
-    WeightedKey(name: 'title', getter: (item) => item.title, weight: 1),
-    WeightedKey(name: 'description', getter: (item) => item.description, weight: 0.5),
-  ];
-
-  // Usage in UI: provider.search("query")
-  // Access results: provider.filteredList
-}
-```
-
-### AI Module Repository Pattern
-
-The AI module uses a Repository layer that converts Drift types to business types:
-
-```dart
-class AiHistoryRepository {
-  final AiHistoryDao _dao;
-
-  // Business types (Session from ai/types.dart)
-  Future<Session?> getSessionById(int sessionId) async {
-    final dbSession = await _dao.getSessionById(sessionId); // Returns SessionData
-    if (dbSession == null) return null;
-    return _dbSessionToSession(dbSession); // Convert to Session
-  }
-
-  // Helper converts Drift SessionData to business Session
-  Session _dbSessionToSession(db.SessionData dbSession) => Session(
-    id: dbSession.id,
-    title: dbSession.title,
-    createdAt: dbSession.createdAt,
-  );
-}
-```
-
-**Key Points**:
-- DAOs return Drift generated classes (e.g., `SessionData`, `AiHistory`)
-- Repositories convert to business types (e.g., `Session` from `ai/types.dart`)
-- Use custom exceptions (`AiHistoryException`, `AiSessionNotFoundException`)
-- Never use `AppDatabaseException` for business logic errors
-- **Conversation retrieval**: Use `getConversation(sessionId, providerId)` to fetch complete conversation with all messages
+### GetIt Service Registration (`main.dart`)
+Key singletons: `AppDatabase`, `Dio`, `AiConfig`, `AiHistoryRepository`, `AiTaskService`, all domain Providers. Providers are also registered with `MultiProvider` for widget tree access.
 
 ## Important Notes
 
-### Database Schema Changes
-- **Before MVP (v0.1.0)**: No database migration support provided yet
-- Update `schemaVersion` in `AppDatabase.get schemaVersion` when making breaking changes
-- Running app with new schema may require deleting old database
+- **Drift types vs business types**: Drift generates data classes (e.g., Drift `AiProvider` has non-null `int id`). Business types in `ai/types.dart` (e.g., `AiProvider` has `int? id`). Repositories handle conversion.
+- **Git**: All development on `main` branch until v0.1.0, then moves to `dev`
+- **Code quality**: AI-assisted development, focus on functionality. Static analysis via `flutter_lints`.
 
-### Code Quality
-- Project uses AI-assisted development - focus on functionality over perfection
-- Many components are subject to refactoring as features mature
-- Static analysis defaults to Flutter lints (`flutter_lints`)
-
-### Git Workflow
-- Currently all active development is on `main` branch
-- After v0.1.0, active development moves to `dev` branch
-
-## File Structure Summary
+## File Structure
 
 ```
 lib/
-├── ai/                       # AI module (LLM integration)
-│   ├── types.dart           # Business models (Message, Conversation, etc.)
-│   ├── client.dart          # AI API client
-│   ├── config/              # AI configuration
-│   ├── prompts.dart         # Prompt definitions
-│   ├── repository/          # Repository layer
-│   │   ├── ai_provider_repository.dart
-│   │   ├── ai_history_repository.dart
-│   │   └── ai_prompt_repository.dart
-│   ├── tools/               # AI tool implementations
-│   └── providers/           # (Planned) Provider layer for state management
-├── db/                      # Database layer (Drift)
-│   ├── tables/             # Drift table definitions
-│   ├── daos/               # Data access objects
-│   └── app_database.dart   # Database configuration
-├── pages/                  # UI pages/screens
-│   ├── routers/            # Navigation shells
-│   ├── english/            # English module pages
-│   ├── mistakes/           # Mistakes module pages
-│   ├── knowledge/          # Knowledge module pages
-│   └── router_config.dart  # Routing configuration
-├── providers/             # State management layer
-├── utils/                 # Business logic & utilities
-│   ├── repository/        # Repository layer
-│   └── mixin/             # Reusable mixins
-├── widget/                # Reusable widgets & components
-│   ├── common/            # Common widgets (tag_selection, images_picker, etc.)
-│   ├── forms/             # Form-related widgets
-│   ├── inputs/            # Input widgets
-│   ├── navigation/        # Navigation widgets
-│   ├── mistake/           # Mistake-related widgets
-│   └── knowledge/         # Knowledge-related widgets
-├── configs/               # Configuration files
-├── extensions/            # Dart extensions
-└── main.dart              # App entry point
+├── ai/
+│   ├── types.dart            # Business models (Message, Conversation, etc.)
+│   ├── client.dart           # High-level AI assistant
+│   ├── config/               # AiConfig (provider management)
+│   ├── core/                 # AiClient (Dio → OpenAI API)
+│   ├── engine/               # Task execution engine
+│   │   ├── task_event.dart   # TaskEvent sealed class
+│   │   ├── tool_context.dart # ToolCall + ToolContext
+│   │   ├── ai_task_processor.dart  # Core while-loop engine
+│   │   └── ai_task_service.dart    # Multi-task manager
+│   ├── repository/           # AiProviderRepo, AiHistoryRepo, PromptRepo
+│   └── tools/                # BaseAiTool + implementations
+├── db/
+│   ├── tables/               # Drift table definitions
+│   ├── daos/                 # Data access objects
+│   └── app_database.dart     # Database configuration
+├── pages/
+│   ├── routers/              # Navigation shells
+│   ├── english/              # English module
+│   ├── mistakes/             # Mistakes module
+│   ├── knowledge/            # Knowledge module
+│   └── router_config.dart    # GoRouter configuration
+├── providers/                # State management (Words, Tags, Knowledge, Mistakes, etc.)
+├── utils/
+│   ├── repository/           # Repository layer + helper/exceptions
+│   └── mixin/                # Reusable mixins
+├── widget/                   # Reusable UI components
+├── configs/                  # App config, default tags, TOML loader
+├── extensions/               # Dart extensions
+└── main.dart                 # Entry point + GetIt/Provider registration
 ```
-

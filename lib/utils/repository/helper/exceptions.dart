@@ -208,3 +208,16 @@ class AiHistoryException implements Exception {
   String toString() => 'AiHistoryException: $message';
 }
 
+/// AI 任务引擎异常
+class AiTaskException implements Exception {
+  final String message;
+  final String? taskId;
+
+  AiTaskException(this.message, {this.taskId});
+
+  @override
+  String toString() =>
+      'AiTaskException: $message'
+      '${taskId != null ? ' (taskId: $taskId)' : ''}';
+}
+
