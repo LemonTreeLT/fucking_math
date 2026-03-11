@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fucking_math/configs/config.dart';
 import 'package:fucking_math/utils/file.dart';
+import 'package:go_router/go_router.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -19,10 +20,20 @@ class _SettingState extends State<Settings> {
     ),
     body: Padding(
       padding: const EdgeInsets.all(16),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            children: [_buildDbPathInputer(), _buildGlobalResPathInputer()],
+          ElevatedButton(
+            onPressed: () => context.go('/ai_provider_manager'),
+            child: const Text("AI 提供商设置"),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Column(
+                children: [_buildDbPathInputer(), _buildGlobalResPathInputer()],
+              ),
+            ],
           ),
         ],
       ),

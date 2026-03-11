@@ -11,6 +11,7 @@ import 'package:fucking_math/pages/mistakes/practise.dart';
 import 'package:fucking_math/pages/knowledge/home.dart';
 import 'package:fucking_math/pages/knowledge/editor.dart';
 import 'package:fucking_math/pages/knowledge/learning.dart';
+import 'package:fucking_math/pages/setting/ai_provider_manager.dart';
 import 'package:fucking_math/pages/setting/settings.dart';
 import 'package:fucking_math/pages/setting/tags_manager.dart';
 import 'package:fucking_math/providers/knowledge_page_state.dart';
@@ -119,6 +120,12 @@ final List<RouterConfig> _routesConfig = [
     navLablel: "Tags",
     navIcon: Icons.tag,
     navSelectedIcon: Icons.tag_outlined,
+  ),
+  RouterConfig(
+    path: '/ai_provider_manager',
+    name: 'AI Provider Manager',
+    builder: (c, s) => const AiProviderManager(),
+    showInNav: false,
   ),
   RouterConfig(
     path: '/setting',

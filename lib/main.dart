@@ -6,6 +6,7 @@ import 'package:fucking_math/ai/config/ai_config.dart';
 import 'package:fucking_math/ai/engine/ai_task_service.dart';
 import 'package:fucking_math/ai/repository/ai_history_repository.dart';
 import 'package:fucking_math/db/app_database.dart';
+import 'package:fucking_math/providers/ai_provider.dart';
 import 'package:fucking_math/providers/images.dart';
 import 'package:fucking_math/providers/knowledge.dart';
 import 'package:fucking_math/providers/mistakes.dart';
@@ -26,6 +27,7 @@ void main() async {
   final getIt = GetIt.instance;
 
   final aiConfig = AiConfig(database)..loadActionProvider();
+  final aiProviderProvider = AiProviderProvider(database)..loadProviders();
   final wordsProvider = WordsProvider(database)..loadWords();
   final phraseProvider = PhraseProvider(database)..loadPhrases();
   final tagProvider = TagProvider(database)..loadTags();
@@ -34,6 +36,7 @@ void main() async {
   final imagesProvider = ImagesProvider(database);
 
   getIt.registerSingleton<AiConfig>(aiConfig);
+  getIt.registerSingleton<AiProviderProvider>(aiProviderProvider);
   getIt.registerSingleton<WordsProvider>(wordsProvider);
   getIt.registerSingleton<PhraseProvider>(phraseProvider);
   getIt.registerSingleton<TagProvider>(tagProvider);
@@ -57,6 +60,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: aiConfig),
+        ChangeNotifierProvider.value(value: aiProviderProvider),
         ChangeNotifierProvider.value(value: wordsProvider),
         ChangeNotifierProvider.value(value: phraseProvider),
         ChangeNotifierProvider.value(value: tagProvider),
