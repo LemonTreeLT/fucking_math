@@ -9,29 +9,27 @@ class ShellScreen extends StatelessWidget {
   final String path;
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        NavigationRail(
-          selectedIndex: _getSelectedIndex(path),
-          onDestinationSelected: (index) => context.go(railRoutes[index].path),
-          labelType: NavigationRailLabelType.all,
-          destinations: railRoutes
-              .map(
-                (r) => NavigationRailDestination(
-                  icon: Icon(r.navIcon),
-                  selectedIcon: Icon(r.navSelectedIcon),
-                  label: Text(r.navLablel!),
-                ),
-              )
-              .toList(),
-        ),
+  Widget build(BuildContext context) => Row(
+    children: [
+      NavigationRail(
+        selectedIndex: _getSelectedIndex(path),
+        onDestinationSelected: (index) => context.go(railRoutes[index].path),
+        labelType: NavigationRailLabelType.all,
+        destinations: railRoutes
+            .map(
+              (r) => NavigationRailDestination(
+                icon: Icon(r.navIcon),
+                selectedIcon: Icon(r.navSelectedIcon),
+                label: Text(r.navLablel!),
+              ),
+            )
+            .toList(),
+      ),
 
-        const VerticalDivider(thickness: 1, width: 1),
-        Expanded(child: child),
-      ],
-    );
-  }
+      const VerticalDivider(thickness: 1, width: 1),
+      Expanded(child: child),
+    ],
+  );
 
   int _getSelectedIndex(String path) {
     final index = railRoutes.indexWhere((route) => path.startsWith(route.path));

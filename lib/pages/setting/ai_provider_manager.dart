@@ -32,15 +32,9 @@ class _AiProviderManagerState extends State<AiProviderManager> {
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
-          Expanded(
-            flex: 1,
-            child: _buildProvidersListArea(),
-          ),
+          Expanded(flex: 1, child: _buildProvidersListArea()),
           boxW16,
-          Expanded(
-            flex: 1,
-            child: _buildDetailedScreen(),
-          ),
+          Expanded(flex: 1, child: _buildDetailedScreen()),
         ],
       ),
     ),
@@ -67,9 +61,8 @@ class _AiProviderManagerState extends State<AiProviderManager> {
               return ListView.separated(
                 itemCount: provider.getItems.length,
                 separatorBuilder: (_, _) => const Divider(),
-                itemBuilder: (context, index) => _buildProviderListItem(
-                  provider.getItems[index],
-                ),
+                itemBuilder: (context, index) =>
+                    _buildProviderListItem(provider.getItems[index]),
               );
             },
           ),
@@ -87,16 +80,12 @@ class _AiProviderManagerState extends State<AiProviderManager> {
     return Consumer<AiProviderProvider>(
       builder: (context, providerNotifier, _) => InkWell(
         onTap: () {
-            providerNotifier.select(provider);
-            setState(() => _isCreatingNew = false);
-          },
+          providerNotifier.select(provider);
+          setState(() => _isCreatingNew = false);
+        },
         child: Container(
           decoration: BoxDecoration(
-            color: isActive ? Colors.blue.shade50 : null,
-            border: Border.all(
-              color: isActive ? Colors.blue : Colors.grey.shade300,
-              width: isActive ? 2 : 1,
-            ),
+            border: Border.all(color: Colors.grey.shade300),
             borderRadius: BorderRadius.circular(8),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -133,8 +122,14 @@ class _AiProviderManagerState extends State<AiProviderManager> {
               if (isActive)
                 const Icon(Icons.check_circle, color: Colors.green, size: 20),
               if (!isActive)
-                Icon(Icons.radio_button_unchecked,
-                    color: Colors.grey.shade400, size: 20),
+                InkWell(
+                  onTap: () => context.read<AiProviderProvider>().switchActiveProvider(provider.id),
+                  child: Icon(
+                    Icons.radio_button_unchecked,
+                    color: Colors.grey.shade400,
+                    size: 20,
+                  ),
+                ),
             ],
           ),
         ),

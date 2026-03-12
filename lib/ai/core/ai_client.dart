@@ -92,8 +92,11 @@ class AiClient {
         finishReason: choice['finish_reason'],
       );
     } on DioException catch (e) {
+      debugPrint('[AiClient] DioException type=${e.type} message=${e.message} error=${e.error}');
+      debugPrint('[AiClient] response status=${e.response?.statusCode} data=${e.response?.data}');
+      final detail = e.error != null ? '${e.error}' : e.message ?? e.type.toString();
       throw AiClientException(
-        '${e.type} - ${e.message}',
+        detail,
         statusCode: e.response?.statusCode,
         responseData: e.response?.data,
       );
