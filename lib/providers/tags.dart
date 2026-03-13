@@ -1,7 +1,5 @@
 // tag_provider.dart
 
-import 'package:fucking_math/db/app_database.dart' show AppDatabase;
-import 'package:fucking_math/db/daos/tag.dart';
 import 'package:fucking_math/extensions/list.dart';
 import 'package:fucking_math/providers/base_db_provider.dart';
 import 'package:fucking_math/utils/repository/tag.dart';
@@ -19,7 +17,7 @@ import 'package:fucking_math/utils/types.dart';
 /// await provider.saveTag('数学', subject: Subject.math); // 保存新标签
 /// ```
 class TagProvider extends BaseRepositoryProvider<Tag, TagRepository> {
-  TagProvider(AppDatabase db) : super(TagRepository(TagsDao(db)));
+  TagProvider(super.rep);
 
   /// 加载所有标签
   /// 

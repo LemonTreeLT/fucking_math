@@ -29,9 +29,14 @@
 - [ ] feat(ai): 支持图片上传
 - [ ] feat(ai): 支持 `/` 快速呼出 prompt list
 - [ ] feat(ai): 错题答案的支持
+- [ ] feat(ai): 修改master工具使其在修改前需要询问用户
+- [ ] feat(ai): 在询问对话框中提供用户输入框，并将输入回传ai
+- [ ] feat(prompt): 添加有关prompt以告知ai
 - [ ] feat: 导出知识点八股文文档
 - [ ] feat(ai): 小试卷出题功能
 - [ ] bug(ai_provider): 切换供应商不会对应切换原供应商的active状态
+- [ ] feat(ai_provider): 模型名字保存与自动输入功能
+- [ ] feat(ai): 对话保存与选择
 - [ ] feat(prompt): 设置ai指导自动标记错题与获取信息 
 - [ ] 重构: Provider 改为统一接受对应 Repo，Repo 通过GetIt注册单例
     - [ ] Repo 注册

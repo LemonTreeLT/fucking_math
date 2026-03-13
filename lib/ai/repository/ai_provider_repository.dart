@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:drift/drift.dart';
 import 'package:fucking_math/db/daos/ai_provider.dart';
 import 'package:fucking_math/db/app_database.dart';
@@ -48,10 +49,7 @@ class AiProviderRepository {
   /// 设置提供商为激活（同时禁用其他提供商）
   Future<int> setProviderActive(int id) async {
     // 首先禁用所有提供商
-    await _dao.updateProviderWithCompanion(
-      id,
-      const AiProvidersCompanion(isActive: Value(false)),
-    );
+    await _dao.disableAllProviders();
     // 然后激活指定提供商
     return _dao.setProviderActive(id);
   }
@@ -80,4 +78,26 @@ class AiProviderRepository {
           isActive: const Value(true),
         ),
       );
+
+  /// 更新模型列表
+  Future<int> updateModels(int providerId, List<String> models) {
+    final jsonStr = jsonEncode(models);
+    return _dao.updateProviderWithCompanion(
+      providerId,
+      AiProvidersCompanion(modelsJson: Value(jsonStr)),
+    );
+  }
+
+  /// 解析模型列表 JSON
+  static List<String> parseModels(String json) {
+    try {
+      final decoded = jsonDecode(json);
+      if (decoded is List) {
+        return decoded.cast<String>();
+      }
+      return [];
+    } catch (_) {
+      return [];
+    }
+  }
 }

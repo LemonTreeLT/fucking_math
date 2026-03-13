@@ -40,6 +40,10 @@ class AiProviderDao extends DatabaseAccessor<AppDatabase>
     AiProvidersCompanion companion,
   ) => (update(aiProviders)..where((p) => p.id.equals(id))).write(companion);
 
+  // 禁用所有提供商
+  Future<void> disableAllProviders() =>
+      update(aiProviders).write(const AiProvidersCompanion(isActive: Value(false)));
+
   // 设置提供商为激活
   Future<int> setProviderActive(int id) =>
       (update(aiProviders)..where((p) => p.id.equals(id))).write(

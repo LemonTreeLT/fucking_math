@@ -436,6 +436,18 @@ class $AiProvidersTable extends AiProviders
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _modelsJsonMeta = const VerificationMeta(
+    'modelsJson',
+  );
+  @override
+  late final GeneratedColumn<String> modelsJson = GeneratedColumn<String>(
+    'models_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -446,6 +458,7 @@ class $AiProvidersTable extends AiProviders
     iconId,
     isActive,
     createdAt,
+    modelsJson,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -513,6 +526,12 @@ class $AiProvidersTable extends AiProviders
         createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
       );
     }
+    if (data.containsKey('models_json')) {
+      context.handle(
+        _modelsJsonMeta,
+        modelsJson.isAcceptableOrUnknown(data['models_json']!, _modelsJsonMeta),
+      );
+    }
     return context;
   }
 
@@ -554,6 +573,10 @@ class $AiProvidersTable extends AiProviders
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
       )!,
+      modelsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}models_json'],
+      )!,
     );
   }
 
@@ -572,6 +595,7 @@ class AiProvider extends DataClass implements Insertable<AiProvider> {
   final int? iconId;
   final bool isActive;
   final DateTime createdAt;
+  final String modelsJson;
   const AiProvider({
     required this.id,
     required this.name,
@@ -581,6 +605,7 @@ class AiProvider extends DataClass implements Insertable<AiProvider> {
     this.iconId,
     required this.isActive,
     required this.createdAt,
+    required this.modelsJson,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -597,6 +622,7 @@ class AiProvider extends DataClass implements Insertable<AiProvider> {
     }
     map['is_active'] = Variable<bool>(isActive);
     map['created_at'] = Variable<DateTime>(createdAt);
+    map['models_json'] = Variable<String>(modelsJson);
     return map;
   }
 
@@ -614,6 +640,7 @@ class AiProvider extends DataClass implements Insertable<AiProvider> {
           : Value(iconId),
       isActive: Value(isActive),
       createdAt: Value(createdAt),
+      modelsJson: Value(modelsJson),
     );
   }
 
@@ -631,6 +658,7 @@ class AiProvider extends DataClass implements Insertable<AiProvider> {
       iconId: serializer.fromJson<int?>(json['iconId']),
       isActive: serializer.fromJson<bool>(json['isActive']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      modelsJson: serializer.fromJson<String>(json['modelsJson']),
     );
   }
   @override
@@ -645,6 +673,7 @@ class AiProvider extends DataClass implements Insertable<AiProvider> {
       'iconId': serializer.toJson<int?>(iconId),
       'isActive': serializer.toJson<bool>(isActive),
       'createdAt': serializer.toJson<DateTime>(createdAt),
+      'modelsJson': serializer.toJson<String>(modelsJson),
     };
   }
 
@@ -657,6 +686,7 @@ class AiProvider extends DataClass implements Insertable<AiProvider> {
     Value<int?> iconId = const Value.absent(),
     bool? isActive,
     DateTime? createdAt,
+    String? modelsJson,
   }) => AiProvider(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -666,6 +696,7 @@ class AiProvider extends DataClass implements Insertable<AiProvider> {
     iconId: iconId.present ? iconId.value : this.iconId,
     isActive: isActive ?? this.isActive,
     createdAt: createdAt ?? this.createdAt,
+    modelsJson: modelsJson ?? this.modelsJson,
   );
   AiProvider copyWithCompanion(AiProvidersCompanion data) {
     return AiProvider(
@@ -679,6 +710,9 @@ class AiProvider extends DataClass implements Insertable<AiProvider> {
       iconId: data.iconId.present ? data.iconId.value : this.iconId,
       isActive: data.isActive.present ? data.isActive.value : this.isActive,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      modelsJson: data.modelsJson.present
+          ? data.modelsJson.value
+          : this.modelsJson,
     );
   }
 
@@ -692,7 +726,8 @@ class AiProvider extends DataClass implements Insertable<AiProvider> {
           ..write('apiKey: $apiKey, ')
           ..write('iconId: $iconId, ')
           ..write('isActive: $isActive, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('modelsJson: $modelsJson')
           ..write(')'))
         .toString();
   }
@@ -707,6 +742,7 @@ class AiProvider extends DataClass implements Insertable<AiProvider> {
     iconId,
     isActive,
     createdAt,
+    modelsJson,
   );
   @override
   bool operator ==(Object other) =>
@@ -719,7 +755,8 @@ class AiProvider extends DataClass implements Insertable<AiProvider> {
           other.apiKey == this.apiKey &&
           other.iconId == this.iconId &&
           other.isActive == this.isActive &&
-          other.createdAt == this.createdAt);
+          other.createdAt == this.createdAt &&
+          other.modelsJson == this.modelsJson);
 }
 
 class AiProvidersCompanion extends UpdateCompanion<AiProvider> {
@@ -731,6 +768,7 @@ class AiProvidersCompanion extends UpdateCompanion<AiProvider> {
   final Value<int?> iconId;
   final Value<bool> isActive;
   final Value<DateTime> createdAt;
+  final Value<String> modelsJson;
   const AiProvidersCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -740,6 +778,7 @@ class AiProvidersCompanion extends UpdateCompanion<AiProvider> {
     this.iconId = const Value.absent(),
     this.isActive = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.modelsJson = const Value.absent(),
   });
   AiProvidersCompanion.insert({
     this.id = const Value.absent(),
@@ -750,6 +789,7 @@ class AiProvidersCompanion extends UpdateCompanion<AiProvider> {
     this.iconId = const Value.absent(),
     this.isActive = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.modelsJson = const Value.absent(),
   }) : name = Value(name),
        baseUrl = Value(baseUrl),
        apiKey = Value(apiKey);
@@ -762,6 +802,7 @@ class AiProvidersCompanion extends UpdateCompanion<AiProvider> {
     Expression<int>? iconId,
     Expression<bool>? isActive,
     Expression<DateTime>? createdAt,
+    Expression<String>? modelsJson,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -772,6 +813,7 @@ class AiProvidersCompanion extends UpdateCompanion<AiProvider> {
       if (iconId != null) 'icon_id': iconId,
       if (isActive != null) 'is_active': isActive,
       if (createdAt != null) 'created_at': createdAt,
+      if (modelsJson != null) 'models_json': modelsJson,
     });
   }
 
@@ -784,6 +826,7 @@ class AiProvidersCompanion extends UpdateCompanion<AiProvider> {
     Value<int?>? iconId,
     Value<bool>? isActive,
     Value<DateTime>? createdAt,
+    Value<String>? modelsJson,
   }) {
     return AiProvidersCompanion(
       id: id ?? this.id,
@@ -794,6 +837,7 @@ class AiProvidersCompanion extends UpdateCompanion<AiProvider> {
       iconId: iconId ?? this.iconId,
       isActive: isActive ?? this.isActive,
       createdAt: createdAt ?? this.createdAt,
+      modelsJson: modelsJson ?? this.modelsJson,
     );
   }
 
@@ -824,6 +868,9 @@ class AiProvidersCompanion extends UpdateCompanion<AiProvider> {
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
+    if (modelsJson.present) {
+      map['models_json'] = Variable<String>(modelsJson.value);
+    }
     return map;
   }
 
@@ -837,7 +884,8 @@ class AiProvidersCompanion extends UpdateCompanion<AiProvider> {
           ..write('apiKey: $apiKey, ')
           ..write('iconId: $iconId, ')
           ..write('isActive: $isActive, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('modelsJson: $modelsJson')
           ..write(')'))
         .toString();
   }
@@ -8741,6 +8789,7 @@ typedef $$AiProvidersTableCreateCompanionBuilder =
       Value<int?> iconId,
       Value<bool> isActive,
       Value<DateTime> createdAt,
+      Value<String> modelsJson,
     });
 typedef $$AiProvidersTableUpdateCompanionBuilder =
     AiProvidersCompanion Function({
@@ -8752,6 +8801,7 @@ typedef $$AiProvidersTableUpdateCompanionBuilder =
       Value<int?> iconId,
       Value<bool> isActive,
       Value<DateTime> createdAt,
+      Value<String> modelsJson,
     });
 
 final class $$AiProvidersTableReferences
@@ -8839,6 +8889,11 @@ class $$AiProvidersTableFilterComposer
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get modelsJson => $composableBuilder(
+    column: $table.modelsJson,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -8935,6 +8990,11 @@ class $$AiProvidersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get modelsJson => $composableBuilder(
+    column: $table.modelsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$ImagesTableOrderingComposer get iconId {
     final $$ImagesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -8990,6 +9050,11 @@ class $$AiProvidersTableAnnotationComposer
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<String> get modelsJson => $composableBuilder(
+    column: $table.modelsJson,
+    builder: (column) => column,
+  );
 
   $$ImagesTableAnnotationComposer get iconId {
     final $$ImagesTableAnnotationComposer composer = $composerBuilder(
@@ -9076,6 +9141,7 @@ class $$AiProvidersTableTableManager
                 Value<int?> iconId = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<String> modelsJson = const Value.absent(),
               }) => AiProvidersCompanion(
                 id: id,
                 name: name,
@@ -9085,6 +9151,7 @@ class $$AiProvidersTableTableManager
                 iconId: iconId,
                 isActive: isActive,
                 createdAt: createdAt,
+                modelsJson: modelsJson,
               ),
           createCompanionCallback:
               ({
@@ -9096,6 +9163,7 @@ class $$AiProvidersTableTableManager
                 Value<int?> iconId = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<String> modelsJson = const Value.absent(),
               }) => AiProvidersCompanion.insert(
                 id: id,
                 name: name,
@@ -9105,6 +9173,7 @@ class $$AiProvidersTableTableManager
                 iconId: iconId,
                 isActive: isActive,
                 createdAt: createdAt,
+                modelsJson: modelsJson,
               ),
           withReferenceMapper: (p0) => p0
               .map(

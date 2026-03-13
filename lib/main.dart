@@ -5,7 +5,9 @@ import 'package:fucking_math/ai/client.dart';
 import 'package:fucking_math/ai/config/ai_config.dart';
 import 'package:fucking_math/ai/engine/ai_task_service.dart';
 import 'package:fucking_math/ai/repository/ai_history_repository.dart';
+import 'package:fucking_math/ai/repository/ai_provider_repository.dart';
 import 'package:fucking_math/db/app_database.dart';
+import 'package:fucking_math/db/daos/images.dart';
 import 'package:fucking_math/db/daos/knowledge.dart';
 import 'package:fucking_math/db/daos/mistake.dart';
 import 'package:fucking_math/db/daos/phrase.dart';
@@ -19,6 +21,7 @@ import 'package:fucking_math/providers/phrase.dart';
 import 'package:fucking_math/providers/tags.dart';
 import 'package:fucking_math/providers/words.dart';
 import 'package:fucking_math/utils/repository/english.dart';
+import 'package:fucking_math/utils/repository/images.dart';
 import 'package:fucking_math/utils/repository/knowledge.dart';
 import 'package:fucking_math/utils/repository/mistakes.dart';
 import 'package:fucking_math/utils/repository/phrase.dart';
@@ -37,26 +40,30 @@ void main() async {
   final getIt = GetIt.instance;
 
   // 注册 Repo
+  final aiProviderRepo = AiProviderRepository(database.aiProviderDao);
   final mistakesRepo = MistakesRepository(MistakesDao(database));
   final phraseRepo = PhraseRepository(PhrasesDao(database));
   final wordRepo = WordsRepository(WordsDao(database));
   final knowledgeRepo = KnowledgeRepository(KnowledgeDao(database));
   final tagRepo = TagRepository(TagsDao(database));
+  final imagesRepo = ImagesRepository(ImagesDao(database));
 
+  getIt.registerSingleton(aiProviderRepo);
   getIt.registerSingleton(wordRepo);
   getIt.registerSingleton(knowledgeRepo);
   getIt.registerSingleton(tagRepo);
   getIt.registerSingleton(mistakesRepo);
   getIt.registerSingleton(phraseRepo);
+  getIt.registerSingleton(imagesRepo);
 
-  final aiConfig = AiConfig(database)..loadActionProvider();
-  final aiProviderProvider = AiProviderProvider(database)..loadProviders();
-  final wordsProvider = WordsProvider(database)..loadWords();
-  final phraseProvider = PhraseProvider(database)..loadPhrases();
-  final tagProvider = TagProvider(database)..loadTags();
-  final knowledgeProvider = KnowledgeProvider(database)..loadKnowledge();
-  final mistakesProvider = MistakesProvider(database)..loadMistakes();
-  final imagesProvider = ImagesProvider(database);
+  final aiConfig = AiConfig(aiProviderRepo)..loadActionProvider();
+  final aiProviderProvider = AiProviderProvider(aiProviderRepo)..loadProviders();
+  final wordsProvider = WordsProvider(wordRepo)..loadWords();
+  final phraseProvider = PhraseProvider(phraseRepo)..loadPhrases();
+  final tagProvider = TagProvider(tagRepo)..loadTags();
+  final knowledgeProvider = KnowledgeProvider(knowledgeRepo)..loadKnowledge();
+  final mistakesProvider = MistakesProvider(mistakesRepo)..loadMistakes();
+  final imagesProvider = ImagesProvider(imagesRepo);
 
   getIt.registerSingleton<AiConfig>(aiConfig);
   getIt.registerSingleton<AiProviderProvider>(aiProviderProvider);

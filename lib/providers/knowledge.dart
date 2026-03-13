@@ -1,15 +1,12 @@
-import 'package:fucking_math/db/daos/knowledge.dart';
 import 'package:fucking_math/providers/base_db_provider.dart';
 import 'package:fucking_math/utils/repository/knowledge.dart';
 
-import 'package:fucking_math/db/app_database.dart' show AppDatabase;
 import 'package:fucking_math/extensions/list.dart';
 import 'package:fucking_math/utils/types.dart';
 
 class KnowledgeProvider
     extends BaseRepositoryProvider<Knowledge, KnowledgeRepository> {
-  KnowledgeProvider(AppDatabase db)
-    : super(KnowledgeRepository(KnowledgeDao(db)));
+  KnowledgeProvider(super.rep);
 
   // --- 查询：加载所有知识点 ---
   Future<void> loadKnowledge() async => justDoIt<List<Knowledge>>(

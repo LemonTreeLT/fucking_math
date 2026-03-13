@@ -6,6 +6,7 @@ import 'package:fucking_math/ai/engine/ai_task_processor.dart';
 import 'package:fucking_math/ai/engine/ai_task_service.dart';
 import 'package:fucking_math/ai/engine/task_event.dart';
 import 'package:fucking_math/ai/repository/ai_history_repository.dart';
+import 'package:fucking_math/ai/repository/ai_provider_repository.dart';
 import 'package:fucking_math/ai/tools/db/get_db_schema_tool.dart';
 import 'package:fucking_math/ai/tools/db/run_sql_mutation_tool.dart';
 import 'package:fucking_math/ai/tools/db/run_sql_query_tool.dart';
@@ -45,6 +46,8 @@ class _AiChatState extends State<AiChat> {
   AiTaskService? _taskService;
   AiConfig? _aiConfig;
   String? _initError;
+  List<String> _availableModels = [];
+  String? _selectedModel;
 
   @override
   void initState() {
@@ -63,19 +66,37 @@ class _AiChatState extends State<AiChat> {
     }
     final historyRepo = GetIt.I<AiHistoryRepository>();
     final sessionId = await historyRepo.createSession(title: 'Debug Chat');
+
+    // 加载可用模型
+    final models = AiProviderRepository.parseModels(
+      aiConfig.activeProvider?.modelsJson ?? '[]',
+    );
+
     setState(() {
       _historyRepo = historyRepo;
       _taskService = GetIt.I<AiTaskService>();
       _aiConfig = aiConfig;
       _sessionId = sessionId;
+      _availableModels = models;
+      if (models.isNotEmpty) {
+        _selectedModel = models.first;
+        _modelCtrl.text = models.first;
+      }
     });
   }
 
   Future<void> _startTask() async {
     final gen = ++_taskGeneration;
+    final modelToUse = _selectedModel ?? _modelCtrl.text.trim();
+    if (modelToUse.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('请选择或输入模型名称')),
+      );
+      return;
+    }
     final processor = await _taskService!.startTask(
       sessionId: _sessionId!,
-      model: _modelCtrl.text.trim(),
+      model: modelToUse,
       tools: [
         GetDbSchemaTool(),
         RunSqlQueryTool(),
@@ -339,14 +360,38 @@ class _AiChatState extends State<AiChat> {
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: 8),
-          child: TextField(
-            controller: _modelCtrl,
-            decoration: const InputDecoration(
-              labelText: '模型名称',
-              border: OutlineInputBorder(),
-              isDense: true,
-            ),
-          ),
+          child: _availableModels.isNotEmpty
+              ? DropdownButtonFormField<String>(
+                  initialValue: _selectedModel,
+                  decoration: const InputDecoration(
+                    labelText: '模型名称',
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                  ),
+                  items: _availableModels
+                      .map((model) => DropdownMenuItem(
+                            value: model,
+                            child: Text(model),
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    if (value != null) {
+                      setState(() {
+                        _selectedModel = value;
+                        _modelCtrl.text = value;
+                      });
+                    }
+                  },
+                )
+              : TextField(
+                  controller: _modelCtrl,
+                  decoration: const InputDecoration(
+                    labelText: '模型名称',
+                    hintText: '未配置模型列表，请手动输入',
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                  ),
+                ),
         ),
         Expanded(
           child: ListView.builder(

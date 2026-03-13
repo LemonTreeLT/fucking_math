@@ -1,5 +1,3 @@
-import 'package:fucking_math/db/app_database.dart';
-import 'package:fucking_math/db/daos/images.dart';
 import 'package:fucking_math/providers/base_db_provider.dart';
 import 'package:fucking_math/utils/image.dart';
 import 'package:fucking_math/utils/repository/images.dart';
@@ -8,7 +6,7 @@ import 'package:fucking_math/utils/uuid.dart';
 
 class ImagesProvider
     extends BaseRepositoryProvider<ImageStorage, ImagesRepository> {
-  ImagesProvider(AppDatabase db) : super(ImagesRepository(ImagesDao(db)));
+  ImagesProvider(super.rep);
 
   Future<ImageStorage?> createImage(String? path, String? desc, String name) =>
       justDoItNext(

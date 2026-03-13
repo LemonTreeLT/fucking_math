@@ -1,5 +1,3 @@
-import 'package:fucking_math/db/app_database.dart' show AppDatabase;
-import 'package:fucking_math/db/daos/mistake.dart';
 import 'package:fucking_math/extensions/list.dart';
 import 'package:fucking_math/providers/base_db_provider.dart';
 import 'package:fucking_math/utils/repository/mistakes.dart';
@@ -9,7 +7,7 @@ import 'package:fuzzy/data/fuzzy_options.dart';
 class MistakesProvider
     extends BaseRepositoryProvider<Mistake, MistakesRepository>
     with FuzzySearchMixin, SingleObjectSelectMixin<int> {
-  MistakesProvider(AppDatabase db) : super(MistakesRepository(MistakesDao(db)));
+  MistakesProvider(super.rep);
 
   @override
   List<WeightedKey<Mistake>> get fuzzyKeys => [

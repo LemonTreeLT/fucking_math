@@ -1,5 +1,3 @@
-import 'package:fucking_math/db/app_database.dart' show AppDatabase;
-import 'package:fucking_math/db/daos/word.dart';
 import 'package:fucking_math/extensions/list.dart';
 import 'package:fucking_math/providers/base_db_provider.dart';
 import 'package:fucking_math/utils/repository/english.dart';
@@ -7,8 +5,7 @@ import 'package:fucking_math/utils/repository/english.dart';
 import 'package:fucking_math/utils/types.dart';
 
 class WordsProvider extends BaseRepositoryProvider<Word, WordsRepository> {
-  WordsProvider(AppDatabase database)
-    : super(WordsRepository(WordsDao(database)));
+  WordsProvider(super.rep);
 
   // --- 操作：添加单词  ---
   Future<void> addWord(

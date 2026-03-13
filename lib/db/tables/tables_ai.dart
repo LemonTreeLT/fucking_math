@@ -16,6 +16,8 @@ class AiProviders extends Table {
       boolean().withDefault(const Constant(true))(); // 是否激活
   DateTimeColumn get createdAt =>
       dateTime().withDefault(currentDateAndTime)(); // 创建时间
+  TextColumn get modelsJson =>
+      text().withDefault(const Constant('[]'))(); // 支持的模型列表 (JSON 数组)
 }
 
 /// 对话历史表

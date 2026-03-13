@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fucking_math/ai/repository/ai_provider_repository.dart';
 import 'package:fucking_math/db/app_database.dart' show AiProvider;
 import 'package:fucking_math/providers/ai_provider.dart';
 import 'package:fucking_math/widget/common/backgrounds.dart';
@@ -26,6 +27,8 @@ class _AiProviderFormState extends State<AiProviderForm> {
   late TextEditingController _baseUrlController;
   late TextEditingController _apiKeyController;
   late TextEditingController _descriptionController;
+  late TextEditingController _modelInputController;
+  late List<String> _models;
   bool _showApiKey = false;
   final _formKey = GlobalKey<FormState>();
 
@@ -41,6 +44,8 @@ class _AiProviderFormState extends State<AiProviderForm> {
         TextEditingController(text: widget.provider?.apiKey ?? '');
     _descriptionController =
         TextEditingController(text: widget.provider?.description ?? '');
+    _modelInputController = TextEditingController();
+    _models = AiProviderRepository.parseModels(widget.provider?.modelsJson ?? '[]');
   }
 
   @override
@@ -49,6 +54,7 @@ class _AiProviderFormState extends State<AiProviderForm> {
     _baseUrlController.dispose();
     _apiKeyController.dispose();
     _descriptionController.dispose();
+    _modelInputController.dispose();
     super.dispose();
   }
 
@@ -97,6 +103,8 @@ class _AiProviderFormState extends State<AiProviderForm> {
           hintText: '输入提供商描述（可选）',
           maxLines: 3,
         ),
+        boxH16,
+        _buildModelsSection(),
       ],
     ),
   );
@@ -127,6 +135,73 @@ class _AiProviderFormState extends State<AiProviderForm> {
       ),
     ],
   );
+
+  Widget _buildModelsSection() => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        '模型列表',
+        style: Theme.of(context).inputDecorationTheme.labelStyle,
+      ),
+      const SizedBox(height: 8),
+      Row(
+        spacing: 8,
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _modelInputController,
+              decoration: const InputDecoration(
+                hintText: '输入模型名称（如：gpt-4, claude-3）',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          ElevatedButton.icon(
+            onPressed: _addModel,
+            icon: const Icon(Icons.add),
+            label: const Text('添加'),
+          ),
+        ],
+      ),
+      const SizedBox(height: 12),
+      if (_models.isEmpty)
+        Text(
+          '未添加任何模型',
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Colors.grey,
+          ),
+        )
+      else
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: _models.map((model) => Chip(
+            label: Text(model),
+            onDeleted: () => _removeModel(model),
+            deleteIcon: const Icon(Icons.clear, size: 18),
+          )).toList(),
+        ),
+    ],
+  );
+
+  void _addModel() {
+    final model = _modelInputController.text.trim();
+    if (model.isEmpty) return;
+    if (_models.contains(model)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('模型 "$model" 已存在')),
+      );
+      return;
+    }
+    setState(() {
+      _models.add(model);
+      _modelInputController.clear();
+    });
+  }
+
+  void _removeModel(String model) {
+    setState(() => _models.remove(model));
+  }
 
   Widget _buildActionButtons() => Row(
     spacing: 8,
@@ -163,6 +238,8 @@ class _AiProviderFormState extends State<AiProviderForm> {
     if (!_formKey.currentState!.validate()) return;
 
     final providerNotifier = context.read<AiProviderProvider>();
+
+    // 创建提供商（暂不在此保存模型，在首次编辑时保存）
     await providerNotifier.createProvider(
       name: _nameController.text.trim(),
       baseUrl: _baseUrlController.text.trim(),
@@ -175,7 +252,7 @@ class _AiProviderFormState extends State<AiProviderForm> {
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("提供商已创建")),
+      const SnackBar(content: Text("提供商已创建，编辑时可添加模型列表")),
     );
     widget.onCreated?.call();
   }
@@ -197,8 +274,12 @@ class _AiProviderFormState extends State<AiProviderForm> {
         iconId: p.iconId,
         isActive: p.isActive,
         createdAt: p.createdAt,
+        modelsJson: p.modelsJson,
       ),
     );
+
+    // 更新模型列表
+    await providerNotifier.updateModels(p.id, _models);
 
     if (!mounted) return;
 

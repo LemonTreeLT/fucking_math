@@ -1,6 +1,6 @@
 // AI 提供商管理 Provider
 
-import 'package:fucking_math/db/app_database.dart' show AppDatabase, AiProvider;
+import 'package:fucking_math/db/app_database.dart' show AiProvider;
 import 'package:fucking_math/ai/repository/ai_provider_repository.dart';
 import 'package:fucking_math/providers/base_db_provider.dart';
 import 'package:fucking_math/ai/config/ai_config.dart';
@@ -12,8 +12,7 @@ import 'package:get_it/get_it.dart';
 /// 支持激活状态管理和与全局 AiConfig 的同步。
 class AiProviderProvider extends BaseRepositoryProvider<AiProvider, AiProviderRepository>
     with SingleObjectSelectMixin<AiProvider> {
-  AiProviderProvider(AppDatabase db)
-      : super(AiProviderRepository(db.aiProviderDao));
+  AiProviderProvider(super.rep);
 
   /// 加载所有 AI 提供商
   Future<void> loadProviders() async => justDoIt<List<AiProvider>>(
@@ -68,5 +67,12 @@ class AiProviderProvider extends BaseRepositoryProvider<AiProvider, AiProviderRe
     action: () => GetIt.I<AiConfig>().switchProvider(id),
     onSuccess: (_) => loadProviders(),
     errMsg: "切换 AI 提供商失败",
+  );
+
+  /// 更新 AI 提供商的模型列表
+  Future<void> updateModels(int providerId, List<String> models) async => justDoIt<int>(
+    action: () => rep.updateModels(providerId, models),
+    onSuccess: (_) => loadProviders(),
+    errMsg: "更新模型列表失败",
   );
 }

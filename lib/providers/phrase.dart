@@ -1,12 +1,10 @@
-import 'package:fucking_math/db/app_database.dart' show AppDatabase;
-import 'package:fucking_math/db/daos/phrase.dart';
 import 'package:fucking_math/extensions/list.dart';
 import 'package:fucking_math/providers/base_db_provider.dart';
 import 'package:fucking_math/utils/repository/phrase.dart';
 import 'package:fucking_math/utils/types.dart';
 
 class PhraseProvider extends BaseRepositoryProvider<Phrase, PhraseRepository> {
-  PhraseProvider(AppDatabase db) : super(PhraseRepository(PhrasesDao(db)));
+  PhraseProvider(super.rep);
 
   // 将全部短语加载到 Provider 中
   Future<void> loadPhrases() async => justDoIt(

@@ -8,8 +8,7 @@ class AiConfig extends ChangeNotifier {
   final AiProviderRepository _repository;
   AiProvider? _activeProvider;
 
-  AiConfig(AppDatabase db)
-    : _repository = AiProviderRepository(db.aiProviderDao);
+  AiConfig(this._repository);
 
   /// 获取当前激活的 AI 提供商
   AiProvider? get activeProvider => _activeProvider;
