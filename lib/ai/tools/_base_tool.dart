@@ -32,6 +32,22 @@ class AiInt extends AiType<int> {
   };
 }
 
+class AiList<T> extends AiType<List<T>> {
+  final AiType<T> itemType;
+  const AiList(super.description, {required this.itemType});
+
+  @override
+  Map<String, dynamic> toSchema() => {
+    "type": "array",
+    "description": description,
+    "items": itemType.toSchema(),
+  };
+
+  @override
+  List<T> cast(dynamic value) =>
+      value is List ? value.map((e) => itemType.cast(e)).toList() : [];
+}
+
 class AiObject extends AiType<Map<String, dynamic>> {
   final List<AiField> properties;
 
@@ -82,7 +98,7 @@ class AiField<T> {
 
     // 1. 如果缺失且是必填
     if (rawValue == null && isRequired) {
-      debugPrint("AI 遗漏了必填参数: $name");
+      debugPrint("[ToolOutputs] AI 遗漏了必填参数: $name");
       return defaultValue;
     }
 
@@ -124,5 +140,6 @@ abstract class BaseAiTool {
   /// Usage: 解析参数
   ///        AiField arg1Field = AiField();
   ///        final arg1 = AiField.getValue(args);
+  /// 通过定义常量避免写字符串解析
   Future<String> call(Map<String, dynamic> args, [ToolContext? context]);
 }

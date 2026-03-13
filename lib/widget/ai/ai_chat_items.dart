@@ -156,7 +156,7 @@ Widget buildToolRow(
         const SizedBox(width: 6),
         Expanded(
           child: SelectableText(
-            body.length > 120 ? '${body.substring(0, 120)}...' : body,
+            body.length > 120 ? '${body.substring(0, 100)}...' : body,
             style: TextStyle(
               fontSize: 12,
               fontFamily: 'monospace',

@@ -16,6 +16,8 @@ abstract class BaseProvider extends ChangeNotifier {
   void clearError() => _error = null;
   @protected
   void setError(String errMsg) => _error = errMsg;
+
+  void refresh() => notifyListeners();
 }
 
 abstract class BaseRepositoryProvider<T, R> extends BaseProvider
@@ -114,7 +116,7 @@ mixin FuzzySearchMixin<T, R> on BaseRepositoryProvider<T, R> {
     if (_currentQuery.isNotEmpty) {
       _runSearch(_currentQuery);
     }
-    
+
     notifyListeners();
   }
 

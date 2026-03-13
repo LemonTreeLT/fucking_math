@@ -9,6 +9,12 @@ import 'package:fucking_math/ai/repository/ai_history_repository.dart';
 import 'package:fucking_math/ai/tools/db/get_db_schema_tool.dart';
 import 'package:fucking_math/ai/tools/db/run_sql_mutation_tool.dart';
 import 'package:fucking_math/ai/tools/db/run_sql_query_tool.dart';
+import 'package:fucking_math/ai/tools/orchestrator/knowledge_sub_handler.dart';
+import 'package:fucking_math/ai/tools/orchestrator/master_orchestrator_tool.dart';
+import 'package:fucking_math/ai/tools/orchestrator/mistakes_sub_handler.dart';
+import 'package:fucking_math/ai/tools/orchestrator/phrase_sub_handler.dart';
+import 'package:fucking_math/ai/tools/orchestrator/tag_sub_handler.dart';
+import 'package:fucking_math/ai/tools/orchestrator/word_sub_handler.dart';
 import 'package:fucking_math/ai/types.dart';
 import 'package:fucking_math/widget/ai/ai_chat_items.dart';
 import 'package:get_it/get_it.dart';
@@ -29,7 +35,6 @@ class _AiChatState extends State<AiChat> {
   AiTaskProcessor? _processor;
   StreamSubscription? _sub;
 
-  // TODO 2: generation counter to ignore stale events after cancel
   int _taskGeneration = 0;
 
   late final TextEditingController _inputCtrl;
@@ -66,13 +71,23 @@ class _AiChatState extends State<AiChat> {
     });
   }
 
-  // TODO 2: capture generation at start, subscribe only if still current
   Future<void> _startTask() async {
     final gen = ++_taskGeneration;
     final processor = await _taskService!.startTask(
       sessionId: _sessionId!,
       model: _modelCtrl.text.trim(),
-      tools: [GetDbSchemaTool(), RunSqlQueryTool(), RunSqlMutationTool()],
+      tools: [
+        GetDbSchemaTool(),
+        RunSqlQueryTool(),
+        RunSqlMutationTool(),
+        MasterOrchestratorTool([
+          PhraseSubHandler(GetIt.I.call()),
+          MistakesSubHandler(GetIt.I.call()),
+          KnowledgeSubHandler(GetIt.I.call()),
+          WordSubHandler(GetIt.I.call()),
+          TagSubHandler(GetIt.I.call()),
+        ]),
+      ],
     );
     _processor = processor;
     _sub?.cancel();
@@ -117,13 +132,11 @@ class _AiChatState extends State<AiChat> {
   void _handleEvent(TaskEvent event) {
     if (!mounted) return;
     switch (event) {
-      // TODO 4: reload from DB immediately when assistant message is persisted
       case ThinkingEvent():
         _reloadMessagesKeepLoading();
         _scrollToBottom();
       case ToolStartEvent():
         setState(() => _statusMessage = 'AI 正在调用 ${event.toolName}...');
-      // TODO 4: reload from DB immediately when tool result is persisted
       case ToolEndEvent():
         setState(() => _statusMessage = null);
         _reloadMessagesKeepLoading();
@@ -137,7 +150,7 @@ class _AiChatState extends State<AiChat> {
           _canRegenerate = true;
         });
         _reloadMessages();
-      // TODO 1: show regenerate button on error
+
       case ErrorEvent():
         setState(() {
           _isLoading = false;
@@ -174,7 +187,6 @@ class _AiChatState extends State<AiChat> {
     );
   }
 
-  // TODO 2: increment generation to invalidate any in-flight subscriptions
   void _cancelTask() {
     _taskGeneration++;
     _sub?.cancel();
@@ -217,7 +229,6 @@ class _AiChatState extends State<AiChat> {
     _scrollToBottom();
   }
 
-  // TODO 4: reload messages without touching _isLoading (called during active task)
   Future<void> _reloadMessagesKeepLoading() async {
     final provider = _aiConfig?.activeProvider;
     if (_sessionId == null || provider == null) return;
@@ -383,7 +394,6 @@ class _AiChatState extends State<AiChat> {
                   ? CrossAxisAlignment.end
                   : CrossAxisAlignment.start;
 
-              // TODO 5: tool messages align to the right (same as user)
               return Column(
                 crossAxisAlignment: cAlignment,
                 children: [

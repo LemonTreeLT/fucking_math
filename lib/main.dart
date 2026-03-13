@@ -6,6 +6,11 @@ import 'package:fucking_math/ai/config/ai_config.dart';
 import 'package:fucking_math/ai/engine/ai_task_service.dart';
 import 'package:fucking_math/ai/repository/ai_history_repository.dart';
 import 'package:fucking_math/db/app_database.dart';
+import 'package:fucking_math/db/daos/knowledge.dart';
+import 'package:fucking_math/db/daos/mistake.dart';
+import 'package:fucking_math/db/daos/phrase.dart';
+import 'package:fucking_math/db/daos/tag.dart';
+import 'package:fucking_math/db/daos/word.dart';
 import 'package:fucking_math/providers/ai_provider.dart';
 import 'package:fucking_math/providers/images.dart';
 import 'package:fucking_math/providers/knowledge.dart';
@@ -13,6 +18,11 @@ import 'package:fucking_math/providers/mistakes.dart';
 import 'package:fucking_math/providers/phrase.dart';
 import 'package:fucking_math/providers/tags.dart';
 import 'package:fucking_math/providers/words.dart';
+import 'package:fucking_math/utils/repository/english.dart';
+import 'package:fucking_math/utils/repository/knowledge.dart';
+import 'package:fucking_math/utils/repository/mistakes.dart';
+import 'package:fucking_math/utils/repository/phrase.dart';
+import 'package:fucking_math/utils/repository/tag.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
@@ -25,6 +35,19 @@ void main() async {
   final AppDatabase database = AppDatabase();
 
   final getIt = GetIt.instance;
+
+  // 注册 Repo
+  final mistakesRepo = MistakesRepository(MistakesDao(database));
+  final phraseRepo = PhraseRepository(PhrasesDao(database));
+  final wordRepo = WordsRepository(WordsDao(database));
+  final knowledgeRepo = KnowledgeRepository(KnowledgeDao(database));
+  final tagRepo = TagRepository(TagsDao(database));
+
+  getIt.registerSingleton(wordRepo);
+  getIt.registerSingleton(knowledgeRepo);
+  getIt.registerSingleton(tagRepo);
+  getIt.registerSingleton(mistakesRepo);
+  getIt.registerSingleton(phraseRepo);
 
   final aiConfig = AiConfig(database)..loadActionProvider();
   final aiProviderProvider = AiProviderProvider(database)..loadProviders();
