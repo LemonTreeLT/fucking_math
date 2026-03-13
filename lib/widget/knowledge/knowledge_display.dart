@@ -55,7 +55,8 @@ class _KnowledgeDisplayState extends State<KnowledgeDisplay> {
     ),
   );
 
-  void _refreshList() => _stateProvider.setKnowledgeList(_provider.getItems);
+  void _refreshList() =>
+      _stateProvider.setKnowledgeList((_provider..loadKnowledge()).getItems);
 
   Future<void> _deleteKnowledge() async {} // TODO 实现删除逻辑
 

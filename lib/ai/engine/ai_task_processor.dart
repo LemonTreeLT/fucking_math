@@ -133,11 +133,11 @@ class AiTaskProcessor {
               }
             }
 
-            // 持久化 tool result
+            // 持久化 tool result（前缀工具名方便 UI 展示）
             await historyRepo.addMessage(
               providerId: providerId,
               role: Roles.tool,
-              content: result,
+              content: '[${toolCall.name}]\n$result',
               sessionId: sessionId,
               toolId: toolCall.id,
             );

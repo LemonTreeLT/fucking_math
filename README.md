@@ -25,6 +25,9 @@
 - [x] 加急: 完成 ai 有关基础功能
 - [ ] 加急：完成拍照上传自动解析错题
 - [ ] 加急：ai 聊天的完整实现
+- [ ] feat(ai): Images upload support
+- [ ] feat(ai): Prompt support
+- [ ] feat(ai): 
 
 - [ ] feat(ai): 基于工具的ai调用实现
 - [ ] feat: 内置 ai 助手，询问问题时自动标记或者创建有关知识点

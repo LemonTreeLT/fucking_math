@@ -13,13 +13,6 @@ import 'package:fucking_math/ai/types.dart';
 import 'package:fucking_math/widget/ai/ai_chat_items.dart';
 import 'package:get_it/get_it.dart';
 
-// TODO 在发生错误的时候显示重新生成的按钮
-// TODO 在发生错误或者断连的时候会在engine内部积压大量的数据，之后DoneEvent时会一次全部展示，而且在此之间删除任何消息也会重新出现
-// TODO 工具调用或者展示结果的时候优化ui，展示名字
-// TODO ai在思考过程中的流貌似不会被正确展示，所有工具调用会在DoneEvent之后一次展示
-// TODO 工具展示时下方的按钮可以移动到右侧
-// TODO 工具展示字体美化，暗色模式下看不清
-// TODO md&latex渲染支持
 class AiChat extends StatefulWidget {
   const AiChat({super.key});
 
@@ -31,11 +24,13 @@ class _AiChatState extends State<AiChat> {
   int? _sessionId;
   List<Message> _messages = [];
   bool _isLoading = false;
-  String _thinkingContent = '';
   String? _statusMessage;
   bool _canRegenerate = false;
   AiTaskProcessor? _processor;
   StreamSubscription? _sub;
+
+  // TODO 2: generation counter to ignore stale events after cancel
+  int _taskGeneration = 0;
 
   late final TextEditingController _inputCtrl;
   late final TextEditingController _modelCtrl;
@@ -71,7 +66,9 @@ class _AiChatState extends State<AiChat> {
     });
   }
 
+  // TODO 2: capture generation at start, subscribe only if still current
   Future<void> _startTask() async {
+    final gen = ++_taskGeneration;
     final processor = await _taskService!.startTask(
       sessionId: _sessionId!,
       model: _modelCtrl.text.trim(),
@@ -79,7 +76,9 @@ class _AiChatState extends State<AiChat> {
     );
     _processor = processor;
     _sub?.cancel();
-    _sub = processor.events.listen(_handleEvent);
+    _sub = processor.events.listen((event) {
+      if (gen == _taskGeneration) _handleEvent(event);
+    });
   }
 
   Future<void> _sendMessage() async {
@@ -118,13 +117,16 @@ class _AiChatState extends State<AiChat> {
   void _handleEvent(TaskEvent event) {
     if (!mounted) return;
     switch (event) {
+      // TODO 4: reload from DB immediately when assistant message is persisted
       case ThinkingEvent():
-        setState(() => _thinkingContent = event.content);
+        _reloadMessagesKeepLoading();
         _scrollToBottom();
       case ToolStartEvent():
         setState(() => _statusMessage = 'AI 正在调用 ${event.toolName}...');
+      // TODO 4: reload from DB immediately when tool result is persisted
       case ToolEndEvent():
         setState(() => _statusMessage = null);
+        _reloadMessagesKeepLoading();
       case LogEvent():
         debugPrint('[Tool Log] ${event.message}');
       case WaitUserEvent():
@@ -135,11 +137,12 @@ class _AiChatState extends State<AiChat> {
           _canRegenerate = true;
         });
         _reloadMessages();
+      // TODO 1: show regenerate button on error
       case ErrorEvent():
         setState(() {
           _isLoading = false;
-          _thinkingContent = '';
           _statusMessage = null;
+          _canRegenerate = true;
         });
         ScaffoldMessenger.of(
           context,
@@ -171,12 +174,13 @@ class _AiChatState extends State<AiChat> {
     );
   }
 
+  // TODO 2: increment generation to invalidate any in-flight subscriptions
   void _cancelTask() {
+    _taskGeneration++;
     _sub?.cancel();
     _processor?.interrupt();
     setState(() {
       _isLoading = false;
-      _thinkingContent = '';
       _statusMessage = null;
     });
   }
@@ -192,7 +196,6 @@ class _AiChatState extends State<AiChat> {
       _messages = _messages.sublist(0, lastUserIndex + 1);
       _isLoading = true;
       _canRegenerate = false;
-      _thinkingContent = '';
       _statusMessage = null;
     });
     _scrollToBottom();
@@ -209,9 +212,21 @@ class _AiChatState extends State<AiChat> {
     if (!mounted) return;
     setState(() {
       _messages = conversation.messages;
-      _thinkingContent = '';
       _isLoading = false;
     });
+    _scrollToBottom();
+  }
+
+  // TODO 4: reload messages without touching _isLoading (called during active task)
+  Future<void> _reloadMessagesKeepLoading() async {
+    final provider = _aiConfig?.activeProvider;
+    if (_sessionId == null || provider == null) return;
+    final conversation = await _historyRepo!.getConversation(
+      _sessionId!,
+      provider.id,
+    );
+    if (!mounted) return;
+    setState(() => _messages = conversation.messages);
     _scrollToBottom();
   }
 
@@ -262,7 +277,6 @@ class _AiChatState extends State<AiChat> {
       _messages = _messages.sublist(0, userIndex + 1);
       _isLoading = true;
       _canRegenerate = false;
-      _thinkingContent = '';
       _statusMessage = null;
     });
     _scrollToBottom();
@@ -333,13 +347,15 @@ class _AiChatState extends State<AiChat> {
                 (!_isLoading && _canRegenerate ? 1 : 0),
             itemBuilder: (context, index) {
               if (index == visibleMessages.length && _isLoading) {
+                // Simple loading spinner while task is running
                 return buildChatBubble(
                   isUser: false,
-                  content: _thinkingContent,
-                  isThinking: true,
-                  isLoadingSpinner: _thinkingContent.isEmpty,
+                  content: '',
+                  isLoadingSpinner: true,
+                  context: context,
                 );
               }
+              // 展示重新生产按钮
               if (index == visibleMessages.length && _canRegenerate) {
                 return Center(
                   child: Padding(
@@ -353,24 +369,42 @@ class _AiChatState extends State<AiChat> {
                 );
               }
               final msg = visibleMessages[index];
+
+              final actionBtn = buildMessageActions(
+                msg,
+                isLoading: _isLoading,
+                onDelete: _deleteMessage,
+                onDeleteFromHere: _deleteFromHere,
+                onRegenerate: _regenerateFrom,
+              );
+
+              final cAlignment =
+                  (msg.role == Roles.user || msg.role == Roles.tool)
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start;
+
+              // TODO 5: tool messages align to the right (same as user)
               return Column(
-                crossAxisAlignment: msg.role == Roles.user
-                    ? CrossAxisAlignment.end
-                    : CrossAxisAlignment.start,
+                crossAxisAlignment: cAlignment,
                 children: [
                   msg.role == Roles.tool
-                      ? buildToolRow(msg.content, _showContentDialog)
-                      : buildChatBubble(
-                          isUser: msg.role == Roles.user,
-                          content: msg.content,
+                      ? buildToolRow(
+                          msg.content,
+                          _showContentDialog,
+                          context,
+                          actionBtn,
+                        )
+                      : Column(
+                          crossAxisAlignment: cAlignment,
+                          children: [
+                            buildChatBubble(
+                              isUser: msg.role == Roles.user,
+                              content: msg.content,
+                              context: context,
+                            ),
+                            actionBtn,
+                          ],
                         ),
-                  buildMessageActions(
-                    msg,
-                    isLoading: _isLoading,
-                    onDelete: _deleteMessage,
-                    onDeleteFromHere: _deleteFromHere,
-                    onRegenerate: _regenerateFrom,
-                  ),
                 ],
               );
             },

@@ -9,3 +9,5 @@ final test1 = Prompt(
   content:
       "你现在处于测试模式之中，你需要输出以下内容,若出现{{}}则说明用户没有提供该字段, 你不需要输出: {{content1}}, {{content2}}, {{content3}}",
 );
+
+final systemPromptV1 = Prompt(content: "你是一位内置于Fucking Math");
