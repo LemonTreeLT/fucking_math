@@ -76,6 +76,42 @@ class MistakesRepository {
     return await _buildCompleteMistake(dbMistake);
   }
 
+  /// 更新错题信息
+  ///
+  /// - [id] 错题 ID
+  /// - [subject] 新学科(可选)
+  /// - [head] 新标题(可选)
+  /// - [body] 新内容(可选)
+  /// - [source] 新来源(可选)
+  ///
+  /// 抛出 [TagOrMistakeNotFoundException] 当错题不存在时
+  Future<Mistake> updateMistake({
+    required int id,
+    Subject? subject,
+    String? head,
+    String? body,
+    String? source,
+  }) async {
+    final existingMistake = await _dao.getMistakeById(id);
+    if (existingMistake == null) {
+      throw TagOrMistakeNotFoundException(
+        'Mistake with id $id not found',
+        mistakeId: id,
+      );
+    }
+
+    final companion = db.MistakesCompanion(
+      subject: subject != null ? Value(subject) : Value.absent(),
+      questionHeader: head != null ? Value(head) : Value.absent(),
+      questionBody: body != null ? Value(body) : Value.absent(),
+      source: source != null ? Value(source) : Value.absent(),
+    );
+
+    await _dao.updateMistakeWithCompanion(id, companion);
+    final updatedMistake = await _dao.getMistakeById(id);
+    return await _buildCompleteMistake(updatedMistake!);
+  }
+
   /// 删除错题(级联删除所有关联数据)
   Future<void> deleteMistake(int mistakeId) async =>
       await _dao.deleteMistake(mistakeId);
@@ -165,6 +201,39 @@ class MistakesRepository {
           mistakeId,
         )).map((a) => _buildCompleteAnswer(a)).toList(),
       );
+
+  /// 更新答案信息
+  ///
+  /// - [id] 答案 ID
+  /// - [head] 新标题(可选)
+  /// - [body] 新内容(可选)
+  /// - [note] 新备注(可选)
+  /// - [source] 新来源(可选)
+  ///
+  /// 抛出 [AppDatabaseException] 当答案不存在时
+  Future<Answer> updateAnswer({
+    required int id,
+    String? head,
+    String? body,
+    String? note,
+    String? source,
+  }) async {
+    final existingAnswer = await _dao.getAnswerById(id);
+    if (existingAnswer == null) {
+      throw AppDatabaseException('Answer with id $id not found');
+    }
+
+    final companion = db.AnswersCompanion(
+      head: head != null ? Value(head) : Value.absent(),
+      answer: body != null ? Value(body) : Value.absent(),
+      note: note != null ? Value(note) : Value.absent(),
+      source: source != null ? Value(source) : Value.absent(),
+    );
+
+    await _dao.updateAnswerWithCompanion(id, companion);
+    final updatedAnswer = await _dao.getAnswerById(id);
+    return await _buildCompleteAnswer(updatedAnswer!);
+  }
 
   /// 删除答案(级联删除关联数据)
   Future<void> deleteAnswer(int answerId) async =>

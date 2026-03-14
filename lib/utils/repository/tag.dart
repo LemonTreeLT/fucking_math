@@ -65,6 +65,39 @@ class TagRepository {
   /// 通过 id 删除 tag
   Future<void> deleteTag(int id) async => await _dao.deleteTag(id);
 
+  /// 更新标签信息
+  ///
+  /// - [id] 标签 ID
+  /// - [name] 新名称(可选)
+  /// - [description] 新描述(可选)
+  /// - [subject] 新学科(可选)
+  /// - [color] 新颜色(可选)
+  ///
+  /// 抛出 [TagNotFoundException] 当标签不存在时
+  Future<Tag> updateTag({
+    required int id,
+    String? name,
+    String? description,
+    Subject? subject,
+    int? color,
+  }) async {
+    final existingTag = await _dao.getTagById(id);
+    if (existingTag == null) {
+      throw TagNotFoundException('Tag with id $id not found');
+    }
+
+    final companion = db.TagsCompanion(
+      tag: name != null ? Value(name) : Value.absent(),
+      description: description != null ? Value(description) : Value.absent(),
+      subject: subject != null ? Value(subject) : Value.absent(),
+      color: color != null ? Value(color) : Value.absent(),
+    );
+
+    await _dao.updateTagWithCompanion(id, companion);
+    final updatedTag = await _dao.getTagById(id);
+    return updatedTag!.toDomain();
+  }
+
   // ------------ PRIVATE HELPERS ------------
 
   /// 执行 upsert 操作并获取完整的 Tag 对象

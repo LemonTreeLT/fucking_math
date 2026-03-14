@@ -157,6 +157,45 @@ class ImageNotFoundException implements Exception {
       '${imageId != null ? ' (id: $imageId)' : ''}';
 }
 
+/// 短语未找到异常
+class PhraseNotFoundException implements Exception {
+  final String message;
+  final int? phraseId;
+
+  PhraseNotFoundException(this.message, {this.phraseId});
+
+  @override
+  String toString() =>
+      'PhraseNotFoundException: $message'
+      '${phraseId != null ? ' (id: $phraseId)' : ''}';
+}
+
+/// 知识点未找到异常
+class KnowledgeNotFoundException implements Exception {
+  final String message;
+  final int? knowledgeId;
+
+  KnowledgeNotFoundException(this.message, {this.knowledgeId});
+
+  @override
+  String toString() =>
+      'KnowledgeNotFoundException: $message'
+      '${knowledgeId != null ? ' (id: $knowledgeId)' : ''}';
+}
+
+/// 单词未找到异常
+class WordNotFoundException implements Exception {
+  final String message;
+  final int? wordId;
+
+  WordNotFoundException(this.message, {this.wordId});
+
+  @override
+  String toString() =>
+      'WordNotFoundException: $message'
+      '${wordId != null ? ' (id: $wordId)' : ''}';
+}
+
 // ============ AI 模块异常 ============
 
 /// AI 提供商未找到异常

@@ -54,6 +54,41 @@ class WordsRepository {
   // 删除单词
   Future<void> deleteWord(int wordId) async => await _dao.deleteWord(wordId);
 
+  /// 更新单词信息
+  ///
+  /// - [id] 单词 ID
+  /// - [word] 新单词(可选)
+  /// - [definition] 新定义(可选)
+  /// - [definitionPreview] 新定义预览(可选)
+  ///
+  /// 抛出 [WordNotFoundException] 当单词不存在时
+  Future<Word> updateWord({
+    required int id,
+    String? word,
+    String? definition,
+    String? definitionPreview,
+  }) async {
+    final existingWord = await _dao.getWordById(id);
+    if (existingWord == null) {
+      throw WordNotFoundException(
+        'Word with id $id not found',
+        wordId: id,
+      );
+    }
+
+    final companion = db.WordsCompanion(
+      word: word != null ? Value(word) : Value.absent(),
+      definition: definition != null ? Value(definition) : Value.absent(),
+      definitionPreview: definitionPreview != null
+          ? Value(definitionPreview)
+          : Value.absent(),
+    );
+
+    await _dao.updateWordWithCompanion(id, companion);
+    final updatedWord = await _dao.getWordById(id);
+    return _dbWordToWord(updatedWord!, [], repeat: 0);
+  }
+
   // ------ PUBLIC METHODS ABOVE ------
 
   // 辅助函数: 查找或者创建单词

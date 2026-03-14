@@ -84,6 +84,39 @@ class KnowledgeRepository {
     return await _buildCompleteKnowledge(dbKnowledge);
   }
 
+  /// 更新知识点信息
+  ///
+  /// - [id] 知识点 ID
+  /// - [subject] 新学科(可选)
+  /// - [head] 新标题(可选)
+  /// - [body] 新内容(可选)
+  ///
+  /// 抛出 [KnowledgeNotFoundException] 当知识点不存在时
+  Future<Knowledge> updateKnowledge({
+    required int id,
+    Subject? subject,
+    String? head,
+    String? body,
+  }) async {
+    final existingKnowledge = await _dao.getKnowledgeById(id);
+    if (existingKnowledge == null) {
+      throw KnowledgeNotFoundException(
+        'Knowledge with id $id not found',
+        knowledgeId: id,
+      );
+    }
+
+    final companion = db.KnowledgeCompanion(
+      subject: subject != null ? Value(subject) : Value.absent(),
+      head: head != null ? Value(head) : Value.absent(),
+      body: body != null ? Value(body) : Value.absent(),
+    );
+
+    await _dao.updateKnowledgeWithCompanion(id, companion);
+    final updatedKnowledge = await _dao.getKnowledgeById(id);
+    return _dbKnowledgeToKnowledge(updatedKnowledge!, []);
+  }
+
   // ------ PRIVATE HELPER METHODS BELOW ------
 
   // 辅助函数: 查找或创建知识点

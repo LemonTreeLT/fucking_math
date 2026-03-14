@@ -42,7 +42,7 @@
 - [ ] feat: 导出知识点八股文文档
 - [ ] feat(prompt): 添加prompt管理页面
 - [x] feat(prompt): 添加有关prompt以告知ai工具的规范使用
-- [ ] feat(repo): 为所有repo提供根据id更新指定字段的方式
+- [x] feat(repo): 为所有repo提供根据id更新指定字段的方式
     - [ ] feat(tool): 为 master 工具提供所有 repo 的 update 方法
 - [x] feat(ai_provider): 模型名字保存与自动输入功能
 - [x] bug(ai_provider): 切换供应商不会对应切换原供应商的active状态

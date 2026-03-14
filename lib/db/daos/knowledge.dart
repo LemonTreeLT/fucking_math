@@ -41,6 +41,12 @@ class KnowledgeDao extends DatabaseAccessor<AppDatabase>
   Future<bool> updateKnowledge(KnowledgeData newKnowledge) =>
       update(knowledge).replace(newKnowledge);
 
+  // 根据 Companion 更新知识点（用于部分字段更新）
+  Future<int> updateKnowledgeWithCompanion(
+    int id,
+    KnowledgeCompanion companion,
+  ) => (update(knowledge)..where((k) => k.id.equals(id))).write(companion);
+
   // 删除知识点
   Future<int> deleteKnowledge(int id) {
     return (delete(knowledge)..where((k) => k.id.equals(id))).go();

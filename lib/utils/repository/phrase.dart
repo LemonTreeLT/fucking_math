@@ -51,6 +51,36 @@ class PhraseRepository {
   // 删除短语
   Future<void> deletePhrase(int id) async => await _dao.deletePhrase(id);
 
+  /// 更新短语信息
+  ///
+  /// - [id] 短语 ID
+  /// - [phrase] 新短语(可选)
+  /// - [definition] 新定义(可选)
+  ///
+  /// 抛出 [PhraseNotFoundException] 当短语不存在时
+  Future<Phrase> updatePhrase({
+    required int id,
+    String? phrase,
+    String? definition,
+  }) async {
+    final existingPhrase = await _dao.getPhraseById(id);
+    if (existingPhrase == null) {
+      throw PhraseNotFoundException(
+        'Phrase with id $id not found',
+        phraseId: id,
+      );
+    }
+
+    final companion = db.PhrasesCompanion(
+      phrase: phrase != null ? Value(phrase) : Value.absent(),
+      definition: definition != null ? Value(definition) : Value.absent(),
+    );
+
+    await _dao.updatePhraseWithCompanion(id, companion);
+    final updatedPhrase = await _dao.getPhraseById(id);
+    return _dbPhraseToPhrase(updatedPhrase!, []);
+  }
+
   // --------- PUBLIC METHODS END ----------
 
   // 辅助函数: 关联标签到短语
