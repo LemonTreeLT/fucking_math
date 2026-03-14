@@ -20,29 +20,35 @@
 - [ ] 重构: tag selector 的弹出窗口 
 - [ ] 重构: 知识点搜索部分 
 - [x] 加急: 完成基础配置文件加载与自定义数据库路径
-- [x] 加急: 完成 ai 有关基础功能
-- [ ] 加急：完成拍照上传自动解析错题
 - [ ] 加急：ai 聊天的完整实现
-- [ ] feat(ai): Images upload support
-- [ ] feat(ai): Prompt support
-- [ ] feat(at): 在startTask之前支持system prompt设定
-- [ ] feat(ai): 支持图片上传
-- [ ] feat(ai): 支持 `/` 快速呼出 prompt list
-- [ ] feat(ai): 错题答案的支持
-- [ ] feat(ai): 修改master工具使其在修改前需要询问用户
-- [ ] feat(ai): 在询问对话框中提供用户输入框，并将输入回传ai
-- [ ] feat(prompt): 添加有关prompt以告知ai
+    - [ ] feat: 内置 ai 助手，询问问题时自动标记或者创建有关知识点
+        - [ ] feat(prompt): 添加system prompt支持 
+        - [ ] feat(prompt): 设置ai指导自动标记错题与获取信息 
+    - [ ] feat(ai): Images upload support
+    - [ ] 加急 feat(ai)：完成拍照上传自动解析错题
+    - [x] 加急 feat(ai): 完成 ai 有关基础功能
+    - [ ] feat(ai): Prompt support
+    - [ ] feat(at): 在startTask之前支持system prompt设定
+    - [ ] feat(ai): 支持图片上传
+    - [ ] feat(ai): 支持 `/` 快速呼出 prompt list
+    - [ ] feat(ai): 错题答案的支持
+    - [ ] feat(ai): 修改master工具使其在修改前需要询问用户
+    - [ ] feat(ai): 在询问对话框中提供用户输入框，并将输入回传ai
+    - [ ] feat(ai): 基于工具的ai调用实现
+    - [ ] feat(ai): 对话保存与选择
+    - [ ] feat(ai): 小试卷出题功能
+    - [ ] feat(ai): 创建 repo tool 以提供庞大的单工具替代方案
+    - [ ] feat(ai_chat): 显示单次输出计时器
 - [ ] feat: 导出知识点八股文文档
-- [ ] feat(ai): 小试卷出题功能
-- [ ] bug(ai_provider): 切换供应商不会对应切换原供应商的active状态
-- [ ] feat(ai_provider): 模型名字保存与自动输入功能
-- [ ] feat(ai): 对话保存与选择
-- [ ] feat(prompt): 设置ai指导自动标记错题与获取信息 
-- [ ] 重构: Provider 改为统一接受对应 Repo，Repo 通过GetIt注册单例
-    - [ ] Repo 注册
-    - [ ] Provider 重构
-- [ ] feat(ai): 基于工具的ai调用实现
-- [ ] feat: 内置 ai 助手，询问问题时自动标记或者创建有关知识点
+- [ ] feat(prompt): 添加prompt管理页面
+- [x] feat(prompt): 添加有关prompt以告知ai工具的规范使用
+- [ ] feat(repo): 为所有repo提供根据id更新指定字段的方式
+    - [ ] feat(tool): 为 master 工具提供所有 repo 的 update 方法
+- [x] feat(ai_provider): 模型名字保存与自动输入功能
+- [x] bug(ai_provider): 切换供应商不会对应切换原供应商的active状态
+- [x] 重构: Provider 改为统一接受对应 Repo，Repo 通过GetIt注册单例
+    - [x] Repo 注册
+    - [x] Provider 重构
 
 
 ## 大饼

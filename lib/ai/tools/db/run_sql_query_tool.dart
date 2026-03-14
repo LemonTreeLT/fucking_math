@@ -11,7 +11,7 @@ class RunSqlQueryTool extends BaseAiTool {
 
   @override
   String get description =>
-      '执行只读 SQL 查询（SELECT / WITH CTE），返回结果集 JSON。最多返回 100 行。';
+      '执行只读 SQL 查询（SELECT / WITH CTE），返回结果集 JSON。最多返回 100 行，每次单条语句，不要额外添加分号';
 
   static const _sqlField = AiField<String>(
     'sql',
@@ -29,13 +29,21 @@ class RunSqlQueryTool extends BaseAiTool {
       return '缺少必填参数：sql';
     }
 
-    final trimmed = sql.trim();
+    var trimmed = sql.trim();
+    if (trimmed.endsWith(';')) {
+      trimmed = trimmed.substring(0, trimmed.length - 1).trim();
+    }
+    if (trimmed.contains(';')) {
+      return '只允许执行单条 SQL 语句，请勿包含分号';
+    }
+
     final firstWord = trimmed.split(RegExp(r'\s+'))[0].toLowerCase();
     if (firstWord != 'select' && firstWord != 'with') {
       return '只允许执行 SELECT 或 WITH（CTE）查询，当前首词：$firstWord';
     }
 
-    final effectiveSql = RegExp(r'\bLIMIT\b', caseSensitive: false).hasMatch(trimmed)
+    final effectiveSql =
+        RegExp(r'\bLIMIT\b', caseSensitive: false).hasMatch(trimmed)
         ? trimmed
         : '$trimmed LIMIT 100';
 
