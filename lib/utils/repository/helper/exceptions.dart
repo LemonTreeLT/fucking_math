@@ -70,28 +70,28 @@ class TagNotFoundException implements Exception {
   String toString() => 'TagNotFoundException: $message';
 }
 
-class TagOrMistakeNotFoundException implements Exception {
+class TagOrQuestionNotFoundException implements Exception {
   final String message;
   final int? tagID;
-  final int? mistakeId;
+  final int? questionId;
 
-  TagOrMistakeNotFoundException(this.message, {this.tagID, this.mistakeId});
+  TagOrQuestionNotFoundException(this.message, {this.tagID, this.questionId});
 
   @override
   String toString() =>
-      'Tag or mistake not found: $message, tagID: $tagID, mistakeId: $mistakeId';
+      'Tag or question not found: $message, tagID: $tagID, questionId: $questionId';
 }
 
-class ImageOrMistakeNotFoundException implements Exception {
+class ImageOrQuestionNotFoundException implements Exception {
   final String message;
   final int? imageId;
-  final int? mistakeId;
+  final int? questionId;
 
-  ImageOrMistakeNotFoundException(this.message, {this.imageId, this.mistakeId});
+  ImageOrQuestionNotFoundException(this.message, {this.imageId, this.questionId});
 
   @override
   String toString() =>
-      'Image or mistake not found: $message, imageId: $imageId, mistakeId: $mistakeId';
+      'Image or question not found: $message, imageId: $imageId, questionId: $questionId';
 }
 
 class TagOrAnswerNotFoundException implements Exception {
@@ -118,17 +118,17 @@ class ImageOrAnswerNotFoundException implements Exception {
       'Image or answer not found: $message, imageId: $imageId, answerId: $answerId';
 }
 
-class KnowledgeOrMistakeNotFoundException implements Exception {
+class KnowledgeOrQuestionNotFoundException implements Exception {
   final String message;
   final int? knowledgeId;
-  final int? mistakeId;
+  final int? questionId;
 
-  KnowledgeOrMistakeNotFoundException(this.message,
-      {this.knowledgeId, this.mistakeId});
+  KnowledgeOrQuestionNotFoundException(this.message,
+      {this.knowledgeId, this.questionId});
 
   @override
   String toString() =>
-      'Knowledge or mistake not found: $message, knowledgeId: $knowledgeId, mistakeId: $mistakeId';
+      'Knowledge or question not found: $message, knowledgeId: $knowledgeId, questionId: $questionId';
 }
 
 /// 图片验证异常(文件不存在等业务逻辑错误)

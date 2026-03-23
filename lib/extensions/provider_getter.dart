@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fucking_math/providers/mistakes.dart';
+import 'package:fucking_math/providers/questions.dart';
 import 'package:provider/provider.dart';
 
-extension MistakesProviderGetterForContext on BuildContext {
-  MistakesProvider get misRead => read();
+extension QuestionsProviderGetterForContext on BuildContext {
+  QuestionsProvider get quesRead => read();
 }

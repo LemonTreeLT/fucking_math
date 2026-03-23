@@ -1,14 +1,14 @@
 import 'package:fucking_math/ai/tools/_base_tool.dart';
 import 'package:fucking_math/ai/tools/orchestrator/sub_action_handler.dart';
-import 'package:fucking_math/utils/repository/mistakes.dart';
+import 'package:fucking_math/utils/repository/questions.dart';
 import 'package:fucking_math/utils/types.dart';
 
-class MistakesSubHandler implements SubActionHandler {
-  final MistakesRepository _repo;
-  MistakesSubHandler(this._repo);
+class QuestionsSubHandler implements SubActionHandler {
+  final QuestionsRepository _repo;
+  QuestionsSubHandler(this._repo);
 
   @override
-  String get target => 'mistake';
+  String get target => 'question';
 
   @override
   List<String> get supportedActions => [
@@ -21,7 +21,7 @@ class MistakesSubHandler implements SubActionHandler {
 
   @override
   List<AiField> get fields => [
-    const AiField('id', AiInt('Mistake ID; omit to create new')),
+    const AiField('id', AiInt('Question ID; omit to create new')),
     AiField(
       'subject',
       AiString(
@@ -52,7 +52,7 @@ class MistakesSubHandler implements SubActionHandler {
   @override
   Future<dynamic> handle(String action, Map<String, dynamic> data) =>
       switch (action) {
-        'save' => _repo.saveMistake(
+        'save' => _repo.saveQuestion(
           id: data['id'] as int?,
           subject: Subject.values.byName(
             (data['subject'] as String?) ?? 'math',
@@ -62,12 +62,12 @@ class MistakesSubHandler implements SubActionHandler {
           source: data['source'] as String?,
           tags: data['tags'] as List<int>?,
         ),
-        'delete' => _repo.deleteMistake(data['id'] as int),
-        'mark_review' => _repo.markMistakeReview(data['id'] as int),
-        'mark_repeat' => _repo.markMistakeRepeat(data['id'] as int),
-        'mark_answer' => _repo.markMistakeAnswer(data['id'] as int),
+        'delete' => _repo.deleteQuestion(data['id'] as int),
+        'mark_review' => _repo.markQuestionReview(data['id'] as int),
+        'mark_repeat' => _repo.markQuestionRepeat(data['id'] as int),
+        'mark_answer' => _repo.markQuestionAnswer(data['id'] as int),
         _ => throw UnimplementedError(
-          'Action $action not supported for target mistake',
+          'Action $action not supported for target question',
         ),
       };
 }

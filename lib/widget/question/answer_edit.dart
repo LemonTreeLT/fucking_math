@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fucking_math/extensions/string.dart';
 import 'package:fucking_math/providers/images.dart';
-import 'package:fucking_math/providers/mistakes.dart';
+import 'package:fucking_math/providers/questions.dart';
 import 'package:fucking_math/utils/types.dart';
 import 'package:fucking_math/widget/common/images_picker.dart';
 import 'package:fucking_math/widget/common/tag_badge.dart';
@@ -12,9 +12,9 @@ import 'package:fucking_math/widget/ui_constants.dart';
 import 'package:provider/provider.dart';
 
 class ShowAnswerButtonWithPreview extends StatefulWidget {
-  const ShowAnswerButtonWithPreview({super.key, this.mistakeID});
+  const ShowAnswerButtonWithPreview({super.key, this.questionID});
 
-  final int? mistakeID;
+  final int? questionID;
 
   @override
   State<StatefulWidget> createState() => AnswerState();
@@ -23,7 +23,7 @@ class ShowAnswerButtonWithPreview extends StatefulWidget {
 class AnswerState extends State<ShowAnswerButtonWithPreview> {
   @override
   Widget build(BuildContext context) => InkWell(
-    onTap: widget.mistakeID != null ? _openAnswerEditingWindow : null,
+    onTap: widget.questionID != null ? _openAnswerEditingWindow : null,
     child: Container(
       padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -39,9 +39,9 @@ class AnswerState extends State<ShowAnswerButtonWithPreview> {
 
   Widget _buildHintText() => Center(
     child: Text(
-      widget.mistakeID != null ? "点击以编辑答案" : "分配 ID 以开始编辑答案",
+      widget.questionID != null ? "点击以编辑答案" : "分配 ID 以开始编辑答案",
       style: TextStyle(
-        color: widget.mistakeID != null ? Colors.blue : Colors.white,
+        color: widget.questionID != null ? Colors.blue : Colors.white,
       ),
     ),
   );
@@ -64,7 +64,7 @@ class AnswerState extends State<ShowAnswerButtonWithPreview> {
             bottom: 32,
             right: 32,
           ),
-          child: AnswerForm(mistakeID: widget.mistakeID!),
+          child: AnswerForm(questionID: widget.questionID!),
         ),
       ),
     ),
@@ -79,9 +79,9 @@ class AnswerState extends State<ShowAnswerButtonWithPreview> {
 
 /// answer弹出窗口内容
 class AnswerForm extends StatefulWidget {
-  const AnswerForm({super.key, required this.mistakeID});
+  const AnswerForm({super.key, required this.questionID});
 
-  final int mistakeID;
+  final int questionID;
 
   @override
   State<StatefulWidget> createState() => _AnswerFormState();
@@ -92,7 +92,7 @@ class _AnswerFormState extends GenericFormStateV3<AnswerForm> {
   Widget content() => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text("#${widget.mistakeID} 错题的答案", style: TextStyle(fontSize: 32)),
+      Text("#${widget.questionID} 题目的答案", style: TextStyle(fontSize: 32)),
       const SizedBox(height: 8),
       Expanded(
         child: Row(
@@ -202,7 +202,7 @@ class _AnswerFormState extends GenericFormStateV3<AnswerForm> {
   void _clearForm() => dev;
 
   Future<void> _addAnswer() async {
-    final MistakesProvider provider = context.read();
+    final QuestionsProvider provider = context.read();
     final ImagesProvider imgProvider = context.read();
 
     final body = _bodyInputerController.text.trim();
@@ -216,7 +216,7 @@ class _AnswerFormState extends GenericFormStateV3<AnswerForm> {
         : null;
 
     await provider.createAnswer(
-      widget.mistakeID,
+      widget.questionID,
       body,
       head: head,
       note: note,
@@ -239,8 +239,8 @@ class _AnswerFormState extends GenericFormStateV3<AnswerForm> {
 
   Future<void> _loadData() async {
     final fetchedAnswers = await context
-        .read<MistakesProvider>()
-        .getAnswerOfMistakes(widget.mistakeID);
+        .read<QuestionsProvider>()
+        .getAnswerOfQuestions(widget.questionID);
 
     if (!mounted) return;
 

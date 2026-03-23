@@ -4,9 +4,9 @@ import 'package:fucking_math/db/tables/tables_knowledge.dart';
 import 'package:fucking_math/db/tables/tables_tags.dart';
 import 'package:fucking_math/utils/types.dart' show SubjectConverter;
 
-// Warning: This sturcture is designed more for math mistakes, may need adjustments for other subjects.
-// 错题表
-class Mistakes extends Table {
+// Warning: This sturcture is designed more for math questions, may need adjustments for other subjects.
+// 题目表
+class Questions extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get subject => text().map(SubjectConverter)();
   TextColumn get questionHeader => text()(); // 题目标题
@@ -16,18 +16,18 @@ class Mistakes extends Table {
       dateTime().withDefault(currentDateAndTime)(); // 创建时间
 }
 
-/// 问题正文内嵌图片链接表
-class MistakePicsLink extends Table {
-  IntColumn get mistakeId => integer().references(Mistakes, #id)();
+/// 题目正文内嵌图片链接表
+class QuestionPicsLink extends Table {
+  IntColumn get questionId => integer().references(Questions, #id)();
   IntColumn get picId => integer().references(Images, #id)();
 
   @override
-  Set<Column> get primaryKey => {mistakeId, picId};
+  Set<Column> get primaryKey => {questionId, picId};
 }
 
 class Answers extends Table {
   IntColumn get id => integer().autoIncrement()();
-  IntColumn get mistakeId => integer().references(Mistakes, #id)();
+  IntColumn get questionId => integer().references(Questions, #id)();
 
   TextColumn get note => text().nullable()();
   TextColumn get head => text().nullable()();
@@ -43,8 +43,8 @@ class AnswersTagsLink extends Table {
   Set<Column> get primaryKey => {answerID, tagID};
 }
 
-class MistakeAnalysis extends Table {
-  IntColumn get id => integer().references(Mistakes, #id).unique()();
+class QuestionAnalysis extends Table {
+  IntColumn get id => integer().references(Questions, #id).unique()();
 
   IntColumn get bestAnswer => integer().references(Answers, #id)();
 
@@ -55,12 +55,12 @@ class MistakeAnalysis extends Table {
   TextColumn get analysis => text().nullable()();
 }
 
-class MistakeKnowledgeLink extends Table {
-  IntColumn get mistakeId => integer().references(Mistakes, #id)();
+class QuestionKnowledgeLink extends Table {
+  IntColumn get questionId => integer().references(Questions, #id)();
   IntColumn get knowledgeId => integer().references(Knowledge, #id)();
 
   @override
-  Set<Column> get primaryKey => {mistakeId, knowledgeId};
+  Set<Column> get primaryKey => {questionId, knowledgeId};
 }
 
 /// 回答正文链接图片表
@@ -72,22 +72,22 @@ class AnswerPicsLink extends Table {
   Set<Column> get primaryKey => {answerID, picID};
 }
 
-class MistakesTagLink extends Table {
-  IntColumn get mistakeID => integer().references(Mistakes, #id)();
+class QuestionsTagLink extends Table {
+  IntColumn get questionID => integer().references(Questions, #id)();
   IntColumn get tagID => integer().references(Tags, #id)();
 
   @override
-  Set<Column> get primaryKey => {mistakeID, tagID};
+  Set<Column> get primaryKey => {questionID, tagID};
 }
 
-class MistakeLogs extends Table {
+class QuestionLogs extends Table {
   IntColumn get id => integer().autoIncrement()();
-  IntColumn get mistakeID => integer().references(Mistakes, #id)(); // 关联错题ID
+  IntColumn get questionID => integer().references(Questions, #id)(); // 关联题目ID
   TextColumn get type =>
-      text().map(const EnumNameConverter(MistakeLogType.values))(); // 日志类型
+      text().map(const EnumNameConverter(QuestionLogType.values))(); // 日志类型
   DateTimeColumn get timestamp =>
       dateTime().withDefault(currentDateAndTime)(); // 时间戳
   TextColumn get notes => text().nullable()(); // 备注，可选
 }
 
-enum MistakeLogType { view, review, repeat, answer }
+enum QuestionLogType { view, review, repeat, answer }

@@ -91,17 +91,17 @@ class Knowledge {
   });
 }
 
-// 错题
-class Mistake {
+// 题目
+class Question {
   final int id;
   final Subject subject;
   final String head;
   final String body;
   final String? source;
-  final MistakeState state;
+  final QuestionState state;
   final List<ImageStorage> images;
   final List<Tag> tags;
-  Mistake({
+  Question({
     required this.id,
     required this.subject,
     required this.head,
@@ -114,32 +114,32 @@ class Mistake {
     this.knowledge = const [],
   });
 
-  final MistakeAnalysis? analysis;
+  final QuestionAnalysis? analysis;
   final List<Knowledge> knowledge;
 }
 
-class MistakeAnalysis {
-  final int mistakeId;
+class QuestionAnalysis {
+  final int questionId;
   final int bestAnswerId;
   final String? reason;
   final String? analysis;
 
-  MistakeAnalysis({
-    required this.mistakeId,
+  QuestionAnalysis({
+    required this.questionId,
     required this.bestAnswerId,
     this.reason,
     this.analysis,
   });
 }
 
-/// 记录了错题的当前状态
-class MistakeState {
+/// 记录了题目的当前状态
+class QuestionState {
   final int view;
   final int review;
   final int repeat;
   final int answer;
 
-  MistakeState({
+  QuestionState({
     required this.view,
     this.answer = 0,
     this.repeat = 0,

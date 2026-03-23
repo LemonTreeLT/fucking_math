@@ -37,19 +37,19 @@ ImageStorage dbImageToImageStorage(db.Image dbImage) => ImageStorage(
   path: dbImage.path,
 );
 
-/// 转换数据库 Mistake 到应用 Mistake
-Mistake dbMistakeToMistake(
-  db.Mistake dbMistake,
-  MistakeState state,
+/// 转换数据库 Question 到应用 Question
+Question dbQuestionToQuestion(
+  db.Question dbQuestion,
+  QuestionState state,
   List<ImageStorage> images,
   List<Tag> tags,
   List<Knowledge> knowledge,
-) => Mistake(
-  id: dbMistake.id,
-  subject: dbMistake.subject,
-  head: dbMistake.questionHeader,
-  body: dbMistake.questionBody,
-  source: dbMistake.source,
+) => Question(
+  id: dbQuestion.id,
+  subject: dbQuestion.subject,
+  head: dbQuestion.questionHeader,
+  body: dbQuestion.questionBody,
+  source: dbQuestion.source,
   state: state,
   images: images,
   tags: tags,
@@ -63,7 +63,7 @@ Answer dbAnswerToAnswer(
   List<ImageStorage> images,
 ) => Answer(
   id: dbAnswer.id,
-  questionID: dbAnswer.mistakeId,
+  questionID: dbAnswer.questionId,
   head: dbAnswer.head,
   body: dbAnswer.answer,
   note: dbAnswer.note,

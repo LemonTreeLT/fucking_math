@@ -8,7 +8,7 @@ import 'package:fucking_math/db/tables/tables_images.dart';
 import 'package:fucking_math/db/tables/tables_ai.dart';
 import 'package:fucking_math/db/tables/tables_english.dart';
 import 'package:fucking_math/db/tables/tables_knowledge.dart';
-import 'package:fucking_math/db/tables/tables_mistakes.dart';
+import 'package:fucking_math/db/tables/tables_questions.dart';
 import 'package:fucking_math/db/tables/tables_tags.dart';
 
 import 'package:fucking_math/utils/types.dart' show Subject, SubjectConverter;
@@ -21,7 +21,7 @@ import 'daos/ai_provider.dart';
 import 'daos/ai_prompt.dart';
 import 'daos/tag.dart';
 import 'daos/knowledge.dart';
-import 'daos/mistake.dart';
+import 'daos/question.dart';
 import 'daos/phrase.dart';
 import 'daos/word.dart';
 import 'daos/images.dart';
@@ -52,18 +52,18 @@ part 'app_database.g.dart';
     Knowledge,
     KnowledgeLogs,
     KnowledgeTagLink,
-    Mistakes,
-    MistakesTagLink,
-    MistakeLogs,
-    MistakePicsLink,
+    Questions,
+    QuestionsTagLink,
+    QuestionLogs,
+    QuestionPicsLink,
     Answers,
     AnswersTagsLink,
     AnswerPicsLink,
     Images,
-    MistakeAnalysis,
-    MistakeKnowledgeLink,
+    QuestionAnalysis,
+    QuestionKnowledgeLink,
   ],
-  daos: [AiProviderDao, AiHistoryDao, AiHistoryImagesLinkDao, PromptDao, TagsDao, WordsDao, KnowledgeDao, MistakesDao, PhrasesDao, ImagesDao],
+  daos: [AiProviderDao, AiHistoryDao, AiHistoryImagesLinkDao, PromptDao, TagsDao, WordsDao, KnowledgeDao, QuestionsDao, PhrasesDao, ImagesDao],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -89,7 +89,7 @@ class AppDatabase extends _$AppDatabase {
   @override
   KnowledgeDao get knowledgeDao => KnowledgeDao(this);
   @override
-  MistakesDao get mistakesDao => MistakesDao(this);
+  QuestionsDao get questionsDao => QuestionsDao(this);
   @override
   PhrasesDao get phrasesDao => PhrasesDao(this);
   @override

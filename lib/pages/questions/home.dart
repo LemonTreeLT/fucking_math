@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class MistakesHome extends StatelessWidget {
-  const MistakesHome({super.key, required this.child});
+class QuestionsHome extends StatelessWidget {
+  const QuestionsHome({super.key, required this.child});
 
   final Widget child;
 
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: Text("Mistakes"),
+      title: Text("题库"),
       actions: [
         Text("Go to:    "),
         _goToEditorPage(context),
@@ -22,11 +22,11 @@ class MistakesHome extends StatelessWidget {
 }
 
 Widget _goToEditorPage(BuildContext context) => ElevatedButton(
-  onPressed: () => context.go('/mistakes/editor'),
+  onPressed: () => context.go('/questions/editor'),
   child: const Text("Editor"),
 );
 
 Widget _goToPracticePage(BuildContext context) => ElevatedButton(
-  onPressed: () => context.go('/mistakes'),
+  onPressed: () => context.go('/questions'),
   child: const Text("Practice"),
 );

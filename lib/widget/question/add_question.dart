@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:fucking_math/providers/images.dart';
-import 'package:fucking_math/providers/mistakes.dart';
+import 'package:fucking_math/providers/questions.dart';
 import 'package:fucking_math/utils/types.dart';
 import 'package:fucking_math/widget/common/images_picker.dart';
 import 'package:fucking_math/widget/common/tag_selection.dart';
 import 'package:fucking_math/widget/forms/base_form.dart';
 import 'package:fucking_math/widget/forms/form_builders.dart';
-import 'package:fucking_math/widget/mistake/answer_edit.dart';
-import 'package:fucking_math/widget/mistake/link_knowledge.dart';
+import 'package:fucking_math/widget/question/answer_edit.dart';
+import 'package:fucking_math/widget/question/link_knowledge.dart';
 import 'package:provider/provider.dart';
 
-class AddMistake extends StatefulWidget {
-  const AddMistake({super.key});
+class AddQuestion extends StatefulWidget {
+  const AddQuestion({super.key});
 
   @override
-  State<StatefulWidget> createState() => _AddMistakeState();
+  State<StatefulWidget> createState() => _AddQuestionState();
 }
 
-class _AddMistakeState extends GenericFormStateV2<AddMistake> {
+class _AddQuestionState extends GenericFormStateV2<AddQuestion> {
   final _titleInputerController = TextEditingController();
   final _bodyInputerController = TextEditingController();
   final _sourceInputerController = TextEditingController();
@@ -29,7 +29,7 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
   Subject _selectedSubject = Subject.math;
 
   final double spacing = 10;
-  int? _mistakeId;
+  int? _questionId;
 
   String? _validateNotNull(String? value, String desc) =>
       value == null || value.trim().isEmpty ? '$desc 不能为空' : null;
@@ -66,11 +66,11 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
         child: Column(
           spacing: 8,
           children: [
-            Expanded(child: ShowAnswerButtonWithPreview(mistakeID: _mistakeId)),
+            Expanded(child: ShowAnswerButtonWithPreview(questionID: _questionId)),
             Expanded(
               child: KnowledgeLinkButton(
                 key: _knowledgeKey,
-                mistakeID: _mistakeId,
+                questionID: _questionId,
               ),
             ),
           ],
@@ -90,7 +90,7 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
       tInputer(
         controller: _bodyInputerController,
         labelText: "题干",
-        maxLines: 3, 
+        maxLines: 3,
         validator: (v) => _validateNotNull(v, "题干"),
       ),
     ],
@@ -100,7 +100,7 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
     spacing: 16,
     children: [
       Text(
-        "# ${_mistakeId ?? "未分配 ID"}",
+        "# ${_questionId ?? "未分配 ID"}",
         style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
       ),
       Expanded(
@@ -139,7 +139,7 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
         icon: const Icon(Icons.save),
       ),
       ElevatedButton.icon(
-        onPressed: _mistakeId == null ? _assignID : _showAssignedAlert,
+        onPressed: _questionId == null ? _assignID : _showAssignedAlert,
         label: const Text("分配 ID"),
         icon: Icon(Icons.assignment),
       ),
@@ -170,13 +170,13 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
     _selectedSubject = subject;
     _imagesInputerKey.currentState?.images = images ?? [];
     _sourceInputerController.text = source ?? "";
-    _mistakeId = id;
+    _questionId = id;
   });
 
   Future<void> _assignID() async {
-    final provider = context.read<MistakesProvider>();
-    final newMistake = await provider.assignID();
-    setState(() => _mistakeId = newMistake);
+    final provider = context.read<QuestionsProvider>();
+    final newQuestion = await provider.assignID();
+    setState(() => _questionId = newQuestion);
   }
 
   void _showAssignedAlert() => ScaffoldMessenger.of(context).showSnackBar(
@@ -198,7 +198,7 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
     final knowledgeIds = _knowledgeKey.currentState?.getSelectedKnowledgeIds
         .toList();
 
-    final MistakesProvider misProvider = context.read();
+    final QuestionsProvider quesProvider = context.read();
     final ImagesProvider imgProvider = context.read();
 
     List<int> imageIDs = [];
@@ -206,7 +206,7 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
       imageIDs = (await imgProvider.uploadImages(images)) ?? [];
     }
 
-    final newID = (await misProvider.createMistakes(
+    final newID = (await quesProvider.createQuestions(
       subject,
       head,
       body,
@@ -215,10 +215,10 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
       images: imageIDs,
       tags: tags?.toList(),
       knowledgeIds: knowledgeIds,
-      id: _mistakeId,
+      id: _questionId,
     ))?.id;
 
-    setState(() => _mistakeId = newID);
+    setState(() => _questionId = newID);
   }
 
   @override
@@ -230,7 +230,7 @@ class _AddMistakeState extends GenericFormStateV2<AddMistake> {
   ];
 
   @override
-  String get formTitle => "添加错题";
+  String get formTitle => "添加题目";
 }
 
 final tInputer = FormBuilders.textField;

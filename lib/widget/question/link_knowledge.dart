@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:fucking_math/providers/knowledge.dart';
-import 'package:fucking_math/providers/mistakes.dart';
+import 'package:fucking_math/providers/questions.dart';
 import 'package:fucking_math/utils/types.dart';
 import 'package:fucking_math/widget/ui_constants.dart';
 import 'package:provider/provider.dart';
 
 class KnowledgeLinkButton extends StatefulWidget {
-  const KnowledgeLinkButton({super.key, this.mistakeID});
+  const KnowledgeLinkButton({super.key, this.questionID});
 
-  final int? mistakeID;
+  final int? questionID;
 
   @override
   State<StatefulWidget> createState() => _KnowledgeLinkButtonState();
@@ -17,7 +17,7 @@ class KnowledgeLinkButton extends StatefulWidget {
 class _KnowledgeLinkButtonState extends State<KnowledgeLinkButton> {
   int _linkedCount = 0;
 
-  bool _isEnabled() => widget.mistakeID != null && widget.mistakeID! > 0;
+  bool _isEnabled() => widget.questionID != null && widget.questionID! > 0;
 
   @override
   Widget build(BuildContext context) => InkWell(
@@ -59,10 +59,10 @@ class _KnowledgeLinkButtonState extends State<KnowledgeLinkButton> {
   // TODO 在编辑完成之后需要调用_loaddata
 
   Future<void> _loadData() async {
-    final fetchedKnowledgeCount = widget.mistakeID == null
+    final fetchedKnowledgeCount = widget.questionID == null
         ? 0
-        : (await context.read<MistakesProvider>().getMistakeKnowledge(
-            widget.mistakeID!,
+        : (await context.read<QuestionsProvider>().getQuestionKnowledge(
+            widget.questionID!,
           ))?.length;
 
     setState(() => _linkedCount = fetchedKnowledgeCount ?? 0);
@@ -87,7 +87,7 @@ class _KnowledgeLinkButtonState extends State<KnowledgeLinkButton> {
             bottom: 32,
             right: 32,
           ),
-          child: KnowledgeLinkForm(mistakeID: widget.mistakeID!),
+          child: KnowledgeLinkForm(questionID: widget.questionID!),
         ),
       ),
     ),
@@ -95,9 +95,9 @@ class _KnowledgeLinkButtonState extends State<KnowledgeLinkButton> {
 }
 
 class KnowledgeLinkForm extends StatefulWidget {
-  const KnowledgeLinkForm({super.key, required this.mistakeID});
+  const KnowledgeLinkForm({super.key, required this.questionID});
 
-  final int mistakeID;
+  final int questionID;
 
   @override
   State<StatefulWidget> createState() => KnowledgeLinkFormState();
@@ -119,8 +119,8 @@ class KnowledgeLinkFormState extends State<KnowledgeLinkForm> {
   }
 
   Future<void> _loadInitialSelection() async {
-    final provider = context.read<MistakesProvider>();
-    final knowledge = await provider.getMistakeKnowledge(widget.mistakeID);
+    final provider = context.read<QuestionsProvider>();
+    final knowledge = await provider.getQuestionKnowledge(widget.questionID);
 
     if (knowledge != null) {
       setState(
@@ -142,7 +142,7 @@ class KnowledgeLinkFormState extends State<KnowledgeLinkForm> {
   );
 
   Widget _buildTitle() => Text(
-    '#${widget.mistakeID} 的相关知识点',
+    '#${widget.questionID} 的相关知识点',
     style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
   );
 

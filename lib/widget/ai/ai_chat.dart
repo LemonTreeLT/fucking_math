@@ -15,7 +15,7 @@ import 'package:fucking_math/ai/tools/db/run_sql_mutation_tool.dart';
 import 'package:fucking_math/ai/tools/db/run_sql_query_tool.dart';
 import 'package:fucking_math/ai/tools/orchestrator/knowledge_sub_handler.dart';
 import 'package:fucking_math/ai/tools/orchestrator/master_orchestrator_tool.dart';
-import 'package:fucking_math/ai/tools/orchestrator/mistakes_sub_handler.dart';
+import 'package:fucking_math/ai/tools/orchestrator/questions_sub_handler.dart';
 import 'package:fucking_math/ai/tools/orchestrator/phrase_sub_handler.dart';
 import 'package:fucking_math/ai/tools/orchestrator/tag_sub_handler.dart';
 import 'package:fucking_math/ai/tools/orchestrator/word_sub_handler.dart';
@@ -496,7 +496,7 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
         RunSqlMutationTool(),
         MasterOrchestratorTool([
           PhraseSubHandler(GetIt.I.call()),
-          MistakesSubHandler(GetIt.I.call()),
+          QuestionsSubHandler(GetIt.I.call()),
           KnowledgeSubHandler(GetIt.I.call()),
           WordSubHandler(GetIt.I.call()),
           TagSubHandler(GetIt.I.call()),

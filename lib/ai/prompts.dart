@@ -26,8 +26,8 @@ final masterOrchestratorGuide = Prompt(
 *   **文本修剪：** 对 `phrase`、`head`、`body` 进行 `trim()` 处理，拒绝仅包含空格的无效录入。
 
 **3. 逻辑约束 (Logic Constraints)**
-*   **动作匹配：** `mark_review` 仅允许作用于 `phrase` 实体；`mistake` 实体严禁使用该动作。
-*   **必填校验：** `phrase` 必须包含 `phrase` 文本和 `linked_word_id`；`mistake` 必须包含 `body`。
+*   **动作匹配：** `mark_review` 仅允许作用于 `phrase` 实体；`question` 实体严禁使用该动作。
+*   **必填校验：** `phrase` 必须包含 `phrase` 文本和 `linked_word_id`；`question` 必须包含 `body`。
 """,
 );
 

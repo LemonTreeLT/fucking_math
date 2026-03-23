@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:fucking_math/providers/mistakes.dart';
+import 'package:fucking_math/providers/questions.dart';
 import 'package:fucking_math/utils/types.dart';
 import 'package:fucking_math/widget/forms/base_form.dart';
 import 'package:provider/provider.dart';
 import 'package:fucking_math/extensions/provider_getter.dart';
 
-class MistakesDisplay extends StatefulWidget {
-  const MistakesDisplay({super.key});
+class QuestionsDisplay extends StatefulWidget {
+  const QuestionsDisplay({super.key});
 
   @override
-  State<StatefulWidget> createState() => _MistakesDisplay();
+  State<StatefulWidget> createState() => _QuestionsDisplay();
 }
 
-class _MistakesDisplay extends GenericFormStateV2<MistakesDisplay> {
+class _QuestionsDisplay extends GenericFormStateV2<QuestionsDisplay> {
   @override
   Widget content() => Column(
     spacing: 16,
@@ -22,14 +22,14 @@ class _MistakesDisplay extends GenericFormStateV2<MistakesDisplay> {
       _buildActionButton(),
     ],
   );
-  Widget _buildList() => Consumer<MistakesProvider>(
+  Widget _buildList() => Consumer<QuestionsProvider>(
     builder: (context, value, child) {
-      final provider = context.misRead;
+      final provider = context.quesRead;
 
       return ListView(
         children: provider.filteredList
             .map(
-              (m) => _MistakeListItem(
+              (m) => _QuestionListItem(
                 m,
                 provider.selectedItem == m.id,
                 () => provider.select(m.id),
@@ -42,7 +42,7 @@ class _MistakesDisplay extends GenericFormStateV2<MistakesDisplay> {
 
   Widget _buildSearchBar() => TextFormField(
     decoration: InputDecoration(hint: const Text("搜索")),
-    onChanged: (value) => setState(() => context.misRead.search(value)),
+    onChanged: (value) => setState(() => context.quesRead.search(value)),
   );
 
   Widget _buildActionButton() => Row(
@@ -67,41 +67,41 @@ class _MistakesDisplay extends GenericFormStateV2<MistakesDisplay> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<MistakesProvider>().search("");
+      context.read<QuestionsProvider>().search("");
     });
   }
 
   void _delete() {
-    final provider = context.misRead;
+    final provider = context.quesRead;
     final selection = provider.selectedItem;
 
-    if (selection != null) provider.removeMistakes(selection);
+    if (selection != null) provider.removeQuestions(selection);
   }
 
-  void _clearSelection() => context.read<MistakesProvider>().select(null);
+  void _clearSelection() => context.read<QuestionsProvider>().select(null);
 
   @override
   List<TextEditingController> get controllers => [];
 
   @override
-  String get formTitle => "选择错题";
+  String get formTitle => "选择题目";
 }
 
-class _MistakeListItem extends StatelessWidget {
-  final Mistake mistake;
+class _QuestionListItem extends StatelessWidget {
+  final Question question;
   final void Function()? onTap;
   final bool selected;
 
-  const _MistakeListItem(this.mistake, this.selected, this.onTap);
+  const _QuestionListItem(this.question, this.selected, this.onTap);
 
   @override
   Widget build(BuildContext context) => ListTile(
     contentPadding: EdgeInsets.all(0),
-    title: Text("# ${mistake.id}"),
-    subtitle: Text(mistake.head),
+    title: Text("# ${question.id}"),
+    subtitle: Text(question.head),
     trailing: SizedBox(
       width: 100,
-      child: Text(mistake.body, overflow: TextOverflow.ellipsis, maxLines: 2),
+      child: Text(question.body, overflow: TextOverflow.ellipsis, maxLines: 2),
     ),
     selected: selected,
     onTap: onTap,

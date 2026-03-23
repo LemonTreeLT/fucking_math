@@ -6,9 +6,9 @@ import 'package:fucking_math/pages/english/editor.dart';
 import 'package:fucking_math/pages/english/home.dart';
 import 'package:fucking_math/pages/english/learning.dart';
 import 'package:fucking_math/pages/home.dart';
-import 'package:fucking_math/pages/mistakes/editor.dart';
-import 'package:fucking_math/pages/mistakes/home.dart';
-import 'package:fucking_math/pages/mistakes/practise.dart';
+import 'package:fucking_math/pages/questions/editor.dart';
+import 'package:fucking_math/pages/questions/home.dart';
+import 'package:fucking_math/pages/questions/practise.dart';
 import 'package:fucking_math/pages/knowledge/home.dart';
 import 'package:fucking_math/pages/knowledge/editor.dart';
 import 'package:fucking_math/pages/knowledge/learning.dart';
@@ -21,7 +21,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 final _englishNavigatorKey = GlobalKey<NavigatorState>();
-final _mistakesNavigatorKey = GlobalKey<NavigatorState>();
+final _questionsNavigatorKey = GlobalKey<NavigatorState>();
 final _knowledgeNavigatorKey = GlobalKey<NavigatorState>();
 
 final List<RouterConfig> _routesConfig = [
@@ -63,27 +63,27 @@ final List<RouterConfig> _routesConfig = [
       ),
     ],
   ),
-  // 错题本模块
+  // 题库模块
   RouterConfig(
-    path: '/mistakes_shell',
-    name: 'Mistakes Shell',
+    path: '/questions_shell',
+    name: 'Questions Shell',
     builder: (c, s) => Container(),
-    shellBuilder: (context, state, child) => MistakesHome(child: child),
-    navigatorKey: _mistakesNavigatorKey,
+    shellBuilder: (context, state, child) => QuestionsHome(child: child),
+    navigatorKey: _questionsNavigatorKey,
     routes: [
       RouterConfig(
-        path: '/mistakes',
-        name: '错误练习',
-        builder: (context, state) => const MistakesPractise(),
+        path: '/questions',
+        name: '题目练习',
+        builder: (context, state) => const QuestionsPractise(),
         showInNav: true,
-        navLabel: '错题本',
+        navLabel: '题库',
         navIcon: Icons.edit_note_outlined,
         navSelectedIcon: Icons.edit_note,
       ),
       RouterConfig(
-        path: '/mistakes/editor',
-        name: '错误编辑',
-        builder: (context, state) => const MistakesEditor(),
+        path: '/questions/editor',
+        name: '题目编辑',
+        builder: (context, state) => const QuestionsEditor(),
       ),
     ],
   ),

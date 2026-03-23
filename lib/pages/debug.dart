@@ -9,7 +9,7 @@ This file includes draft codes, rubbish, horrible logics and so on
 import 'package:flutter/material.dart';
 import 'package:fucking_math/ai/tools/orchestrator/knowledge_sub_handler.dart';
 import 'package:fucking_math/ai/tools/orchestrator/master_orchestrator_tool.dart';
-import 'package:fucking_math/ai/tools/orchestrator/mistakes_sub_handler.dart';
+import 'package:fucking_math/ai/tools/orchestrator/questions_sub_handler.dart';
 import 'package:fucking_math/ai/tools/orchestrator/phrase_sub_handler.dart';
 import 'package:fucking_math/ai/tools/orchestrator/tag_sub_handler.dart';
 import 'package:fucking_math/ai/tools/orchestrator/word_sub_handler.dart';
@@ -31,7 +31,7 @@ class Debug extends StatelessWidget {
               onPressed: () {
                 final a = MasterOrchestratorTool([
                   PhraseSubHandler(GetIt.I.call()),
-                  MistakesSubHandler(GetIt.I.call()),
+                  QuestionsSubHandler(GetIt.I.call()),
                   KnowledgeSubHandler(GetIt.I.call()),
                   WordSubHandler(GetIt.I.call()),
                   TagSubHandler(GetIt.I.call()),

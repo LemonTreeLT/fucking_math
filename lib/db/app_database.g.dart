@@ -5493,11 +5493,12 @@ class KnowledgeTagLinkCompanion extends UpdateCompanion<KnowledgeTagLinkData> {
   }
 }
 
-class $MistakesTable extends Mistakes with TableInfo<$MistakesTable, Mistake> {
+class $QuestionsTable extends Questions
+    with TableInfo<$QuestionsTable, Question> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $MistakesTable(this.attachedDatabase, [this._alias]);
+  $QuestionsTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -5519,7 +5520,7 @@ class $MistakesTable extends Mistakes with TableInfo<$MistakesTable, Mistake> {
         false,
         type: DriftSqlType.string,
         requiredDuringInsert: true,
-      ).withConverter<Subject>($MistakesTable.$convertersubject);
+      ).withConverter<Subject>($QuestionsTable.$convertersubject);
   static const VerificationMeta _questionHeaderMeta = const VerificationMeta(
     'questionHeader',
   );
@@ -5576,10 +5577,10 @@ class $MistakesTable extends Mistakes with TableInfo<$MistakesTable, Mistake> {
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'mistakes';
+  static const String $name = 'questions';
   @override
   VerificationContext validateIntegrity(
-    Insertable<Mistake> instance, {
+    Insertable<Question> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -5627,14 +5628,14 @@ class $MistakesTable extends Mistakes with TableInfo<$MistakesTable, Mistake> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Mistake map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Question map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Mistake(
+    return Question(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
-      subject: $MistakesTable.$convertersubject.fromSql(
+      subject: $QuestionsTable.$convertersubject.fromSql(
         attachedDatabase.typeMapping.read(
           DriftSqlType.string,
           data['${effectivePrefix}subject'],
@@ -5660,22 +5661,22 @@ class $MistakesTable extends Mistakes with TableInfo<$MistakesTable, Mistake> {
   }
 
   @override
-  $MistakesTable createAlias(String alias) {
-    return $MistakesTable(attachedDatabase, alias);
+  $QuestionsTable createAlias(String alias) {
+    return $QuestionsTable(attachedDatabase, alias);
   }
 
   static JsonTypeConverter2<Subject, String, String> $convertersubject =
       SubjectConverter;
 }
 
-class Mistake extends DataClass implements Insertable<Mistake> {
+class Question extends DataClass implements Insertable<Question> {
   final int id;
   final Subject subject;
   final String questionHeader;
   final String questionBody;
   final String? source;
   final DateTime createdAt;
-  const Mistake({
+  const Question({
     required this.id,
     required this.subject,
     required this.questionHeader,
@@ -5689,7 +5690,7 @@ class Mistake extends DataClass implements Insertable<Mistake> {
     map['id'] = Variable<int>(id);
     {
       map['subject'] = Variable<String>(
-        $MistakesTable.$convertersubject.toSql(subject),
+        $QuestionsTable.$convertersubject.toSql(subject),
       );
     }
     map['question_header'] = Variable<String>(questionHeader);
@@ -5701,8 +5702,8 @@ class Mistake extends DataClass implements Insertable<Mistake> {
     return map;
   }
 
-  MistakesCompanion toCompanion(bool nullToAbsent) {
-    return MistakesCompanion(
+  QuestionsCompanion toCompanion(bool nullToAbsent) {
+    return QuestionsCompanion(
       id: Value(id),
       subject: Value(subject),
       questionHeader: Value(questionHeader),
@@ -5714,14 +5715,14 @@ class Mistake extends DataClass implements Insertable<Mistake> {
     );
   }
 
-  factory Mistake.fromJson(
+  factory Question.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Mistake(
+    return Question(
       id: serializer.fromJson<int>(json['id']),
-      subject: $MistakesTable.$convertersubject.fromJson(
+      subject: $QuestionsTable.$convertersubject.fromJson(
         serializer.fromJson<String>(json['subject']),
       ),
       questionHeader: serializer.fromJson<String>(json['questionHeader']),
@@ -5736,7 +5737,7 @@ class Mistake extends DataClass implements Insertable<Mistake> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'subject': serializer.toJson<String>(
-        $MistakesTable.$convertersubject.toJson(subject),
+        $QuestionsTable.$convertersubject.toJson(subject),
       ),
       'questionHeader': serializer.toJson<String>(questionHeader),
       'questionBody': serializer.toJson<String>(questionBody),
@@ -5745,14 +5746,14 @@ class Mistake extends DataClass implements Insertable<Mistake> {
     };
   }
 
-  Mistake copyWith({
+  Question copyWith({
     int? id,
     Subject? subject,
     String? questionHeader,
     String? questionBody,
     Value<String?> source = const Value.absent(),
     DateTime? createdAt,
-  }) => Mistake(
+  }) => Question(
     id: id ?? this.id,
     subject: subject ?? this.subject,
     questionHeader: questionHeader ?? this.questionHeader,
@@ -5760,8 +5761,8 @@ class Mistake extends DataClass implements Insertable<Mistake> {
     source: source.present ? source.value : this.source,
     createdAt: createdAt ?? this.createdAt,
   );
-  Mistake copyWithCompanion(MistakesCompanion data) {
-    return Mistake(
+  Question copyWithCompanion(QuestionsCompanion data) {
+    return Question(
       id: data.id.present ? data.id.value : this.id,
       subject: data.subject.present ? data.subject.value : this.subject,
       questionHeader: data.questionHeader.present
@@ -5777,7 +5778,7 @@ class Mistake extends DataClass implements Insertable<Mistake> {
 
   @override
   String toString() {
-    return (StringBuffer('Mistake(')
+    return (StringBuffer('Question(')
           ..write('id: $id, ')
           ..write('subject: $subject, ')
           ..write('questionHeader: $questionHeader, ')
@@ -5794,7 +5795,7 @@ class Mistake extends DataClass implements Insertable<Mistake> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Mistake &&
+      (other is Question &&
           other.id == this.id &&
           other.subject == this.subject &&
           other.questionHeader == this.questionHeader &&
@@ -5803,14 +5804,14 @@ class Mistake extends DataClass implements Insertable<Mistake> {
           other.createdAt == this.createdAt);
 }
 
-class MistakesCompanion extends UpdateCompanion<Mistake> {
+class QuestionsCompanion extends UpdateCompanion<Question> {
   final Value<int> id;
   final Value<Subject> subject;
   final Value<String> questionHeader;
   final Value<String> questionBody;
   final Value<String?> source;
   final Value<DateTime> createdAt;
-  const MistakesCompanion({
+  const QuestionsCompanion({
     this.id = const Value.absent(),
     this.subject = const Value.absent(),
     this.questionHeader = const Value.absent(),
@@ -5818,7 +5819,7 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
     this.source = const Value.absent(),
     this.createdAt = const Value.absent(),
   });
-  MistakesCompanion.insert({
+  QuestionsCompanion.insert({
     this.id = const Value.absent(),
     required Subject subject,
     required String questionHeader,
@@ -5828,7 +5829,7 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
   }) : subject = Value(subject),
        questionHeader = Value(questionHeader),
        questionBody = Value(questionBody);
-  static Insertable<Mistake> custom({
+  static Insertable<Question> custom({
     Expression<int>? id,
     Expression<String>? subject,
     Expression<String>? questionHeader,
@@ -5846,7 +5847,7 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
     });
   }
 
-  MistakesCompanion copyWith({
+  QuestionsCompanion copyWith({
     Value<int>? id,
     Value<Subject>? subject,
     Value<String>? questionHeader,
@@ -5854,7 +5855,7 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
     Value<String?>? source,
     Value<DateTime>? createdAt,
   }) {
-    return MistakesCompanion(
+    return QuestionsCompanion(
       id: id ?? this.id,
       subject: subject ?? this.subject,
       questionHeader: questionHeader ?? this.questionHeader,
@@ -5872,7 +5873,7 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
     }
     if (subject.present) {
       map['subject'] = Variable<String>(
-        $MistakesTable.$convertersubject.toSql(subject.value),
+        $QuestionsTable.$convertersubject.toSql(subject.value),
       );
     }
     if (questionHeader.present) {
@@ -5892,7 +5893,7 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
 
   @override
   String toString() {
-    return (StringBuffer('MistakesCompanion(')
+    return (StringBuffer('QuestionsCompanion(')
           ..write('id: $id, ')
           ..write('subject: $subject, ')
           ..write('questionHeader: $questionHeader, ')
@@ -5904,24 +5905,24 @@ class MistakesCompanion extends UpdateCompanion<Mistake> {
   }
 }
 
-class $MistakesTagLinkTable extends MistakesTagLink
-    with TableInfo<$MistakesTagLinkTable, MistakesTagLinkData> {
+class $QuestionsTagLinkTable extends QuestionsTagLink
+    with TableInfo<$QuestionsTagLinkTable, QuestionsTagLinkData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $MistakesTagLinkTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _mistakeIDMeta = const VerificationMeta(
-    'mistakeID',
+  $QuestionsTagLinkTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _questionIDMeta = const VerificationMeta(
+    'questionID',
   );
   @override
-  late final GeneratedColumn<int> mistakeID = GeneratedColumn<int>(
-    'mistake_i_d',
+  late final GeneratedColumn<int> questionID = GeneratedColumn<int>(
+    'question_i_d',
     aliasedName,
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES mistakes (id)',
+      'REFERENCES questions (id)',
     ),
   );
   static const VerificationMeta _tagIDMeta = const VerificationMeta('tagID');
@@ -5937,26 +5938,29 @@ class $MistakesTagLinkTable extends MistakesTagLink
     ),
   );
   @override
-  List<GeneratedColumn> get $columns => [mistakeID, tagID];
+  List<GeneratedColumn> get $columns => [questionID, tagID];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'mistakes_tag_link';
+  static const String $name = 'questions_tag_link';
   @override
   VerificationContext validateIntegrity(
-    Insertable<MistakesTagLinkData> instance, {
+    Insertable<QuestionsTagLinkData> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('mistake_i_d')) {
+    if (data.containsKey('question_i_d')) {
       context.handle(
-        _mistakeIDMeta,
-        mistakeID.isAcceptableOrUnknown(data['mistake_i_d']!, _mistakeIDMeta),
+        _questionIDMeta,
+        questionID.isAcceptableOrUnknown(
+          data['question_i_d']!,
+          _questionIDMeta,
+        ),
       );
     } else if (isInserting) {
-      context.missing(_mistakeIDMeta);
+      context.missing(_questionIDMeta);
     }
     if (data.containsKey('tag_i_d')) {
       context.handle(
@@ -5970,14 +5974,14 @@ class $MistakesTagLinkTable extends MistakesTagLink
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {mistakeID, tagID};
+  Set<GeneratedColumn> get $primaryKey => {questionID, tagID};
   @override
-  MistakesTagLinkData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  QuestionsTagLinkData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return MistakesTagLinkData(
-      mistakeID: attachedDatabase.typeMapping.read(
+    return QuestionsTagLinkData(
+      questionID: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}mistake_i_d'],
+        data['${effectivePrefix}question_i_d'],
       )!,
       tagID: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
@@ -5987,38 +5991,38 @@ class $MistakesTagLinkTable extends MistakesTagLink
   }
 
   @override
-  $MistakesTagLinkTable createAlias(String alias) {
-    return $MistakesTagLinkTable(attachedDatabase, alias);
+  $QuestionsTagLinkTable createAlias(String alias) {
+    return $QuestionsTagLinkTable(attachedDatabase, alias);
   }
 }
 
-class MistakesTagLinkData extends DataClass
-    implements Insertable<MistakesTagLinkData> {
-  final int mistakeID;
+class QuestionsTagLinkData extends DataClass
+    implements Insertable<QuestionsTagLinkData> {
+  final int questionID;
   final int tagID;
-  const MistakesTagLinkData({required this.mistakeID, required this.tagID});
+  const QuestionsTagLinkData({required this.questionID, required this.tagID});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['mistake_i_d'] = Variable<int>(mistakeID);
+    map['question_i_d'] = Variable<int>(questionID);
     map['tag_i_d'] = Variable<int>(tagID);
     return map;
   }
 
-  MistakesTagLinkCompanion toCompanion(bool nullToAbsent) {
-    return MistakesTagLinkCompanion(
-      mistakeID: Value(mistakeID),
+  QuestionsTagLinkCompanion toCompanion(bool nullToAbsent) {
+    return QuestionsTagLinkCompanion(
+      questionID: Value(questionID),
       tagID: Value(tagID),
     );
   }
 
-  factory MistakesTagLinkData.fromJson(
+  factory QuestionsTagLinkData.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return MistakesTagLinkData(
-      mistakeID: serializer.fromJson<int>(json['mistakeID']),
+    return QuestionsTagLinkData(
+      questionID: serializer.fromJson<int>(json['questionID']),
       tagID: serializer.fromJson<int>(json['tagID']),
     );
   }
@@ -6026,76 +6030,78 @@ class MistakesTagLinkData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'mistakeID': serializer.toJson<int>(mistakeID),
+      'questionID': serializer.toJson<int>(questionID),
       'tagID': serializer.toJson<int>(tagID),
     };
   }
 
-  MistakesTagLinkData copyWith({int? mistakeID, int? tagID}) =>
-      MistakesTagLinkData(
-        mistakeID: mistakeID ?? this.mistakeID,
+  QuestionsTagLinkData copyWith({int? questionID, int? tagID}) =>
+      QuestionsTagLinkData(
+        questionID: questionID ?? this.questionID,
         tagID: tagID ?? this.tagID,
       );
-  MistakesTagLinkData copyWithCompanion(MistakesTagLinkCompanion data) {
-    return MistakesTagLinkData(
-      mistakeID: data.mistakeID.present ? data.mistakeID.value : this.mistakeID,
+  QuestionsTagLinkData copyWithCompanion(QuestionsTagLinkCompanion data) {
+    return QuestionsTagLinkData(
+      questionID: data.questionID.present
+          ? data.questionID.value
+          : this.questionID,
       tagID: data.tagID.present ? data.tagID.value : this.tagID,
     );
   }
 
   @override
   String toString() {
-    return (StringBuffer('MistakesTagLinkData(')
-          ..write('mistakeID: $mistakeID, ')
+    return (StringBuffer('QuestionsTagLinkData(')
+          ..write('questionID: $questionID, ')
           ..write('tagID: $tagID')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(mistakeID, tagID);
+  int get hashCode => Object.hash(questionID, tagID);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is MistakesTagLinkData &&
-          other.mistakeID == this.mistakeID &&
+      (other is QuestionsTagLinkData &&
+          other.questionID == this.questionID &&
           other.tagID == this.tagID);
 }
 
-class MistakesTagLinkCompanion extends UpdateCompanion<MistakesTagLinkData> {
-  final Value<int> mistakeID;
+class QuestionsTagLinkCompanion extends UpdateCompanion<QuestionsTagLinkData> {
+  final Value<int> questionID;
   final Value<int> tagID;
   final Value<int> rowid;
-  const MistakesTagLinkCompanion({
-    this.mistakeID = const Value.absent(),
+  const QuestionsTagLinkCompanion({
+    this.questionID = const Value.absent(),
     this.tagID = const Value.absent(),
     this.rowid = const Value.absent(),
   });
-  MistakesTagLinkCompanion.insert({
-    required int mistakeID,
+  QuestionsTagLinkCompanion.insert({
+    required int questionID,
     required int tagID,
     this.rowid = const Value.absent(),
-  }) : mistakeID = Value(mistakeID),
+  }) : questionID = Value(questionID),
        tagID = Value(tagID);
-  static Insertable<MistakesTagLinkData> custom({
-    Expression<int>? mistakeID,
+  static Insertable<QuestionsTagLinkData> custom({
+    Expression<int>? questionID,
     Expression<int>? tagID,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
-      if (mistakeID != null) 'mistake_i_d': mistakeID,
+      if (questionID != null) 'question_i_d': questionID,
       if (tagID != null) 'tag_i_d': tagID,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
-  MistakesTagLinkCompanion copyWith({
-    Value<int>? mistakeID,
+  QuestionsTagLinkCompanion copyWith({
+    Value<int>? questionID,
     Value<int>? tagID,
     Value<int>? rowid,
   }) {
-    return MistakesTagLinkCompanion(
-      mistakeID: mistakeID ?? this.mistakeID,
+    return QuestionsTagLinkCompanion(
+      questionID: questionID ?? this.questionID,
       tagID: tagID ?? this.tagID,
       rowid: rowid ?? this.rowid,
     );
@@ -6104,8 +6110,8 @@ class MistakesTagLinkCompanion extends UpdateCompanion<MistakesTagLinkData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (mistakeID.present) {
-      map['mistake_i_d'] = Variable<int>(mistakeID.value);
+    if (questionID.present) {
+      map['question_i_d'] = Variable<int>(questionID.value);
     }
     if (tagID.present) {
       map['tag_i_d'] = Variable<int>(tagID.value);
@@ -6118,8 +6124,8 @@ class MistakesTagLinkCompanion extends UpdateCompanion<MistakesTagLinkData> {
 
   @override
   String toString() {
-    return (StringBuffer('MistakesTagLinkCompanion(')
-          ..write('mistakeID: $mistakeID, ')
+    return (StringBuffer('QuestionsTagLinkCompanion(')
+          ..write('questionID: $questionID, ')
           ..write('tagID: $tagID, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -6127,12 +6133,12 @@ class MistakesTagLinkCompanion extends UpdateCompanion<MistakesTagLinkData> {
   }
 }
 
-class $MistakeLogsTable extends MistakeLogs
-    with TableInfo<$MistakeLogsTable, MistakeLog> {
+class $QuestionLogsTable extends QuestionLogs
+    with TableInfo<$QuestionLogsTable, QuestionLog> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $MistakeLogsTable(this.attachedDatabase, [this._alias]);
+  $QuestionLogsTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -6146,29 +6152,29 @@ class $MistakeLogsTable extends MistakeLogs
       'PRIMARY KEY AUTOINCREMENT',
     ),
   );
-  static const VerificationMeta _mistakeIDMeta = const VerificationMeta(
-    'mistakeID',
+  static const VerificationMeta _questionIDMeta = const VerificationMeta(
+    'questionID',
   );
   @override
-  late final GeneratedColumn<int> mistakeID = GeneratedColumn<int>(
-    'mistake_i_d',
+  late final GeneratedColumn<int> questionID = GeneratedColumn<int>(
+    'question_i_d',
     aliasedName,
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES mistakes (id)',
+      'REFERENCES questions (id)',
     ),
   );
   @override
-  late final GeneratedColumnWithTypeConverter<MistakeLogType, String> type =
+  late final GeneratedColumnWithTypeConverter<QuestionLogType, String> type =
       GeneratedColumn<String>(
         'type',
         aliasedName,
         false,
         type: DriftSqlType.string,
         requiredDuringInsert: true,
-      ).withConverter<MistakeLogType>($MistakeLogsTable.$convertertype);
+      ).withConverter<QuestionLogType>($QuestionLogsTable.$convertertype);
   static const VerificationMeta _timestampMeta = const VerificationMeta(
     'timestamp',
   );
@@ -6191,15 +6197,21 @@ class $MistakeLogsTable extends MistakeLogs
     requiredDuringInsert: false,
   );
   @override
-  List<GeneratedColumn> get $columns => [id, mistakeID, type, timestamp, notes];
+  List<GeneratedColumn> get $columns => [
+    id,
+    questionID,
+    type,
+    timestamp,
+    notes,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'mistake_logs';
+  static const String $name = 'question_logs';
   @override
   VerificationContext validateIntegrity(
-    Insertable<MistakeLog> instance, {
+    Insertable<QuestionLog> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -6207,13 +6219,16 @@ class $MistakeLogsTable extends MistakeLogs
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('mistake_i_d')) {
+    if (data.containsKey('question_i_d')) {
       context.handle(
-        _mistakeIDMeta,
-        mistakeID.isAcceptableOrUnknown(data['mistake_i_d']!, _mistakeIDMeta),
+        _questionIDMeta,
+        questionID.isAcceptableOrUnknown(
+          data['question_i_d']!,
+          _questionIDMeta,
+        ),
       );
     } else if (isInserting) {
-      context.missing(_mistakeIDMeta);
+      context.missing(_questionIDMeta);
     }
     if (data.containsKey('timestamp')) {
       context.handle(
@@ -6233,18 +6248,18 @@ class $MistakeLogsTable extends MistakeLogs
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  MistakeLog map(Map<String, dynamic> data, {String? tablePrefix}) {
+  QuestionLog map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return MistakeLog(
+    return QuestionLog(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
-      mistakeID: attachedDatabase.typeMapping.read(
+      questionID: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}mistake_i_d'],
+        data['${effectivePrefix}question_i_d'],
       )!,
-      type: $MistakeLogsTable.$convertertype.fromSql(
+      type: $QuestionLogsTable.$convertertype.fromSql(
         attachedDatabase.typeMapping.read(
           DriftSqlType.string,
           data['${effectivePrefix}type'],
@@ -6262,23 +6277,23 @@ class $MistakeLogsTable extends MistakeLogs
   }
 
   @override
-  $MistakeLogsTable createAlias(String alias) {
-    return $MistakeLogsTable(attachedDatabase, alias);
+  $QuestionLogsTable createAlias(String alias) {
+    return $QuestionLogsTable(attachedDatabase, alias);
   }
 
-  static JsonTypeConverter2<MistakeLogType, String, String> $convertertype =
-      const EnumNameConverter(MistakeLogType.values);
+  static JsonTypeConverter2<QuestionLogType, String, String> $convertertype =
+      const EnumNameConverter(QuestionLogType.values);
 }
 
-class MistakeLog extends DataClass implements Insertable<MistakeLog> {
+class QuestionLog extends DataClass implements Insertable<QuestionLog> {
   final int id;
-  final int mistakeID;
-  final MistakeLogType type;
+  final int questionID;
+  final QuestionLogType type;
   final DateTime timestamp;
   final String? notes;
-  const MistakeLog({
+  const QuestionLog({
     required this.id,
-    required this.mistakeID,
+    required this.questionID,
     required this.type,
     required this.timestamp,
     this.notes,
@@ -6287,10 +6302,10 @@ class MistakeLog extends DataClass implements Insertable<MistakeLog> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['mistake_i_d'] = Variable<int>(mistakeID);
+    map['question_i_d'] = Variable<int>(questionID);
     {
       map['type'] = Variable<String>(
-        $MistakeLogsTable.$convertertype.toSql(type),
+        $QuestionLogsTable.$convertertype.toSql(type),
       );
     }
     map['timestamp'] = Variable<DateTime>(timestamp);
@@ -6300,10 +6315,10 @@ class MistakeLog extends DataClass implements Insertable<MistakeLog> {
     return map;
   }
 
-  MistakeLogsCompanion toCompanion(bool nullToAbsent) {
-    return MistakeLogsCompanion(
+  QuestionLogsCompanion toCompanion(bool nullToAbsent) {
+    return QuestionLogsCompanion(
       id: Value(id),
-      mistakeID: Value(mistakeID),
+      questionID: Value(questionID),
       type: Value(type),
       timestamp: Value(timestamp),
       notes: notes == null && nullToAbsent
@@ -6312,15 +6327,15 @@ class MistakeLog extends DataClass implements Insertable<MistakeLog> {
     );
   }
 
-  factory MistakeLog.fromJson(
+  factory QuestionLog.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return MistakeLog(
+    return QuestionLog(
       id: serializer.fromJson<int>(json['id']),
-      mistakeID: serializer.fromJson<int>(json['mistakeID']),
-      type: $MistakeLogsTable.$convertertype.fromJson(
+      questionID: serializer.fromJson<int>(json['questionID']),
+      type: $QuestionLogsTable.$convertertype.fromJson(
         serializer.fromJson<String>(json['type']),
       ),
       timestamp: serializer.fromJson<DateTime>(json['timestamp']),
@@ -6332,32 +6347,34 @@ class MistakeLog extends DataClass implements Insertable<MistakeLog> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'mistakeID': serializer.toJson<int>(mistakeID),
+      'questionID': serializer.toJson<int>(questionID),
       'type': serializer.toJson<String>(
-        $MistakeLogsTable.$convertertype.toJson(type),
+        $QuestionLogsTable.$convertertype.toJson(type),
       ),
       'timestamp': serializer.toJson<DateTime>(timestamp),
       'notes': serializer.toJson<String?>(notes),
     };
   }
 
-  MistakeLog copyWith({
+  QuestionLog copyWith({
     int? id,
-    int? mistakeID,
-    MistakeLogType? type,
+    int? questionID,
+    QuestionLogType? type,
     DateTime? timestamp,
     Value<String?> notes = const Value.absent(),
-  }) => MistakeLog(
+  }) => QuestionLog(
     id: id ?? this.id,
-    mistakeID: mistakeID ?? this.mistakeID,
+    questionID: questionID ?? this.questionID,
     type: type ?? this.type,
     timestamp: timestamp ?? this.timestamp,
     notes: notes.present ? notes.value : this.notes,
   );
-  MistakeLog copyWithCompanion(MistakeLogsCompanion data) {
-    return MistakeLog(
+  QuestionLog copyWithCompanion(QuestionLogsCompanion data) {
+    return QuestionLog(
       id: data.id.present ? data.id.value : this.id,
-      mistakeID: data.mistakeID.present ? data.mistakeID.value : this.mistakeID,
+      questionID: data.questionID.present
+          ? data.questionID.value
+          : this.questionID,
       type: data.type.present ? data.type.value : this.type,
       timestamp: data.timestamp.present ? data.timestamp.value : this.timestamp,
       notes: data.notes.present ? data.notes.value : this.notes,
@@ -6366,9 +6383,9 @@ class MistakeLog extends DataClass implements Insertable<MistakeLog> {
 
   @override
   String toString() {
-    return (StringBuffer('MistakeLog(')
+    return (StringBuffer('QuestionLog(')
           ..write('id: $id, ')
-          ..write('mistakeID: $mistakeID, ')
+          ..write('questionID: $questionID, ')
           ..write('type: $type, ')
           ..write('timestamp: $timestamp, ')
           ..write('notes: $notes')
@@ -6377,65 +6394,65 @@ class MistakeLog extends DataClass implements Insertable<MistakeLog> {
   }
 
   @override
-  int get hashCode => Object.hash(id, mistakeID, type, timestamp, notes);
+  int get hashCode => Object.hash(id, questionID, type, timestamp, notes);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is MistakeLog &&
+      (other is QuestionLog &&
           other.id == this.id &&
-          other.mistakeID == this.mistakeID &&
+          other.questionID == this.questionID &&
           other.type == this.type &&
           other.timestamp == this.timestamp &&
           other.notes == this.notes);
 }
 
-class MistakeLogsCompanion extends UpdateCompanion<MistakeLog> {
+class QuestionLogsCompanion extends UpdateCompanion<QuestionLog> {
   final Value<int> id;
-  final Value<int> mistakeID;
-  final Value<MistakeLogType> type;
+  final Value<int> questionID;
+  final Value<QuestionLogType> type;
   final Value<DateTime> timestamp;
   final Value<String?> notes;
-  const MistakeLogsCompanion({
+  const QuestionLogsCompanion({
     this.id = const Value.absent(),
-    this.mistakeID = const Value.absent(),
+    this.questionID = const Value.absent(),
     this.type = const Value.absent(),
     this.timestamp = const Value.absent(),
     this.notes = const Value.absent(),
   });
-  MistakeLogsCompanion.insert({
+  QuestionLogsCompanion.insert({
     this.id = const Value.absent(),
-    required int mistakeID,
-    required MistakeLogType type,
+    required int questionID,
+    required QuestionLogType type,
     this.timestamp = const Value.absent(),
     this.notes = const Value.absent(),
-  }) : mistakeID = Value(mistakeID),
+  }) : questionID = Value(questionID),
        type = Value(type);
-  static Insertable<MistakeLog> custom({
+  static Insertable<QuestionLog> custom({
     Expression<int>? id,
-    Expression<int>? mistakeID,
+    Expression<int>? questionID,
     Expression<String>? type,
     Expression<DateTime>? timestamp,
     Expression<String>? notes,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (mistakeID != null) 'mistake_i_d': mistakeID,
+      if (questionID != null) 'question_i_d': questionID,
       if (type != null) 'type': type,
       if (timestamp != null) 'timestamp': timestamp,
       if (notes != null) 'notes': notes,
     });
   }
 
-  MistakeLogsCompanion copyWith({
+  QuestionLogsCompanion copyWith({
     Value<int>? id,
-    Value<int>? mistakeID,
-    Value<MistakeLogType>? type,
+    Value<int>? questionID,
+    Value<QuestionLogType>? type,
     Value<DateTime>? timestamp,
     Value<String?>? notes,
   }) {
-    return MistakeLogsCompanion(
+    return QuestionLogsCompanion(
       id: id ?? this.id,
-      mistakeID: mistakeID ?? this.mistakeID,
+      questionID: questionID ?? this.questionID,
       type: type ?? this.type,
       timestamp: timestamp ?? this.timestamp,
       notes: notes ?? this.notes,
@@ -6448,12 +6465,12 @@ class MistakeLogsCompanion extends UpdateCompanion<MistakeLog> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (mistakeID.present) {
-      map['mistake_i_d'] = Variable<int>(mistakeID.value);
+    if (questionID.present) {
+      map['question_i_d'] = Variable<int>(questionID.value);
     }
     if (type.present) {
       map['type'] = Variable<String>(
-        $MistakeLogsTable.$convertertype.toSql(type.value),
+        $QuestionLogsTable.$convertertype.toSql(type.value),
       );
     }
     if (timestamp.present) {
@@ -6467,9 +6484,9 @@ class MistakeLogsCompanion extends UpdateCompanion<MistakeLog> {
 
   @override
   String toString() {
-    return (StringBuffer('MistakeLogsCompanion(')
+    return (StringBuffer('QuestionLogsCompanion(')
           ..write('id: $id, ')
-          ..write('mistakeID: $mistakeID, ')
+          ..write('questionID: $questionID, ')
           ..write('type: $type, ')
           ..write('timestamp: $timestamp, ')
           ..write('notes: $notes')
@@ -6478,24 +6495,24 @@ class MistakeLogsCompanion extends UpdateCompanion<MistakeLog> {
   }
 }
 
-class $MistakePicsLinkTable extends MistakePicsLink
-    with TableInfo<$MistakePicsLinkTable, MistakePicsLinkData> {
+class $QuestionPicsLinkTable extends QuestionPicsLink
+    with TableInfo<$QuestionPicsLinkTable, QuestionPicsLinkData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $MistakePicsLinkTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _mistakeIdMeta = const VerificationMeta(
-    'mistakeId',
+  $QuestionPicsLinkTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _questionIdMeta = const VerificationMeta(
+    'questionId',
   );
   @override
-  late final GeneratedColumn<int> mistakeId = GeneratedColumn<int>(
-    'mistake_id',
+  late final GeneratedColumn<int> questionId = GeneratedColumn<int>(
+    'question_id',
     aliasedName,
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES mistakes (id)',
+      'REFERENCES questions (id)',
     ),
   );
   static const VerificationMeta _picIdMeta = const VerificationMeta('picId');
@@ -6511,26 +6528,26 @@ class $MistakePicsLinkTable extends MistakePicsLink
     ),
   );
   @override
-  List<GeneratedColumn> get $columns => [mistakeId, picId];
+  List<GeneratedColumn> get $columns => [questionId, picId];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'mistake_pics_link';
+  static const String $name = 'question_pics_link';
   @override
   VerificationContext validateIntegrity(
-    Insertable<MistakePicsLinkData> instance, {
+    Insertable<QuestionPicsLinkData> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('mistake_id')) {
+    if (data.containsKey('question_id')) {
       context.handle(
-        _mistakeIdMeta,
-        mistakeId.isAcceptableOrUnknown(data['mistake_id']!, _mistakeIdMeta),
+        _questionIdMeta,
+        questionId.isAcceptableOrUnknown(data['question_id']!, _questionIdMeta),
       );
     } else if (isInserting) {
-      context.missing(_mistakeIdMeta);
+      context.missing(_questionIdMeta);
     }
     if (data.containsKey('pic_id')) {
       context.handle(
@@ -6544,14 +6561,14 @@ class $MistakePicsLinkTable extends MistakePicsLink
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {mistakeId, picId};
+  Set<GeneratedColumn> get $primaryKey => {questionId, picId};
   @override
-  MistakePicsLinkData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  QuestionPicsLinkData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return MistakePicsLinkData(
-      mistakeId: attachedDatabase.typeMapping.read(
+    return QuestionPicsLinkData(
+      questionId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}mistake_id'],
+        data['${effectivePrefix}question_id'],
       )!,
       picId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
@@ -6561,38 +6578,38 @@ class $MistakePicsLinkTable extends MistakePicsLink
   }
 
   @override
-  $MistakePicsLinkTable createAlias(String alias) {
-    return $MistakePicsLinkTable(attachedDatabase, alias);
+  $QuestionPicsLinkTable createAlias(String alias) {
+    return $QuestionPicsLinkTable(attachedDatabase, alias);
   }
 }
 
-class MistakePicsLinkData extends DataClass
-    implements Insertable<MistakePicsLinkData> {
-  final int mistakeId;
+class QuestionPicsLinkData extends DataClass
+    implements Insertable<QuestionPicsLinkData> {
+  final int questionId;
   final int picId;
-  const MistakePicsLinkData({required this.mistakeId, required this.picId});
+  const QuestionPicsLinkData({required this.questionId, required this.picId});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['mistake_id'] = Variable<int>(mistakeId);
+    map['question_id'] = Variable<int>(questionId);
     map['pic_id'] = Variable<int>(picId);
     return map;
   }
 
-  MistakePicsLinkCompanion toCompanion(bool nullToAbsent) {
-    return MistakePicsLinkCompanion(
-      mistakeId: Value(mistakeId),
+  QuestionPicsLinkCompanion toCompanion(bool nullToAbsent) {
+    return QuestionPicsLinkCompanion(
+      questionId: Value(questionId),
       picId: Value(picId),
     );
   }
 
-  factory MistakePicsLinkData.fromJson(
+  factory QuestionPicsLinkData.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return MistakePicsLinkData(
-      mistakeId: serializer.fromJson<int>(json['mistakeId']),
+    return QuestionPicsLinkData(
+      questionId: serializer.fromJson<int>(json['questionId']),
       picId: serializer.fromJson<int>(json['picId']),
     );
   }
@@ -6600,76 +6617,78 @@ class MistakePicsLinkData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'mistakeId': serializer.toJson<int>(mistakeId),
+      'questionId': serializer.toJson<int>(questionId),
       'picId': serializer.toJson<int>(picId),
     };
   }
 
-  MistakePicsLinkData copyWith({int? mistakeId, int? picId}) =>
-      MistakePicsLinkData(
-        mistakeId: mistakeId ?? this.mistakeId,
+  QuestionPicsLinkData copyWith({int? questionId, int? picId}) =>
+      QuestionPicsLinkData(
+        questionId: questionId ?? this.questionId,
         picId: picId ?? this.picId,
       );
-  MistakePicsLinkData copyWithCompanion(MistakePicsLinkCompanion data) {
-    return MistakePicsLinkData(
-      mistakeId: data.mistakeId.present ? data.mistakeId.value : this.mistakeId,
+  QuestionPicsLinkData copyWithCompanion(QuestionPicsLinkCompanion data) {
+    return QuestionPicsLinkData(
+      questionId: data.questionId.present
+          ? data.questionId.value
+          : this.questionId,
       picId: data.picId.present ? data.picId.value : this.picId,
     );
   }
 
   @override
   String toString() {
-    return (StringBuffer('MistakePicsLinkData(')
-          ..write('mistakeId: $mistakeId, ')
+    return (StringBuffer('QuestionPicsLinkData(')
+          ..write('questionId: $questionId, ')
           ..write('picId: $picId')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(mistakeId, picId);
+  int get hashCode => Object.hash(questionId, picId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is MistakePicsLinkData &&
-          other.mistakeId == this.mistakeId &&
+      (other is QuestionPicsLinkData &&
+          other.questionId == this.questionId &&
           other.picId == this.picId);
 }
 
-class MistakePicsLinkCompanion extends UpdateCompanion<MistakePicsLinkData> {
-  final Value<int> mistakeId;
+class QuestionPicsLinkCompanion extends UpdateCompanion<QuestionPicsLinkData> {
+  final Value<int> questionId;
   final Value<int> picId;
   final Value<int> rowid;
-  const MistakePicsLinkCompanion({
-    this.mistakeId = const Value.absent(),
+  const QuestionPicsLinkCompanion({
+    this.questionId = const Value.absent(),
     this.picId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
-  MistakePicsLinkCompanion.insert({
-    required int mistakeId,
+  QuestionPicsLinkCompanion.insert({
+    required int questionId,
     required int picId,
     this.rowid = const Value.absent(),
-  }) : mistakeId = Value(mistakeId),
+  }) : questionId = Value(questionId),
        picId = Value(picId);
-  static Insertable<MistakePicsLinkData> custom({
-    Expression<int>? mistakeId,
+  static Insertable<QuestionPicsLinkData> custom({
+    Expression<int>? questionId,
     Expression<int>? picId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
-      if (mistakeId != null) 'mistake_id': mistakeId,
+      if (questionId != null) 'question_id': questionId,
       if (picId != null) 'pic_id': picId,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
-  MistakePicsLinkCompanion copyWith({
-    Value<int>? mistakeId,
+  QuestionPicsLinkCompanion copyWith({
+    Value<int>? questionId,
     Value<int>? picId,
     Value<int>? rowid,
   }) {
-    return MistakePicsLinkCompanion(
-      mistakeId: mistakeId ?? this.mistakeId,
+    return QuestionPicsLinkCompanion(
+      questionId: questionId ?? this.questionId,
       picId: picId ?? this.picId,
       rowid: rowid ?? this.rowid,
     );
@@ -6678,8 +6697,8 @@ class MistakePicsLinkCompanion extends UpdateCompanion<MistakePicsLinkData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (mistakeId.present) {
-      map['mistake_id'] = Variable<int>(mistakeId.value);
+    if (questionId.present) {
+      map['question_id'] = Variable<int>(questionId.value);
     }
     if (picId.present) {
       map['pic_id'] = Variable<int>(picId.value);
@@ -6692,8 +6711,8 @@ class MistakePicsLinkCompanion extends UpdateCompanion<MistakePicsLinkData> {
 
   @override
   String toString() {
-    return (StringBuffer('MistakePicsLinkCompanion(')
-          ..write('mistakeId: $mistakeId, ')
+    return (StringBuffer('QuestionPicsLinkCompanion(')
+          ..write('questionId: $questionId, ')
           ..write('picId: $picId, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -6719,18 +6738,18 @@ class $AnswersTable extends Answers with TableInfo<$AnswersTable, Answer> {
       'PRIMARY KEY AUTOINCREMENT',
     ),
   );
-  static const VerificationMeta _mistakeIdMeta = const VerificationMeta(
-    'mistakeId',
+  static const VerificationMeta _questionIdMeta = const VerificationMeta(
+    'questionId',
   );
   @override
-  late final GeneratedColumn<int> mistakeId = GeneratedColumn<int>(
-    'mistake_id',
+  late final GeneratedColumn<int> questionId = GeneratedColumn<int>(
+    'question_id',
     aliasedName,
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES mistakes (id)',
+      'REFERENCES questions (id)',
     ),
   );
   static const VerificationMeta _noteMeta = const VerificationMeta('note');
@@ -6772,7 +6791,7 @@ class $AnswersTable extends Answers with TableInfo<$AnswersTable, Answer> {
   @override
   List<GeneratedColumn> get $columns => [
     id,
-    mistakeId,
+    questionId,
     note,
     head,
     source,
@@ -6793,13 +6812,13 @@ class $AnswersTable extends Answers with TableInfo<$AnswersTable, Answer> {
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('mistake_id')) {
+    if (data.containsKey('question_id')) {
       context.handle(
-        _mistakeIdMeta,
-        mistakeId.isAcceptableOrUnknown(data['mistake_id']!, _mistakeIdMeta),
+        _questionIdMeta,
+        questionId.isAcceptableOrUnknown(data['question_id']!, _questionIdMeta),
       );
     } else if (isInserting) {
-      context.missing(_mistakeIdMeta);
+      context.missing(_questionIdMeta);
     }
     if (data.containsKey('note')) {
       context.handle(
@@ -6840,9 +6859,9 @@ class $AnswersTable extends Answers with TableInfo<$AnswersTable, Answer> {
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
-      mistakeId: attachedDatabase.typeMapping.read(
+      questionId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}mistake_id'],
+        data['${effectivePrefix}question_id'],
       )!,
       note: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -6871,14 +6890,14 @@ class $AnswersTable extends Answers with TableInfo<$AnswersTable, Answer> {
 
 class Answer extends DataClass implements Insertable<Answer> {
   final int id;
-  final int mistakeId;
+  final int questionId;
   final String? note;
   final String? head;
   final String? source;
   final String answer;
   const Answer({
     required this.id,
-    required this.mistakeId,
+    required this.questionId,
     this.note,
     this.head,
     this.source,
@@ -6888,7 +6907,7 @@ class Answer extends DataClass implements Insertable<Answer> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['mistake_id'] = Variable<int>(mistakeId);
+    map['question_id'] = Variable<int>(questionId);
     if (!nullToAbsent || note != null) {
       map['note'] = Variable<String>(note);
     }
@@ -6905,7 +6924,7 @@ class Answer extends DataClass implements Insertable<Answer> {
   AnswersCompanion toCompanion(bool nullToAbsent) {
     return AnswersCompanion(
       id: Value(id),
-      mistakeId: Value(mistakeId),
+      questionId: Value(questionId),
       note: note == null && nullToAbsent ? const Value.absent() : Value(note),
       head: head == null && nullToAbsent ? const Value.absent() : Value(head),
       source: source == null && nullToAbsent
@@ -6922,7 +6941,7 @@ class Answer extends DataClass implements Insertable<Answer> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Answer(
       id: serializer.fromJson<int>(json['id']),
-      mistakeId: serializer.fromJson<int>(json['mistakeId']),
+      questionId: serializer.fromJson<int>(json['questionId']),
       note: serializer.fromJson<String?>(json['note']),
       head: serializer.fromJson<String?>(json['head']),
       source: serializer.fromJson<String?>(json['source']),
@@ -6934,7 +6953,7 @@ class Answer extends DataClass implements Insertable<Answer> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'mistakeId': serializer.toJson<int>(mistakeId),
+      'questionId': serializer.toJson<int>(questionId),
       'note': serializer.toJson<String?>(note),
       'head': serializer.toJson<String?>(head),
       'source': serializer.toJson<String?>(source),
@@ -6944,14 +6963,14 @@ class Answer extends DataClass implements Insertable<Answer> {
 
   Answer copyWith({
     int? id,
-    int? mistakeId,
+    int? questionId,
     Value<String?> note = const Value.absent(),
     Value<String?> head = const Value.absent(),
     Value<String?> source = const Value.absent(),
     String? answer,
   }) => Answer(
     id: id ?? this.id,
-    mistakeId: mistakeId ?? this.mistakeId,
+    questionId: questionId ?? this.questionId,
     note: note.present ? note.value : this.note,
     head: head.present ? head.value : this.head,
     source: source.present ? source.value : this.source,
@@ -6960,7 +6979,9 @@ class Answer extends DataClass implements Insertable<Answer> {
   Answer copyWithCompanion(AnswersCompanion data) {
     return Answer(
       id: data.id.present ? data.id.value : this.id,
-      mistakeId: data.mistakeId.present ? data.mistakeId.value : this.mistakeId,
+      questionId: data.questionId.present
+          ? data.questionId.value
+          : this.questionId,
       note: data.note.present ? data.note.value : this.note,
       head: data.head.present ? data.head.value : this.head,
       source: data.source.present ? data.source.value : this.source,
@@ -6972,7 +6993,7 @@ class Answer extends DataClass implements Insertable<Answer> {
   String toString() {
     return (StringBuffer('Answer(')
           ..write('id: $id, ')
-          ..write('mistakeId: $mistakeId, ')
+          ..write('questionId: $questionId, ')
           ..write('note: $note, ')
           ..write('head: $head, ')
           ..write('source: $source, ')
@@ -6982,13 +7003,13 @@ class Answer extends DataClass implements Insertable<Answer> {
   }
 
   @override
-  int get hashCode => Object.hash(id, mistakeId, note, head, source, answer);
+  int get hashCode => Object.hash(id, questionId, note, head, source, answer);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Answer &&
           other.id == this.id &&
-          other.mistakeId == this.mistakeId &&
+          other.questionId == this.questionId &&
           other.note == this.note &&
           other.head == this.head &&
           other.source == this.source &&
@@ -6997,14 +7018,14 @@ class Answer extends DataClass implements Insertable<Answer> {
 
 class AnswersCompanion extends UpdateCompanion<Answer> {
   final Value<int> id;
-  final Value<int> mistakeId;
+  final Value<int> questionId;
   final Value<String?> note;
   final Value<String?> head;
   final Value<String?> source;
   final Value<String> answer;
   const AnswersCompanion({
     this.id = const Value.absent(),
-    this.mistakeId = const Value.absent(),
+    this.questionId = const Value.absent(),
     this.note = const Value.absent(),
     this.head = const Value.absent(),
     this.source = const Value.absent(),
@@ -7012,16 +7033,16 @@ class AnswersCompanion extends UpdateCompanion<Answer> {
   });
   AnswersCompanion.insert({
     this.id = const Value.absent(),
-    required int mistakeId,
+    required int questionId,
     this.note = const Value.absent(),
     this.head = const Value.absent(),
     this.source = const Value.absent(),
     required String answer,
-  }) : mistakeId = Value(mistakeId),
+  }) : questionId = Value(questionId),
        answer = Value(answer);
   static Insertable<Answer> custom({
     Expression<int>? id,
-    Expression<int>? mistakeId,
+    Expression<int>? questionId,
     Expression<String>? note,
     Expression<String>? head,
     Expression<String>? source,
@@ -7029,7 +7050,7 @@ class AnswersCompanion extends UpdateCompanion<Answer> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (mistakeId != null) 'mistake_id': mistakeId,
+      if (questionId != null) 'question_id': questionId,
       if (note != null) 'note': note,
       if (head != null) 'head': head,
       if (source != null) 'source': source,
@@ -7039,7 +7060,7 @@ class AnswersCompanion extends UpdateCompanion<Answer> {
 
   AnswersCompanion copyWith({
     Value<int>? id,
-    Value<int>? mistakeId,
+    Value<int>? questionId,
     Value<String?>? note,
     Value<String?>? head,
     Value<String?>? source,
@@ -7047,7 +7068,7 @@ class AnswersCompanion extends UpdateCompanion<Answer> {
   }) {
     return AnswersCompanion(
       id: id ?? this.id,
-      mistakeId: mistakeId ?? this.mistakeId,
+      questionId: questionId ?? this.questionId,
       note: note ?? this.note,
       head: head ?? this.head,
       source: source ?? this.source,
@@ -7061,8 +7082,8 @@ class AnswersCompanion extends UpdateCompanion<Answer> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (mistakeId.present) {
-      map['mistake_id'] = Variable<int>(mistakeId.value);
+    if (questionId.present) {
+      map['question_id'] = Variable<int>(questionId.value);
     }
     if (note.present) {
       map['note'] = Variable<String>(note.value);
@@ -7083,7 +7104,7 @@ class AnswersCompanion extends UpdateCompanion<Answer> {
   String toString() {
     return (StringBuffer('AnswersCompanion(')
           ..write('id: $id, ')
-          ..write('mistakeId: $mistakeId, ')
+          ..write('questionId: $questionId, ')
           ..write('note: $note, ')
           ..write('head: $head, ')
           ..write('source: $source, ')
@@ -7539,12 +7560,12 @@ class AnswerPicsLinkCompanion extends UpdateCompanion<AnswerPicsLinkData> {
   }
 }
 
-class $MistakeAnalysisTable extends MistakeAnalysis
-    with TableInfo<$MistakeAnalysisTable, MistakeAnalysi> {
+class $QuestionAnalysisTable extends QuestionAnalysis
+    with TableInfo<$QuestionAnalysisTable, QuestionAnalysi> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $MistakeAnalysisTable(this.attachedDatabase, [this._alias]);
+  $QuestionAnalysisTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -7554,7 +7575,7 @@ class $MistakeAnalysisTable extends MistakeAnalysis
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'UNIQUE REFERENCES mistakes (id)',
+      'UNIQUE REFERENCES questions (id)',
     ),
   );
   static const VerificationMeta _bestAnswerMeta = const VerificationMeta(
@@ -7597,10 +7618,10 @@ class $MistakeAnalysisTable extends MistakeAnalysis
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'mistake_analysis';
+  static const String $name = 'question_analysis';
   @override
   VerificationContext validateIntegrity(
-    Insertable<MistakeAnalysi> instance, {
+    Insertable<QuestionAnalysi> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -7636,9 +7657,9 @@ class $MistakeAnalysisTable extends MistakeAnalysis
   @override
   Set<GeneratedColumn> get $primaryKey => const {};
   @override
-  MistakeAnalysi map(Map<String, dynamic> data, {String? tablePrefix}) {
+  QuestionAnalysi map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return MistakeAnalysi(
+    return QuestionAnalysi(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -7659,12 +7680,12 @@ class $MistakeAnalysisTable extends MistakeAnalysis
   }
 
   @override
-  $MistakeAnalysisTable createAlias(String alias) {
-    return $MistakeAnalysisTable(attachedDatabase, alias);
+  $QuestionAnalysisTable createAlias(String alias) {
+    return $QuestionAnalysisTable(attachedDatabase, alias);
   }
 }
 
-class MistakeAnalysi extends DataClass implements Insertable<MistakeAnalysi> {
+class QuestionAnalysi extends DataClass implements Insertable<QuestionAnalysi> {
   final int id;
   final int bestAnswer;
 
@@ -7673,7 +7694,7 @@ class MistakeAnalysi extends DataClass implements Insertable<MistakeAnalysi> {
 
   /// 该字段为易错点分析
   final String? analysis;
-  const MistakeAnalysi({
+  const QuestionAnalysi({
     required this.id,
     required this.bestAnswer,
     this.reason,
@@ -7693,8 +7714,8 @@ class MistakeAnalysi extends DataClass implements Insertable<MistakeAnalysi> {
     return map;
   }
 
-  MistakeAnalysisCompanion toCompanion(bool nullToAbsent) {
-    return MistakeAnalysisCompanion(
+  QuestionAnalysisCompanion toCompanion(bool nullToAbsent) {
+    return QuestionAnalysisCompanion(
       id: Value(id),
       bestAnswer: Value(bestAnswer),
       reason: reason == null && nullToAbsent
@@ -7706,12 +7727,12 @@ class MistakeAnalysi extends DataClass implements Insertable<MistakeAnalysi> {
     );
   }
 
-  factory MistakeAnalysi.fromJson(
+  factory QuestionAnalysi.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return MistakeAnalysi(
+    return QuestionAnalysi(
       id: serializer.fromJson<int>(json['id']),
       bestAnswer: serializer.fromJson<int>(json['bestAnswer']),
       reason: serializer.fromJson<String?>(json['reason']),
@@ -7729,19 +7750,19 @@ class MistakeAnalysi extends DataClass implements Insertable<MistakeAnalysi> {
     };
   }
 
-  MistakeAnalysi copyWith({
+  QuestionAnalysi copyWith({
     int? id,
     int? bestAnswer,
     Value<String?> reason = const Value.absent(),
     Value<String?> analysis = const Value.absent(),
-  }) => MistakeAnalysi(
+  }) => QuestionAnalysi(
     id: id ?? this.id,
     bestAnswer: bestAnswer ?? this.bestAnswer,
     reason: reason.present ? reason.value : this.reason,
     analysis: analysis.present ? analysis.value : this.analysis,
   );
-  MistakeAnalysi copyWithCompanion(MistakeAnalysisCompanion data) {
-    return MistakeAnalysi(
+  QuestionAnalysi copyWithCompanion(QuestionAnalysisCompanion data) {
+    return QuestionAnalysi(
       id: data.id.present ? data.id.value : this.id,
       bestAnswer: data.bestAnswer.present
           ? data.bestAnswer.value
@@ -7753,7 +7774,7 @@ class MistakeAnalysi extends DataClass implements Insertable<MistakeAnalysi> {
 
   @override
   String toString() {
-    return (StringBuffer('MistakeAnalysi(')
+    return (StringBuffer('QuestionAnalysi(')
           ..write('id: $id, ')
           ..write('bestAnswer: $bestAnswer, ')
           ..write('reason: $reason, ')
@@ -7767,27 +7788,27 @@ class MistakeAnalysi extends DataClass implements Insertable<MistakeAnalysi> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is MistakeAnalysi &&
+      (other is QuestionAnalysi &&
           other.id == this.id &&
           other.bestAnswer == this.bestAnswer &&
           other.reason == this.reason &&
           other.analysis == this.analysis);
 }
 
-class MistakeAnalysisCompanion extends UpdateCompanion<MistakeAnalysi> {
+class QuestionAnalysisCompanion extends UpdateCompanion<QuestionAnalysi> {
   final Value<int> id;
   final Value<int> bestAnswer;
   final Value<String?> reason;
   final Value<String?> analysis;
   final Value<int> rowid;
-  const MistakeAnalysisCompanion({
+  const QuestionAnalysisCompanion({
     this.id = const Value.absent(),
     this.bestAnswer = const Value.absent(),
     this.reason = const Value.absent(),
     this.analysis = const Value.absent(),
     this.rowid = const Value.absent(),
   });
-  MistakeAnalysisCompanion.insert({
+  QuestionAnalysisCompanion.insert({
     required int id,
     required int bestAnswer,
     this.reason = const Value.absent(),
@@ -7795,7 +7816,7 @@ class MistakeAnalysisCompanion extends UpdateCompanion<MistakeAnalysi> {
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        bestAnswer = Value(bestAnswer);
-  static Insertable<MistakeAnalysi> custom({
+  static Insertable<QuestionAnalysi> custom({
     Expression<int>? id,
     Expression<int>? bestAnswer,
     Expression<String>? reason,
@@ -7811,14 +7832,14 @@ class MistakeAnalysisCompanion extends UpdateCompanion<MistakeAnalysi> {
     });
   }
 
-  MistakeAnalysisCompanion copyWith({
+  QuestionAnalysisCompanion copyWith({
     Value<int>? id,
     Value<int>? bestAnswer,
     Value<String?>? reason,
     Value<String?>? analysis,
     Value<int>? rowid,
   }) {
-    return MistakeAnalysisCompanion(
+    return QuestionAnalysisCompanion(
       id: id ?? this.id,
       bestAnswer: bestAnswer ?? this.bestAnswer,
       reason: reason ?? this.reason,
@@ -7850,7 +7871,7 @@ class MistakeAnalysisCompanion extends UpdateCompanion<MistakeAnalysi> {
 
   @override
   String toString() {
-    return (StringBuffer('MistakeAnalysisCompanion(')
+    return (StringBuffer('QuestionAnalysisCompanion(')
           ..write('id: $id, ')
           ..write('bestAnswer: $bestAnswer, ')
           ..write('reason: $reason, ')
@@ -7861,24 +7882,24 @@ class MistakeAnalysisCompanion extends UpdateCompanion<MistakeAnalysi> {
   }
 }
 
-class $MistakeKnowledgeLinkTable extends MistakeKnowledgeLink
-    with TableInfo<$MistakeKnowledgeLinkTable, MistakeKnowledgeLinkData> {
+class $QuestionKnowledgeLinkTable extends QuestionKnowledgeLink
+    with TableInfo<$QuestionKnowledgeLinkTable, QuestionKnowledgeLinkData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $MistakeKnowledgeLinkTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _mistakeIdMeta = const VerificationMeta(
-    'mistakeId',
+  $QuestionKnowledgeLinkTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _questionIdMeta = const VerificationMeta(
+    'questionId',
   );
   @override
-  late final GeneratedColumn<int> mistakeId = GeneratedColumn<int>(
-    'mistake_id',
+  late final GeneratedColumn<int> questionId = GeneratedColumn<int>(
+    'question_id',
     aliasedName,
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES mistakes (id)',
+      'REFERENCES questions (id)',
     ),
   );
   static const VerificationMeta _knowledgeIdMeta = const VerificationMeta(
@@ -7896,26 +7917,26 @@ class $MistakeKnowledgeLinkTable extends MistakeKnowledgeLink
     ),
   );
   @override
-  List<GeneratedColumn> get $columns => [mistakeId, knowledgeId];
+  List<GeneratedColumn> get $columns => [questionId, knowledgeId];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'mistake_knowledge_link';
+  static const String $name = 'question_knowledge_link';
   @override
   VerificationContext validateIntegrity(
-    Insertable<MistakeKnowledgeLinkData> instance, {
+    Insertable<QuestionKnowledgeLinkData> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('mistake_id')) {
+    if (data.containsKey('question_id')) {
       context.handle(
-        _mistakeIdMeta,
-        mistakeId.isAcceptableOrUnknown(data['mistake_id']!, _mistakeIdMeta),
+        _questionIdMeta,
+        questionId.isAcceptableOrUnknown(data['question_id']!, _questionIdMeta),
       );
     } else if (isInserting) {
-      context.missing(_mistakeIdMeta);
+      context.missing(_questionIdMeta);
     }
     if (data.containsKey('knowledge_id')) {
       context.handle(
@@ -7932,17 +7953,17 @@ class $MistakeKnowledgeLinkTable extends MistakeKnowledgeLink
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {mistakeId, knowledgeId};
+  Set<GeneratedColumn> get $primaryKey => {questionId, knowledgeId};
   @override
-  MistakeKnowledgeLinkData map(
+  QuestionKnowledgeLinkData map(
     Map<String, dynamic> data, {
     String? tablePrefix,
   }) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return MistakeKnowledgeLinkData(
-      mistakeId: attachedDatabase.typeMapping.read(
+    return QuestionKnowledgeLinkData(
+      questionId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}mistake_id'],
+        data['${effectivePrefix}question_id'],
       )!,
       knowledgeId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
@@ -7952,41 +7973,41 @@ class $MistakeKnowledgeLinkTable extends MistakeKnowledgeLink
   }
 
   @override
-  $MistakeKnowledgeLinkTable createAlias(String alias) {
-    return $MistakeKnowledgeLinkTable(attachedDatabase, alias);
+  $QuestionKnowledgeLinkTable createAlias(String alias) {
+    return $QuestionKnowledgeLinkTable(attachedDatabase, alias);
   }
 }
 
-class MistakeKnowledgeLinkData extends DataClass
-    implements Insertable<MistakeKnowledgeLinkData> {
-  final int mistakeId;
+class QuestionKnowledgeLinkData extends DataClass
+    implements Insertable<QuestionKnowledgeLinkData> {
+  final int questionId;
   final int knowledgeId;
-  const MistakeKnowledgeLinkData({
-    required this.mistakeId,
+  const QuestionKnowledgeLinkData({
+    required this.questionId,
     required this.knowledgeId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['mistake_id'] = Variable<int>(mistakeId);
+    map['question_id'] = Variable<int>(questionId);
     map['knowledge_id'] = Variable<int>(knowledgeId);
     return map;
   }
 
-  MistakeKnowledgeLinkCompanion toCompanion(bool nullToAbsent) {
-    return MistakeKnowledgeLinkCompanion(
-      mistakeId: Value(mistakeId),
+  QuestionKnowledgeLinkCompanion toCompanion(bool nullToAbsent) {
+    return QuestionKnowledgeLinkCompanion(
+      questionId: Value(questionId),
       knowledgeId: Value(knowledgeId),
     );
   }
 
-  factory MistakeKnowledgeLinkData.fromJson(
+  factory QuestionKnowledgeLinkData.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return MistakeKnowledgeLinkData(
-      mistakeId: serializer.fromJson<int>(json['mistakeId']),
+    return QuestionKnowledgeLinkData(
+      questionId: serializer.fromJson<int>(json['questionId']),
       knowledgeId: serializer.fromJson<int>(json['knowledgeId']),
     );
   }
@@ -7994,21 +8015,23 @@ class MistakeKnowledgeLinkData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'mistakeId': serializer.toJson<int>(mistakeId),
+      'questionId': serializer.toJson<int>(questionId),
       'knowledgeId': serializer.toJson<int>(knowledgeId),
     };
   }
 
-  MistakeKnowledgeLinkData copyWith({int? mistakeId, int? knowledgeId}) =>
-      MistakeKnowledgeLinkData(
-        mistakeId: mistakeId ?? this.mistakeId,
+  QuestionKnowledgeLinkData copyWith({int? questionId, int? knowledgeId}) =>
+      QuestionKnowledgeLinkData(
+        questionId: questionId ?? this.questionId,
         knowledgeId: knowledgeId ?? this.knowledgeId,
       );
-  MistakeKnowledgeLinkData copyWithCompanion(
-    MistakeKnowledgeLinkCompanion data,
+  QuestionKnowledgeLinkData copyWithCompanion(
+    QuestionKnowledgeLinkCompanion data,
   ) {
-    return MistakeKnowledgeLinkData(
-      mistakeId: data.mistakeId.present ? data.mistakeId.value : this.mistakeId,
+    return QuestionKnowledgeLinkData(
+      questionId: data.questionId.present
+          ? data.questionId.value
+          : this.questionId,
       knowledgeId: data.knowledgeId.present
           ? data.knowledgeId.value
           : this.knowledgeId,
@@ -8017,58 +8040,58 @@ class MistakeKnowledgeLinkData extends DataClass
 
   @override
   String toString() {
-    return (StringBuffer('MistakeKnowledgeLinkData(')
-          ..write('mistakeId: $mistakeId, ')
+    return (StringBuffer('QuestionKnowledgeLinkData(')
+          ..write('questionId: $questionId, ')
           ..write('knowledgeId: $knowledgeId')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(mistakeId, knowledgeId);
+  int get hashCode => Object.hash(questionId, knowledgeId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is MistakeKnowledgeLinkData &&
-          other.mistakeId == this.mistakeId &&
+      (other is QuestionKnowledgeLinkData &&
+          other.questionId == this.questionId &&
           other.knowledgeId == this.knowledgeId);
 }
 
-class MistakeKnowledgeLinkCompanion
-    extends UpdateCompanion<MistakeKnowledgeLinkData> {
-  final Value<int> mistakeId;
+class QuestionKnowledgeLinkCompanion
+    extends UpdateCompanion<QuestionKnowledgeLinkData> {
+  final Value<int> questionId;
   final Value<int> knowledgeId;
   final Value<int> rowid;
-  const MistakeKnowledgeLinkCompanion({
-    this.mistakeId = const Value.absent(),
+  const QuestionKnowledgeLinkCompanion({
+    this.questionId = const Value.absent(),
     this.knowledgeId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
-  MistakeKnowledgeLinkCompanion.insert({
-    required int mistakeId,
+  QuestionKnowledgeLinkCompanion.insert({
+    required int questionId,
     required int knowledgeId,
     this.rowid = const Value.absent(),
-  }) : mistakeId = Value(mistakeId),
+  }) : questionId = Value(questionId),
        knowledgeId = Value(knowledgeId);
-  static Insertable<MistakeKnowledgeLinkData> custom({
-    Expression<int>? mistakeId,
+  static Insertable<QuestionKnowledgeLinkData> custom({
+    Expression<int>? questionId,
     Expression<int>? knowledgeId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
-      if (mistakeId != null) 'mistake_id': mistakeId,
+      if (questionId != null) 'question_id': questionId,
       if (knowledgeId != null) 'knowledge_id': knowledgeId,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
-  MistakeKnowledgeLinkCompanion copyWith({
-    Value<int>? mistakeId,
+  QuestionKnowledgeLinkCompanion copyWith({
+    Value<int>? questionId,
     Value<int>? knowledgeId,
     Value<int>? rowid,
   }) {
-    return MistakeKnowledgeLinkCompanion(
-      mistakeId: mistakeId ?? this.mistakeId,
+    return QuestionKnowledgeLinkCompanion(
+      questionId: questionId ?? this.questionId,
       knowledgeId: knowledgeId ?? this.knowledgeId,
       rowid: rowid ?? this.rowid,
     );
@@ -8077,8 +8100,8 @@ class MistakeKnowledgeLinkCompanion
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (mistakeId.present) {
-      map['mistake_id'] = Variable<int>(mistakeId.value);
+    if (questionId.present) {
+      map['question_id'] = Variable<int>(questionId.value);
     }
     if (knowledgeId.present) {
       map['knowledge_id'] = Variable<int>(knowledgeId.value);
@@ -8091,8 +8114,8 @@ class MistakeKnowledgeLinkCompanion
 
   @override
   String toString() {
-    return (StringBuffer('MistakeKnowledgeLinkCompanion(')
-          ..write('mistakeId: $mistakeId, ')
+    return (StringBuffer('QuestionKnowledgeLinkCompanion(')
+          ..write('questionId: $questionId, ')
           ..write('knowledgeId: $knowledgeId, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -8122,12 +8145,12 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $KnowledgeTagLinkTable knowledgeTagLink = $KnowledgeTagLinkTable(
     this,
   );
-  late final $MistakesTable mistakes = $MistakesTable(this);
-  late final $MistakesTagLinkTable mistakesTagLink = $MistakesTagLinkTable(
+  late final $QuestionsTable questions = $QuestionsTable(this);
+  late final $QuestionsTagLinkTable questionsTagLink = $QuestionsTagLinkTable(
     this,
   );
-  late final $MistakeLogsTable mistakeLogs = $MistakeLogsTable(this);
-  late final $MistakePicsLinkTable mistakePicsLink = $MistakePicsLinkTable(
+  late final $QuestionLogsTable questionLogs = $QuestionLogsTable(this);
+  late final $QuestionPicsLinkTable questionPicsLink = $QuestionPicsLinkTable(
     this,
   );
   late final $AnswersTable answers = $AnswersTable(this);
@@ -8135,11 +8158,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     this,
   );
   late final $AnswerPicsLinkTable answerPicsLink = $AnswerPicsLinkTable(this);
-  late final $MistakeAnalysisTable mistakeAnalysis = $MistakeAnalysisTable(
+  late final $QuestionAnalysisTable questionAnalysis = $QuestionAnalysisTable(
     this,
   );
-  late final $MistakeKnowledgeLinkTable mistakeKnowledgeLink =
-      $MistakeKnowledgeLinkTable(this);
+  late final $QuestionKnowledgeLinkTable questionKnowledgeLink =
+      $QuestionKnowledgeLinkTable(this);
   late final AiProviderDao aiProviderDao = AiProviderDao(this as AppDatabase);
   late final AiHistoryDao aiHistoryDao = AiHistoryDao(this as AppDatabase);
   late final AiHistoryImagesLinkDao aiHistoryImagesLinkDao =
@@ -8148,7 +8171,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final TagsDao tagsDao = TagsDao(this as AppDatabase);
   late final WordsDao wordsDao = WordsDao(this as AppDatabase);
   late final KnowledgeDao knowledgeDao = KnowledgeDao(this as AppDatabase);
-  late final MistakesDao mistakesDao = MistakesDao(this as AppDatabase);
+  late final QuestionsDao questionsDao = QuestionsDao(this as AppDatabase);
   late final PhrasesDao phrasesDao = PhrasesDao(this as AppDatabase);
   late final ImagesDao imagesDao = ImagesDao(this as AppDatabase);
   @override
@@ -8172,15 +8195,15 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     knowledge,
     knowledgeLogs,
     knowledgeTagLink,
-    mistakes,
-    mistakesTagLink,
-    mistakeLogs,
-    mistakePicsLink,
+    questions,
+    questionsTagLink,
+    questionLogs,
+    questionPicsLink,
     answers,
     answersTagsLink,
     answerPicsLink,
-    mistakeAnalysis,
-    mistakeKnowledgeLink,
+    questionAnalysis,
+    questionKnowledgeLink,
   ];
 }
 
@@ -8250,20 +8273,20 @@ final class $$ImagesTableReferences
     );
   }
 
-  static MultiTypedResultKey<$MistakePicsLinkTable, List<MistakePicsLinkData>>
-  _mistakePicsLinkRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
-    db.mistakePicsLink,
-    aliasName: $_aliasNameGenerator(db.images.id, db.mistakePicsLink.picId),
+  static MultiTypedResultKey<$QuestionPicsLinkTable, List<QuestionPicsLinkData>>
+  _questionPicsLinkRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.questionPicsLink,
+    aliasName: $_aliasNameGenerator(db.images.id, db.questionPicsLink.picId),
   );
 
-  $$MistakePicsLinkTableProcessedTableManager get mistakePicsLinkRefs {
-    final manager = $$MistakePicsLinkTableTableManager(
+  $$QuestionPicsLinkTableProcessedTableManager get questionPicsLinkRefs {
+    final manager = $$QuestionPicsLinkTableTableManager(
       $_db,
-      $_db.mistakePicsLink,
+      $_db.questionPicsLink,
     ).filter((f) => f.picId.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(
-      _mistakePicsLinkRefsTable($_db),
+      _questionPicsLinkRefsTable($_db),
     );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
@@ -8373,22 +8396,22 @@ class $$ImagesTableFilterComposer
     return f(composer);
   }
 
-  Expression<bool> mistakePicsLinkRefs(
-    Expression<bool> Function($$MistakePicsLinkTableFilterComposer f) f,
+  Expression<bool> questionPicsLinkRefs(
+    Expression<bool> Function($$QuestionPicsLinkTableFilterComposer f) f,
   ) {
-    final $$MistakePicsLinkTableFilterComposer composer = $composerBuilder(
+    final $$QuestionPicsLinkTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.mistakePicsLink,
+      referencedTable: $db.questionPicsLink,
       getReferencedColumn: (t) => t.picId,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakePicsLinkTableFilterComposer(
+          }) => $$QuestionPicsLinkTableFilterComposer(
             $db: $db,
-            $table: $db.mistakePicsLink,
+            $table: $db.questionPicsLink,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -8534,22 +8557,22 @@ class $$ImagesTableAnnotationComposer
     return f(composer);
   }
 
-  Expression<T> mistakePicsLinkRefs<T extends Object>(
-    Expression<T> Function($$MistakePicsLinkTableAnnotationComposer a) f,
+  Expression<T> questionPicsLinkRefs<T extends Object>(
+    Expression<T> Function($$QuestionPicsLinkTableAnnotationComposer a) f,
   ) {
-    final $$MistakePicsLinkTableAnnotationComposer composer = $composerBuilder(
+    final $$QuestionPicsLinkTableAnnotationComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.mistakePicsLink,
+      referencedTable: $db.questionPicsLink,
       getReferencedColumn: (t) => t.picId,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakePicsLinkTableAnnotationComposer(
+          }) => $$QuestionPicsLinkTableAnnotationComposer(
             $db: $db,
-            $table: $db.mistakePicsLink,
+            $table: $db.questionPicsLink,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -8601,7 +8624,7 @@ class $$ImagesTableTableManager
           PrefetchHooks Function({
             bool aiProvidersRefs,
             bool aiHistoryImagesLinkRefs,
-            bool mistakePicsLinkRefs,
+            bool questionPicsLinkRefs,
             bool answerPicsLinkRefs,
           })
         > {
@@ -8654,7 +8677,7 @@ class $$ImagesTableTableManager
               ({
                 aiProvidersRefs = false,
                 aiHistoryImagesLinkRefs = false,
-                mistakePicsLinkRefs = false,
+                questionPicsLinkRefs = false,
                 answerPicsLinkRefs = false,
               }) {
                 return PrefetchHooks(
@@ -8662,7 +8685,7 @@ class $$ImagesTableTableManager
                   explicitlyWatchedTables: [
                     if (aiProvidersRefs) db.aiProviders,
                     if (aiHistoryImagesLinkRefs) db.aiHistoryImagesLink,
-                    if (mistakePicsLinkRefs) db.mistakePicsLink,
+                    if (questionPicsLinkRefs) db.questionPicsLink,
                     if (answerPicsLinkRefs) db.answerPicsLink,
                   ],
                   addJoins: null,
@@ -8710,21 +8733,21 @@ class $$ImagesTableTableManager
                               ),
                           typedResults: items,
                         ),
-                      if (mistakePicsLinkRefs)
+                      if (questionPicsLinkRefs)
                         await $_getPrefetchedData<
                           Image,
                           $ImagesTable,
-                          MistakePicsLinkData
+                          QuestionPicsLinkData
                         >(
                           currentTable: table,
                           referencedTable: $$ImagesTableReferences
-                              ._mistakePicsLinkRefsTable(db),
+                              ._questionPicsLinkRefsTable(db),
                           managerFromTypedResult: (p0) =>
                               $$ImagesTableReferences(
                                 db,
                                 table,
                                 p0,
-                              ).mistakePicsLinkRefs,
+                              ).questionPicsLinkRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
                                 (e) => e.picId == item.id,
@@ -8775,7 +8798,7 @@ typedef $$ImagesTableProcessedTableManager =
       PrefetchHooks Function({
         bool aiProvidersRefs,
         bool aiHistoryImagesLinkRefs,
-        bool mistakePicsLinkRefs,
+        bool questionPicsLinkRefs,
         bool answerPicsLinkRefs,
       })
     >;
@@ -10877,20 +10900,20 @@ final class $$TagsTableReferences
     );
   }
 
-  static MultiTypedResultKey<$MistakesTagLinkTable, List<MistakesTagLinkData>>
-  _mistakesTagLinkRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
-    db.mistakesTagLink,
-    aliasName: $_aliasNameGenerator(db.tags.id, db.mistakesTagLink.tagID),
+  static MultiTypedResultKey<$QuestionsTagLinkTable, List<QuestionsTagLinkData>>
+  _questionsTagLinkRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.questionsTagLink,
+    aliasName: $_aliasNameGenerator(db.tags.id, db.questionsTagLink.tagID),
   );
 
-  $$MistakesTagLinkTableProcessedTableManager get mistakesTagLinkRefs {
-    final manager = $$MistakesTagLinkTableTableManager(
+  $$QuestionsTagLinkTableProcessedTableManager get questionsTagLinkRefs {
+    final manager = $$QuestionsTagLinkTableTableManager(
       $_db,
-      $_db.mistakesTagLink,
+      $_db.questionsTagLink,
     ).filter((f) => f.tagID.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(
-      _mistakesTagLinkRefsTable($_db),
+      _questionsTagLinkRefsTable($_db),
     );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
@@ -11027,22 +11050,22 @@ class $$TagsTableFilterComposer extends Composer<_$AppDatabase, $TagsTable> {
     return f(composer);
   }
 
-  Expression<bool> mistakesTagLinkRefs(
-    Expression<bool> Function($$MistakesTagLinkTableFilterComposer f) f,
+  Expression<bool> questionsTagLinkRefs(
+    Expression<bool> Function($$QuestionsTagLinkTableFilterComposer f) f,
   ) {
-    final $$MistakesTagLinkTableFilterComposer composer = $composerBuilder(
+    final $$QuestionsTagLinkTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.mistakesTagLink,
+      referencedTable: $db.questionsTagLink,
       getReferencedColumn: (t) => t.tagID,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakesTagLinkTableFilterComposer(
+          }) => $$QuestionsTagLinkTableFilterComposer(
             $db: $db,
-            $table: $db.mistakesTagLink,
+            $table: $db.questionsTagLink,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -11213,22 +11236,22 @@ class $$TagsTableAnnotationComposer
     return f(composer);
   }
 
-  Expression<T> mistakesTagLinkRefs<T extends Object>(
-    Expression<T> Function($$MistakesTagLinkTableAnnotationComposer a) f,
+  Expression<T> questionsTagLinkRefs<T extends Object>(
+    Expression<T> Function($$QuestionsTagLinkTableAnnotationComposer a) f,
   ) {
-    final $$MistakesTagLinkTableAnnotationComposer composer = $composerBuilder(
+    final $$QuestionsTagLinkTableAnnotationComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.mistakesTagLink,
+      referencedTable: $db.questionsTagLink,
       getReferencedColumn: (t) => t.tagID,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakesTagLinkTableAnnotationComposer(
+          }) => $$QuestionsTagLinkTableAnnotationComposer(
             $db: $db,
-            $table: $db.mistakesTagLink,
+            $table: $db.questionsTagLink,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -11281,7 +11304,7 @@ class $$TagsTableTableManager
             bool wordTagLinkRefs,
             bool phrasesTagLinkRefs,
             bool knowledgeTagLinkRefs,
-            bool mistakesTagLinkRefs,
+            bool questionsTagLinkRefs,
             bool answersTagsLinkRefs,
           })
         > {
@@ -11335,7 +11358,7 @@ class $$TagsTableTableManager
                 wordTagLinkRefs = false,
                 phrasesTagLinkRefs = false,
                 knowledgeTagLinkRefs = false,
-                mistakesTagLinkRefs = false,
+                questionsTagLinkRefs = false,
                 answersTagsLinkRefs = false,
               }) {
                 return PrefetchHooks(
@@ -11344,7 +11367,7 @@ class $$TagsTableTableManager
                     if (wordTagLinkRefs) db.wordTagLink,
                     if (phrasesTagLinkRefs) db.phrasesTagLink,
                     if (knowledgeTagLinkRefs) db.knowledgeTagLink,
-                    if (mistakesTagLinkRefs) db.mistakesTagLink,
+                    if (questionsTagLinkRefs) db.questionsTagLink,
                     if (answersTagsLinkRefs) db.answersTagsLink,
                   ],
                   addJoins: null,
@@ -11410,20 +11433,20 @@ class $$TagsTableTableManager
                               ),
                           typedResults: items,
                         ),
-                      if (mistakesTagLinkRefs)
+                      if (questionsTagLinkRefs)
                         await $_getPrefetchedData<
                           Tag,
                           $TagsTable,
-                          MistakesTagLinkData
+                          QuestionsTagLinkData
                         >(
                           currentTable: table,
                           referencedTable: $$TagsTableReferences
-                              ._mistakesTagLinkRefsTable(db),
+                              ._questionsTagLinkRefsTable(db),
                           managerFromTypedResult: (p0) => $$TagsTableReferences(
                             db,
                             table,
                             p0,
-                          ).mistakesTagLinkRefs,
+                          ).questionsTagLinkRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
                                 (e) => e.tagID == item.id,
@@ -11474,7 +11497,7 @@ typedef $$TagsTableProcessedTableManager =
         bool wordTagLinkRefs,
         bool phrasesTagLinkRefs,
         bool knowledgeTagLinkRefs,
-        bool mistakesTagLinkRefs,
+        bool questionsTagLinkRefs,
         bool answersTagsLinkRefs,
       })
     >;
@@ -13871,27 +13894,27 @@ final class $$KnowledgeTableReferences
   }
 
   static MultiTypedResultKey<
-    $MistakeKnowledgeLinkTable,
-    List<MistakeKnowledgeLinkData>
+    $QuestionKnowledgeLinkTable,
+    List<QuestionKnowledgeLinkData>
   >
-  _mistakeKnowledgeLinkRefsTable(_$AppDatabase db) =>
+  _questionKnowledgeLinkRefsTable(_$AppDatabase db) =>
       MultiTypedResultKey.fromTable(
-        db.mistakeKnowledgeLink,
+        db.questionKnowledgeLink,
         aliasName: $_aliasNameGenerator(
           db.knowledge.id,
-          db.mistakeKnowledgeLink.knowledgeId,
+          db.questionKnowledgeLink.knowledgeId,
         ),
       );
 
-  $$MistakeKnowledgeLinkTableProcessedTableManager
-  get mistakeKnowledgeLinkRefs {
-    final manager = $$MistakeKnowledgeLinkTableTableManager(
+  $$QuestionKnowledgeLinkTableProcessedTableManager
+  get questionKnowledgeLinkRefs {
+    final manager = $$QuestionKnowledgeLinkTableTableManager(
       $_db,
-      $_db.mistakeKnowledgeLink,
+      $_db.questionKnowledgeLink,
     ).filter((f) => f.knowledgeId.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(
-      _mistakeKnowledgeLinkRefsTable($_db),
+      _questionKnowledgeLinkRefsTable($_db),
     );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
@@ -13984,28 +14007,29 @@ class $$KnowledgeTableFilterComposer
     return f(composer);
   }
 
-  Expression<bool> mistakeKnowledgeLinkRefs(
-    Expression<bool> Function($$MistakeKnowledgeLinkTableFilterComposer f) f,
+  Expression<bool> questionKnowledgeLinkRefs(
+    Expression<bool> Function($$QuestionKnowledgeLinkTableFilterComposer f) f,
   ) {
-    final $$MistakeKnowledgeLinkTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.mistakeKnowledgeLink,
-      getReferencedColumn: (t) => t.knowledgeId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$MistakeKnowledgeLinkTableFilterComposer(
-            $db: $db,
-            $table: $db.mistakeKnowledgeLink,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
+    final $$QuestionKnowledgeLinkTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.questionKnowledgeLink,
+          getReferencedColumn: (t) => t.knowledgeId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
                 $removeJoinBuilderFromRootComposer,
-          ),
-    );
+              }) => $$QuestionKnowledgeLinkTableFilterComposer(
+                $db: $db,
+                $table: $db.questionKnowledgeLink,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 }
@@ -14119,23 +14143,23 @@ class $$KnowledgeTableAnnotationComposer
     return f(composer);
   }
 
-  Expression<T> mistakeKnowledgeLinkRefs<T extends Object>(
-    Expression<T> Function($$MistakeKnowledgeLinkTableAnnotationComposer a) f,
+  Expression<T> questionKnowledgeLinkRefs<T extends Object>(
+    Expression<T> Function($$QuestionKnowledgeLinkTableAnnotationComposer a) f,
   ) {
-    final $$MistakeKnowledgeLinkTableAnnotationComposer composer =
+    final $$QuestionKnowledgeLinkTableAnnotationComposer composer =
         $composerBuilder(
           composer: this,
           getCurrentColumn: (t) => t.id,
-          referencedTable: $db.mistakeKnowledgeLink,
+          referencedTable: $db.questionKnowledgeLink,
           getReferencedColumn: (t) => t.knowledgeId,
           builder:
               (
                 joinBuilder, {
                 $addJoinBuilderToRootComposer,
                 $removeJoinBuilderFromRootComposer,
-              }) => $$MistakeKnowledgeLinkTableAnnotationComposer(
+              }) => $$QuestionKnowledgeLinkTableAnnotationComposer(
                 $db: $db,
-                $table: $db.mistakeKnowledgeLink,
+                $table: $db.questionKnowledgeLink,
                 $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
                 joinBuilder: joinBuilder,
                 $removeJoinBuilderFromRootComposer:
@@ -14162,7 +14186,7 @@ class $$KnowledgeTableTableManager
           PrefetchHooks Function({
             bool knowledgeLogsRefs,
             bool knowledgeTagLinkRefs,
-            bool mistakeKnowledgeLinkRefs,
+            bool questionKnowledgeLinkRefs,
           })
         > {
   $$KnowledgeTableTableManager(_$AppDatabase db, $KnowledgeTable table)
@@ -14216,14 +14240,14 @@ class $$KnowledgeTableTableManager
               ({
                 knowledgeLogsRefs = false,
                 knowledgeTagLinkRefs = false,
-                mistakeKnowledgeLinkRefs = false,
+                questionKnowledgeLinkRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (knowledgeLogsRefs) db.knowledgeLogs,
                     if (knowledgeTagLinkRefs) db.knowledgeTagLink,
-                    if (mistakeKnowledgeLinkRefs) db.mistakeKnowledgeLink,
+                    if (questionKnowledgeLinkRefs) db.questionKnowledgeLink,
                   ],
                   addJoins: null,
                   getPrefetchedDataCallback: (items) async {
@@ -14270,21 +14294,21 @@ class $$KnowledgeTableTableManager
                               ),
                           typedResults: items,
                         ),
-                      if (mistakeKnowledgeLinkRefs)
+                      if (questionKnowledgeLinkRefs)
                         await $_getPrefetchedData<
                           KnowledgeData,
                           $KnowledgeTable,
-                          MistakeKnowledgeLinkData
+                          QuestionKnowledgeLinkData
                         >(
                           currentTable: table,
                           referencedTable: $$KnowledgeTableReferences
-                              ._mistakeKnowledgeLinkRefsTable(db),
+                              ._questionKnowledgeLinkRefsTable(db),
                           managerFromTypedResult: (p0) =>
                               $$KnowledgeTableReferences(
                                 db,
                                 table,
                                 p0,
-                              ).mistakeKnowledgeLinkRefs,
+                              ).questionKnowledgeLinkRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
                                 (e) => e.knowledgeId == item.id,
@@ -14314,7 +14338,7 @@ typedef $$KnowledgeTableProcessedTableManager =
       PrefetchHooks Function({
         bool knowledgeLogsRefs,
         bool knowledgeTagLinkRefs,
-        bool mistakeKnowledgeLinkRefs,
+        bool questionKnowledgeLinkRefs,
       })
     >;
 typedef $$KnowledgeLogsTableCreateCompanionBuilder =
@@ -14999,8 +15023,8 @@ typedef $$KnowledgeTagLinkTableProcessedTableManager =
       KnowledgeTagLinkData,
       PrefetchHooks Function({bool knowledgeID, bool tagID})
     >;
-typedef $$MistakesTableCreateCompanionBuilder =
-    MistakesCompanion Function({
+typedef $$QuestionsTableCreateCompanionBuilder =
+    QuestionsCompanion Function({
       Value<int> id,
       required Subject subject,
       required String questionHeader,
@@ -15008,8 +15032,8 @@ typedef $$MistakesTableCreateCompanionBuilder =
       Value<String?> source,
       Value<DateTime> createdAt,
     });
-typedef $$MistakesTableUpdateCompanionBuilder =
-    MistakesCompanion Function({
+typedef $$QuestionsTableUpdateCompanionBuilder =
+    QuestionsCompanion Function({
       Value<int> id,
       Value<Subject> subject,
       Value<String> questionHeader,
@@ -15018,68 +15042,71 @@ typedef $$MistakesTableUpdateCompanionBuilder =
       Value<DateTime> createdAt,
     });
 
-final class $$MistakesTableReferences
-    extends BaseReferences<_$AppDatabase, $MistakesTable, Mistake> {
-  $$MistakesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+final class $$QuestionsTableReferences
+    extends BaseReferences<_$AppDatabase, $QuestionsTable, Question> {
+  $$QuestionsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static MultiTypedResultKey<$MistakesTagLinkTable, List<MistakesTagLinkData>>
-  _mistakesTagLinkRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
-    db.mistakesTagLink,
+  static MultiTypedResultKey<$QuestionsTagLinkTable, List<QuestionsTagLinkData>>
+  _questionsTagLinkRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.questionsTagLink,
     aliasName: $_aliasNameGenerator(
-      db.mistakes.id,
-      db.mistakesTagLink.mistakeID,
+      db.questions.id,
+      db.questionsTagLink.questionID,
     ),
   );
 
-  $$MistakesTagLinkTableProcessedTableManager get mistakesTagLinkRefs {
-    final manager = $$MistakesTagLinkTableTableManager(
+  $$QuestionsTagLinkTableProcessedTableManager get questionsTagLinkRefs {
+    final manager = $$QuestionsTagLinkTableTableManager(
       $_db,
-      $_db.mistakesTagLink,
-    ).filter((f) => f.mistakeID.id.sqlEquals($_itemColumn<int>('id')!));
+      $_db.questionsTagLink,
+    ).filter((f) => f.questionID.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(
-      _mistakesTagLinkRefsTable($_db),
+      _questionsTagLinkRefsTable($_db),
     );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
 
-  static MultiTypedResultKey<$MistakeLogsTable, List<MistakeLog>>
-  _mistakeLogsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
-    db.mistakeLogs,
-    aliasName: $_aliasNameGenerator(db.mistakes.id, db.mistakeLogs.mistakeID),
+  static MultiTypedResultKey<$QuestionLogsTable, List<QuestionLog>>
+  _questionLogsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.questionLogs,
+    aliasName: $_aliasNameGenerator(
+      db.questions.id,
+      db.questionLogs.questionID,
+    ),
   );
 
-  $$MistakeLogsTableProcessedTableManager get mistakeLogsRefs {
-    final manager = $$MistakeLogsTableTableManager(
+  $$QuestionLogsTableProcessedTableManager get questionLogsRefs {
+    final manager = $$QuestionLogsTableTableManager(
       $_db,
-      $_db.mistakeLogs,
-    ).filter((f) => f.mistakeID.id.sqlEquals($_itemColumn<int>('id')!));
+      $_db.questionLogs,
+    ).filter((f) => f.questionID.id.sqlEquals($_itemColumn<int>('id')!));
 
-    final cache = $_typedResult.readTableOrNull(_mistakeLogsRefsTable($_db));
+    final cache = $_typedResult.readTableOrNull(_questionLogsRefsTable($_db));
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
 
-  static MultiTypedResultKey<$MistakePicsLinkTable, List<MistakePicsLinkData>>
-  _mistakePicsLinkRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
-    db.mistakePicsLink,
+  static MultiTypedResultKey<$QuestionPicsLinkTable, List<QuestionPicsLinkData>>
+  _questionPicsLinkRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.questionPicsLink,
     aliasName: $_aliasNameGenerator(
-      db.mistakes.id,
-      db.mistakePicsLink.mistakeId,
+      db.questions.id,
+      db.questionPicsLink.questionId,
     ),
   );
 
-  $$MistakePicsLinkTableProcessedTableManager get mistakePicsLinkRefs {
-    final manager = $$MistakePicsLinkTableTableManager(
+  $$QuestionPicsLinkTableProcessedTableManager get questionPicsLinkRefs {
+    final manager = $$QuestionPicsLinkTableTableManager(
       $_db,
-      $_db.mistakePicsLink,
-    ).filter((f) => f.mistakeId.id.sqlEquals($_itemColumn<int>('id')!));
+      $_db.questionPicsLink,
+    ).filter((f) => f.questionId.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(
-      _mistakePicsLinkRefsTable($_db),
+      _questionPicsLinkRefsTable($_db),
     );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
@@ -15090,14 +15117,14 @@ final class $$MistakesTableReferences
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
     db.answers,
-    aliasName: $_aliasNameGenerator(db.mistakes.id, db.answers.mistakeId),
+    aliasName: $_aliasNameGenerator(db.questions.id, db.answers.questionId),
   );
 
   $$AnswersTableProcessedTableManager get answersRefs {
     final manager = $$AnswersTableTableManager(
       $_db,
       $_db.answers,
-    ).filter((f) => f.mistakeId.id.sqlEquals($_itemColumn<int>('id')!));
+    ).filter((f) => f.questionId.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_answersRefsTable($_db));
     return ProcessedTableManager(
@@ -15105,20 +15132,20 @@ final class $$MistakesTableReferences
     );
   }
 
-  static MultiTypedResultKey<$MistakeAnalysisTable, List<MistakeAnalysi>>
-  _mistakeAnalysisRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
-    db.mistakeAnalysis,
-    aliasName: $_aliasNameGenerator(db.mistakes.id, db.mistakeAnalysis.id),
+  static MultiTypedResultKey<$QuestionAnalysisTable, List<QuestionAnalysi>>
+  _questionAnalysisRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.questionAnalysis,
+    aliasName: $_aliasNameGenerator(db.questions.id, db.questionAnalysis.id),
   );
 
-  $$MistakeAnalysisTableProcessedTableManager get mistakeAnalysisRefs {
-    final manager = $$MistakeAnalysisTableTableManager(
+  $$QuestionAnalysisTableProcessedTableManager get questionAnalysisRefs {
+    final manager = $$QuestionAnalysisTableTableManager(
       $_db,
-      $_db.mistakeAnalysis,
+      $_db.questionAnalysis,
     ).filter((f) => f.id.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(
-      _mistakeAnalysisRefsTable($_db),
+      _questionAnalysisRefsTable($_db),
     );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
@@ -15126,27 +15153,27 @@ final class $$MistakesTableReferences
   }
 
   static MultiTypedResultKey<
-    $MistakeKnowledgeLinkTable,
-    List<MistakeKnowledgeLinkData>
+    $QuestionKnowledgeLinkTable,
+    List<QuestionKnowledgeLinkData>
   >
-  _mistakeKnowledgeLinkRefsTable(_$AppDatabase db) =>
+  _questionKnowledgeLinkRefsTable(_$AppDatabase db) =>
       MultiTypedResultKey.fromTable(
-        db.mistakeKnowledgeLink,
+        db.questionKnowledgeLink,
         aliasName: $_aliasNameGenerator(
-          db.mistakes.id,
-          db.mistakeKnowledgeLink.mistakeId,
+          db.questions.id,
+          db.questionKnowledgeLink.questionId,
         ),
       );
 
-  $$MistakeKnowledgeLinkTableProcessedTableManager
-  get mistakeKnowledgeLinkRefs {
-    final manager = $$MistakeKnowledgeLinkTableTableManager(
+  $$QuestionKnowledgeLinkTableProcessedTableManager
+  get questionKnowledgeLinkRefs {
+    final manager = $$QuestionKnowledgeLinkTableTableManager(
       $_db,
-      $_db.mistakeKnowledgeLink,
-    ).filter((f) => f.mistakeId.id.sqlEquals($_itemColumn<int>('id')!));
+      $_db.questionKnowledgeLink,
+    ).filter((f) => f.questionId.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(
-      _mistakeKnowledgeLinkRefsTable($_db),
+      _questionKnowledgeLinkRefsTable($_db),
     );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
@@ -15154,9 +15181,9 @@ final class $$MistakesTableReferences
   }
 }
 
-class $$MistakesTableFilterComposer
-    extends Composer<_$AppDatabase, $MistakesTable> {
-  $$MistakesTableFilterComposer({
+class $$QuestionsTableFilterComposer
+    extends Composer<_$AppDatabase, $QuestionsTable> {
+  $$QuestionsTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -15194,22 +15221,22 @@ class $$MistakesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  Expression<bool> mistakesTagLinkRefs(
-    Expression<bool> Function($$MistakesTagLinkTableFilterComposer f) f,
+  Expression<bool> questionsTagLinkRefs(
+    Expression<bool> Function($$QuestionsTagLinkTableFilterComposer f) f,
   ) {
-    final $$MistakesTagLinkTableFilterComposer composer = $composerBuilder(
+    final $$QuestionsTagLinkTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.mistakesTagLink,
-      getReferencedColumn: (t) => t.mistakeID,
+      referencedTable: $db.questionsTagLink,
+      getReferencedColumn: (t) => t.questionID,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakesTagLinkTableFilterComposer(
+          }) => $$QuestionsTagLinkTableFilterComposer(
             $db: $db,
-            $table: $db.mistakesTagLink,
+            $table: $db.questionsTagLink,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -15219,22 +15246,22 @@ class $$MistakesTableFilterComposer
     return f(composer);
   }
 
-  Expression<bool> mistakeLogsRefs(
-    Expression<bool> Function($$MistakeLogsTableFilterComposer f) f,
+  Expression<bool> questionLogsRefs(
+    Expression<bool> Function($$QuestionLogsTableFilterComposer f) f,
   ) {
-    final $$MistakeLogsTableFilterComposer composer = $composerBuilder(
+    final $$QuestionLogsTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.mistakeLogs,
-      getReferencedColumn: (t) => t.mistakeID,
+      referencedTable: $db.questionLogs,
+      getReferencedColumn: (t) => t.questionID,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakeLogsTableFilterComposer(
+          }) => $$QuestionLogsTableFilterComposer(
             $db: $db,
-            $table: $db.mistakeLogs,
+            $table: $db.questionLogs,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -15244,22 +15271,22 @@ class $$MistakesTableFilterComposer
     return f(composer);
   }
 
-  Expression<bool> mistakePicsLinkRefs(
-    Expression<bool> Function($$MistakePicsLinkTableFilterComposer f) f,
+  Expression<bool> questionPicsLinkRefs(
+    Expression<bool> Function($$QuestionPicsLinkTableFilterComposer f) f,
   ) {
-    final $$MistakePicsLinkTableFilterComposer composer = $composerBuilder(
+    final $$QuestionPicsLinkTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.mistakePicsLink,
-      getReferencedColumn: (t) => t.mistakeId,
+      referencedTable: $db.questionPicsLink,
+      getReferencedColumn: (t) => t.questionId,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakePicsLinkTableFilterComposer(
+          }) => $$QuestionPicsLinkTableFilterComposer(
             $db: $db,
-            $table: $db.mistakePicsLink,
+            $table: $db.questionPicsLink,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -15276,7 +15303,7 @@ class $$MistakesTableFilterComposer
       composer: this,
       getCurrentColumn: (t) => t.id,
       referencedTable: $db.answers,
-      getReferencedColumn: (t) => t.mistakeId,
+      getReferencedColumn: (t) => t.questionId,
       builder:
           (
             joinBuilder, {
@@ -15294,22 +15321,22 @@ class $$MistakesTableFilterComposer
     return f(composer);
   }
 
-  Expression<bool> mistakeAnalysisRefs(
-    Expression<bool> Function($$MistakeAnalysisTableFilterComposer f) f,
+  Expression<bool> questionAnalysisRefs(
+    Expression<bool> Function($$QuestionAnalysisTableFilterComposer f) f,
   ) {
-    final $$MistakeAnalysisTableFilterComposer composer = $composerBuilder(
+    final $$QuestionAnalysisTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.mistakeAnalysis,
+      referencedTable: $db.questionAnalysis,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakeAnalysisTableFilterComposer(
+          }) => $$QuestionAnalysisTableFilterComposer(
             $db: $db,
-            $table: $db.mistakeAnalysis,
+            $table: $db.questionAnalysis,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -15319,35 +15346,36 @@ class $$MistakesTableFilterComposer
     return f(composer);
   }
 
-  Expression<bool> mistakeKnowledgeLinkRefs(
-    Expression<bool> Function($$MistakeKnowledgeLinkTableFilterComposer f) f,
+  Expression<bool> questionKnowledgeLinkRefs(
+    Expression<bool> Function($$QuestionKnowledgeLinkTableFilterComposer f) f,
   ) {
-    final $$MistakeKnowledgeLinkTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.mistakeKnowledgeLink,
-      getReferencedColumn: (t) => t.mistakeId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$MistakeKnowledgeLinkTableFilterComposer(
-            $db: $db,
-            $table: $db.mistakeKnowledgeLink,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
+    final $$QuestionKnowledgeLinkTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.questionKnowledgeLink,
+          getReferencedColumn: (t) => t.questionId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
                 $removeJoinBuilderFromRootComposer,
-          ),
-    );
+              }) => $$QuestionKnowledgeLinkTableFilterComposer(
+                $db: $db,
+                $table: $db.questionKnowledgeLink,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 }
 
-class $$MistakesTableOrderingComposer
-    extends Composer<_$AppDatabase, $MistakesTable> {
-  $$MistakesTableOrderingComposer({
+class $$QuestionsTableOrderingComposer
+    extends Composer<_$AppDatabase, $QuestionsTable> {
+  $$QuestionsTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -15385,9 +15413,9 @@ class $$MistakesTableOrderingComposer
   );
 }
 
-class $$MistakesTableAnnotationComposer
-    extends Composer<_$AppDatabase, $MistakesTable> {
-  $$MistakesTableAnnotationComposer({
+class $$QuestionsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $QuestionsTable> {
+  $$QuestionsTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -15416,22 +15444,22 @@ class $$MistakesTableAnnotationComposer
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
-  Expression<T> mistakesTagLinkRefs<T extends Object>(
-    Expression<T> Function($$MistakesTagLinkTableAnnotationComposer a) f,
+  Expression<T> questionsTagLinkRefs<T extends Object>(
+    Expression<T> Function($$QuestionsTagLinkTableAnnotationComposer a) f,
   ) {
-    final $$MistakesTagLinkTableAnnotationComposer composer = $composerBuilder(
+    final $$QuestionsTagLinkTableAnnotationComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.mistakesTagLink,
-      getReferencedColumn: (t) => t.mistakeID,
+      referencedTable: $db.questionsTagLink,
+      getReferencedColumn: (t) => t.questionID,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakesTagLinkTableAnnotationComposer(
+          }) => $$QuestionsTagLinkTableAnnotationComposer(
             $db: $db,
-            $table: $db.mistakesTagLink,
+            $table: $db.questionsTagLink,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -15441,22 +15469,22 @@ class $$MistakesTableAnnotationComposer
     return f(composer);
   }
 
-  Expression<T> mistakeLogsRefs<T extends Object>(
-    Expression<T> Function($$MistakeLogsTableAnnotationComposer a) f,
+  Expression<T> questionLogsRefs<T extends Object>(
+    Expression<T> Function($$QuestionLogsTableAnnotationComposer a) f,
   ) {
-    final $$MistakeLogsTableAnnotationComposer composer = $composerBuilder(
+    final $$QuestionLogsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.mistakeLogs,
-      getReferencedColumn: (t) => t.mistakeID,
+      referencedTable: $db.questionLogs,
+      getReferencedColumn: (t) => t.questionID,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakeLogsTableAnnotationComposer(
+          }) => $$QuestionLogsTableAnnotationComposer(
             $db: $db,
-            $table: $db.mistakeLogs,
+            $table: $db.questionLogs,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -15466,22 +15494,22 @@ class $$MistakesTableAnnotationComposer
     return f(composer);
   }
 
-  Expression<T> mistakePicsLinkRefs<T extends Object>(
-    Expression<T> Function($$MistakePicsLinkTableAnnotationComposer a) f,
+  Expression<T> questionPicsLinkRefs<T extends Object>(
+    Expression<T> Function($$QuestionPicsLinkTableAnnotationComposer a) f,
   ) {
-    final $$MistakePicsLinkTableAnnotationComposer composer = $composerBuilder(
+    final $$QuestionPicsLinkTableAnnotationComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.mistakePicsLink,
-      getReferencedColumn: (t) => t.mistakeId,
+      referencedTable: $db.questionPicsLink,
+      getReferencedColumn: (t) => t.questionId,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakePicsLinkTableAnnotationComposer(
+          }) => $$QuestionPicsLinkTableAnnotationComposer(
             $db: $db,
-            $table: $db.mistakePicsLink,
+            $table: $db.questionPicsLink,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -15498,7 +15526,7 @@ class $$MistakesTableAnnotationComposer
       composer: this,
       getCurrentColumn: (t) => t.id,
       referencedTable: $db.answers,
-      getReferencedColumn: (t) => t.mistakeId,
+      getReferencedColumn: (t) => t.questionId,
       builder:
           (
             joinBuilder, {
@@ -15516,22 +15544,22 @@ class $$MistakesTableAnnotationComposer
     return f(composer);
   }
 
-  Expression<T> mistakeAnalysisRefs<T extends Object>(
-    Expression<T> Function($$MistakeAnalysisTableAnnotationComposer a) f,
+  Expression<T> questionAnalysisRefs<T extends Object>(
+    Expression<T> Function($$QuestionAnalysisTableAnnotationComposer a) f,
   ) {
-    final $$MistakeAnalysisTableAnnotationComposer composer = $composerBuilder(
+    final $$QuestionAnalysisTableAnnotationComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.mistakeAnalysis,
+      referencedTable: $db.questionAnalysis,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakeAnalysisTableAnnotationComposer(
+          }) => $$QuestionAnalysisTableAnnotationComposer(
             $db: $db,
-            $table: $db.mistakeAnalysis,
+            $table: $db.questionAnalysis,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -15541,23 +15569,23 @@ class $$MistakesTableAnnotationComposer
     return f(composer);
   }
 
-  Expression<T> mistakeKnowledgeLinkRefs<T extends Object>(
-    Expression<T> Function($$MistakeKnowledgeLinkTableAnnotationComposer a) f,
+  Expression<T> questionKnowledgeLinkRefs<T extends Object>(
+    Expression<T> Function($$QuestionKnowledgeLinkTableAnnotationComposer a) f,
   ) {
-    final $$MistakeKnowledgeLinkTableAnnotationComposer composer =
+    final $$QuestionKnowledgeLinkTableAnnotationComposer composer =
         $composerBuilder(
           composer: this,
           getCurrentColumn: (t) => t.id,
-          referencedTable: $db.mistakeKnowledgeLink,
-          getReferencedColumn: (t) => t.mistakeId,
+          referencedTable: $db.questionKnowledgeLink,
+          getReferencedColumn: (t) => t.questionId,
           builder:
               (
                 joinBuilder, {
                 $addJoinBuilderToRootComposer,
                 $removeJoinBuilderFromRootComposer,
-              }) => $$MistakeKnowledgeLinkTableAnnotationComposer(
+              }) => $$QuestionKnowledgeLinkTableAnnotationComposer(
                 $db: $db,
-                $table: $db.mistakeKnowledgeLink,
+                $table: $db.questionKnowledgeLink,
                 $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
                 joinBuilder: joinBuilder,
                 $removeJoinBuilderFromRootComposer:
@@ -15568,39 +15596,39 @@ class $$MistakesTableAnnotationComposer
   }
 }
 
-class $$MistakesTableTableManager
+class $$QuestionsTableTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $MistakesTable,
-          Mistake,
-          $$MistakesTableFilterComposer,
-          $$MistakesTableOrderingComposer,
-          $$MistakesTableAnnotationComposer,
-          $$MistakesTableCreateCompanionBuilder,
-          $$MistakesTableUpdateCompanionBuilder,
-          (Mistake, $$MistakesTableReferences),
-          Mistake,
+          $QuestionsTable,
+          Question,
+          $$QuestionsTableFilterComposer,
+          $$QuestionsTableOrderingComposer,
+          $$QuestionsTableAnnotationComposer,
+          $$QuestionsTableCreateCompanionBuilder,
+          $$QuestionsTableUpdateCompanionBuilder,
+          (Question, $$QuestionsTableReferences),
+          Question,
           PrefetchHooks Function({
-            bool mistakesTagLinkRefs,
-            bool mistakeLogsRefs,
-            bool mistakePicsLinkRefs,
+            bool questionsTagLinkRefs,
+            bool questionLogsRefs,
+            bool questionPicsLinkRefs,
             bool answersRefs,
-            bool mistakeAnalysisRefs,
-            bool mistakeKnowledgeLinkRefs,
+            bool questionAnalysisRefs,
+            bool questionKnowledgeLinkRefs,
           })
         > {
-  $$MistakesTableTableManager(_$AppDatabase db, $MistakesTable table)
+  $$QuestionsTableTableManager(_$AppDatabase db, $QuestionsTable table)
     : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$MistakesTableFilterComposer($db: db, $table: table),
+              $$QuestionsTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$MistakesTableOrderingComposer($db: db, $table: table),
+              $$QuestionsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$MistakesTableAnnotationComposer($db: db, $table: table),
+              $$QuestionsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
@@ -15609,7 +15637,7 @@ class $$MistakesTableTableManager
                 Value<String> questionBody = const Value.absent(),
                 Value<String?> source = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
-              }) => MistakesCompanion(
+              }) => QuestionsCompanion(
                 id: id,
                 subject: subject,
                 questionHeader: questionHeader,
@@ -15625,7 +15653,7 @@ class $$MistakesTableTableManager
                 required String questionBody,
                 Value<String?> source = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
-              }) => MistakesCompanion.insert(
+              }) => QuestionsCompanion.insert(
                 id: id,
                 subject: subject,
                 questionHeader: questionHeader,
@@ -15637,154 +15665,154 @@ class $$MistakesTableTableManager
               .map(
                 (e) => (
                   e.readTable(table),
-                  $$MistakesTableReferences(db, table, e),
+                  $$QuestionsTableReferences(db, table, e),
                 ),
               )
               .toList(),
           prefetchHooksCallback:
               ({
-                mistakesTagLinkRefs = false,
-                mistakeLogsRefs = false,
-                mistakePicsLinkRefs = false,
+                questionsTagLinkRefs = false,
+                questionLogsRefs = false,
+                questionPicsLinkRefs = false,
                 answersRefs = false,
-                mistakeAnalysisRefs = false,
-                mistakeKnowledgeLinkRefs = false,
+                questionAnalysisRefs = false,
+                questionKnowledgeLinkRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
-                    if (mistakesTagLinkRefs) db.mistakesTagLink,
-                    if (mistakeLogsRefs) db.mistakeLogs,
-                    if (mistakePicsLinkRefs) db.mistakePicsLink,
+                    if (questionsTagLinkRefs) db.questionsTagLink,
+                    if (questionLogsRefs) db.questionLogs,
+                    if (questionPicsLinkRefs) db.questionPicsLink,
                     if (answersRefs) db.answers,
-                    if (mistakeAnalysisRefs) db.mistakeAnalysis,
-                    if (mistakeKnowledgeLinkRefs) db.mistakeKnowledgeLink,
+                    if (questionAnalysisRefs) db.questionAnalysis,
+                    if (questionKnowledgeLinkRefs) db.questionKnowledgeLink,
                   ],
                   addJoins: null,
                   getPrefetchedDataCallback: (items) async {
                     return [
-                      if (mistakesTagLinkRefs)
+                      if (questionsTagLinkRefs)
                         await $_getPrefetchedData<
-                          Mistake,
-                          $MistakesTable,
-                          MistakesTagLinkData
+                          Question,
+                          $QuestionsTable,
+                          QuestionsTagLinkData
                         >(
                           currentTable: table,
-                          referencedTable: $$MistakesTableReferences
-                              ._mistakesTagLinkRefsTable(db),
+                          referencedTable: $$QuestionsTableReferences
+                              ._questionsTagLinkRefsTable(db),
                           managerFromTypedResult: (p0) =>
-                              $$MistakesTableReferences(
+                              $$QuestionsTableReferences(
                                 db,
                                 table,
                                 p0,
-                              ).mistakesTagLinkRefs,
+                              ).questionsTagLinkRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
-                                (e) => e.mistakeID == item.id,
+                                (e) => e.questionID == item.id,
                               ),
                           typedResults: items,
                         ),
-                      if (mistakeLogsRefs)
+                      if (questionLogsRefs)
                         await $_getPrefetchedData<
-                          Mistake,
-                          $MistakesTable,
-                          MistakeLog
+                          Question,
+                          $QuestionsTable,
+                          QuestionLog
                         >(
                           currentTable: table,
-                          referencedTable: $$MistakesTableReferences
-                              ._mistakeLogsRefsTable(db),
+                          referencedTable: $$QuestionsTableReferences
+                              ._questionLogsRefsTable(db),
                           managerFromTypedResult: (p0) =>
-                              $$MistakesTableReferences(
+                              $$QuestionsTableReferences(
                                 db,
                                 table,
                                 p0,
-                              ).mistakeLogsRefs,
+                              ).questionLogsRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
-                                (e) => e.mistakeID == item.id,
+                                (e) => e.questionID == item.id,
                               ),
                           typedResults: items,
                         ),
-                      if (mistakePicsLinkRefs)
+                      if (questionPicsLinkRefs)
                         await $_getPrefetchedData<
-                          Mistake,
-                          $MistakesTable,
-                          MistakePicsLinkData
+                          Question,
+                          $QuestionsTable,
+                          QuestionPicsLinkData
                         >(
                           currentTable: table,
-                          referencedTable: $$MistakesTableReferences
-                              ._mistakePicsLinkRefsTable(db),
+                          referencedTable: $$QuestionsTableReferences
+                              ._questionPicsLinkRefsTable(db),
                           managerFromTypedResult: (p0) =>
-                              $$MistakesTableReferences(
+                              $$QuestionsTableReferences(
                                 db,
                                 table,
                                 p0,
-                              ).mistakePicsLinkRefs,
+                              ).questionPicsLinkRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
-                                (e) => e.mistakeId == item.id,
+                                (e) => e.questionId == item.id,
                               ),
                           typedResults: items,
                         ),
                       if (answersRefs)
                         await $_getPrefetchedData<
-                          Mistake,
-                          $MistakesTable,
+                          Question,
+                          $QuestionsTable,
                           Answer
                         >(
                           currentTable: table,
-                          referencedTable: $$MistakesTableReferences
+                          referencedTable: $$QuestionsTableReferences
                               ._answersRefsTable(db),
                           managerFromTypedResult: (p0) =>
-                              $$MistakesTableReferences(
+                              $$QuestionsTableReferences(
                                 db,
                                 table,
                                 p0,
                               ).answersRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
-                                (e) => e.mistakeId == item.id,
+                                (e) => e.questionId == item.id,
                               ),
                           typedResults: items,
                         ),
-                      if (mistakeAnalysisRefs)
+                      if (questionAnalysisRefs)
                         await $_getPrefetchedData<
-                          Mistake,
-                          $MistakesTable,
-                          MistakeAnalysi
+                          Question,
+                          $QuestionsTable,
+                          QuestionAnalysi
                         >(
                           currentTable: table,
-                          referencedTable: $$MistakesTableReferences
-                              ._mistakeAnalysisRefsTable(db),
+                          referencedTable: $$QuestionsTableReferences
+                              ._questionAnalysisRefsTable(db),
                           managerFromTypedResult: (p0) =>
-                              $$MistakesTableReferences(
+                              $$QuestionsTableReferences(
                                 db,
                                 table,
                                 p0,
-                              ).mistakeAnalysisRefs,
+                              ).questionAnalysisRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) =>
                                   referencedItems.where((e) => e.id == item.id),
                           typedResults: items,
                         ),
-                      if (mistakeKnowledgeLinkRefs)
+                      if (questionKnowledgeLinkRefs)
                         await $_getPrefetchedData<
-                          Mistake,
-                          $MistakesTable,
-                          MistakeKnowledgeLinkData
+                          Question,
+                          $QuestionsTable,
+                          QuestionKnowledgeLinkData
                         >(
                           currentTable: table,
-                          referencedTable: $$MistakesTableReferences
-                              ._mistakeKnowledgeLinkRefsTable(db),
+                          referencedTable: $$QuestionsTableReferences
+                              ._questionKnowledgeLinkRefsTable(db),
                           managerFromTypedResult: (p0) =>
-                              $$MistakesTableReferences(
+                              $$QuestionsTableReferences(
                                 db,
                                 table,
                                 p0,
-                              ).mistakeKnowledgeLinkRefs,
+                              ).questionKnowledgeLinkRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
-                                (e) => e.mistakeId == item.id,
+                                (e) => e.questionId == item.id,
                               ),
                           typedResults: items,
                         ),
@@ -15796,66 +15824,66 @@ class $$MistakesTableTableManager
       );
 }
 
-typedef $$MistakesTableProcessedTableManager =
+typedef $$QuestionsTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $MistakesTable,
-      Mistake,
-      $$MistakesTableFilterComposer,
-      $$MistakesTableOrderingComposer,
-      $$MistakesTableAnnotationComposer,
-      $$MistakesTableCreateCompanionBuilder,
-      $$MistakesTableUpdateCompanionBuilder,
-      (Mistake, $$MistakesTableReferences),
-      Mistake,
+      $QuestionsTable,
+      Question,
+      $$QuestionsTableFilterComposer,
+      $$QuestionsTableOrderingComposer,
+      $$QuestionsTableAnnotationComposer,
+      $$QuestionsTableCreateCompanionBuilder,
+      $$QuestionsTableUpdateCompanionBuilder,
+      (Question, $$QuestionsTableReferences),
+      Question,
       PrefetchHooks Function({
-        bool mistakesTagLinkRefs,
-        bool mistakeLogsRefs,
-        bool mistakePicsLinkRefs,
+        bool questionsTagLinkRefs,
+        bool questionLogsRefs,
+        bool questionPicsLinkRefs,
         bool answersRefs,
-        bool mistakeAnalysisRefs,
-        bool mistakeKnowledgeLinkRefs,
+        bool questionAnalysisRefs,
+        bool questionKnowledgeLinkRefs,
       })
     >;
-typedef $$MistakesTagLinkTableCreateCompanionBuilder =
-    MistakesTagLinkCompanion Function({
-      required int mistakeID,
+typedef $$QuestionsTagLinkTableCreateCompanionBuilder =
+    QuestionsTagLinkCompanion Function({
+      required int questionID,
       required int tagID,
       Value<int> rowid,
     });
-typedef $$MistakesTagLinkTableUpdateCompanionBuilder =
-    MistakesTagLinkCompanion Function({
-      Value<int> mistakeID,
+typedef $$QuestionsTagLinkTableUpdateCompanionBuilder =
+    QuestionsTagLinkCompanion Function({
+      Value<int> questionID,
       Value<int> tagID,
       Value<int> rowid,
     });
 
-final class $$MistakesTagLinkTableReferences
+final class $$QuestionsTagLinkTableReferences
     extends
         BaseReferences<
           _$AppDatabase,
-          $MistakesTagLinkTable,
-          MistakesTagLinkData
+          $QuestionsTagLinkTable,
+          QuestionsTagLinkData
         > {
-  $$MistakesTagLinkTableReferences(
+  $$QuestionsTagLinkTableReferences(
     super.$_db,
     super.$_table,
     super.$_typedResult,
   );
 
-  static $MistakesTable _mistakeIDTable(_$AppDatabase db) =>
-      db.mistakes.createAlias(
-        $_aliasNameGenerator(db.mistakesTagLink.mistakeID, db.mistakes.id),
+  static $QuestionsTable _questionIDTable(_$AppDatabase db) =>
+      db.questions.createAlias(
+        $_aliasNameGenerator(db.questionsTagLink.questionID, db.questions.id),
       );
 
-  $$MistakesTableProcessedTableManager get mistakeID {
-    final $_column = $_itemColumn<int>('mistake_i_d')!;
+  $$QuestionsTableProcessedTableManager get questionID {
+    final $_column = $_itemColumn<int>('question_i_d')!;
 
-    final manager = $$MistakesTableTableManager(
+    final manager = $$QuestionsTableTableManager(
       $_db,
-      $_db.mistakes,
+      $_db.questions,
     ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_mistakeIDTable($_db));
+    final item = $_typedResult.readTableOrNull(_questionIDTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -15863,7 +15891,7 @@ final class $$MistakesTagLinkTableReferences
   }
 
   static $TagsTable _tagIDTable(_$AppDatabase db) => db.tags.createAlias(
-    $_aliasNameGenerator(db.mistakesTagLink.tagID, db.tags.id),
+    $_aliasNameGenerator(db.questionsTagLink.tagID, db.tags.id),
   );
 
   $$TagsTableProcessedTableManager get tagID {
@@ -15881,29 +15909,29 @@ final class $$MistakesTagLinkTableReferences
   }
 }
 
-class $$MistakesTagLinkTableFilterComposer
-    extends Composer<_$AppDatabase, $MistakesTagLinkTable> {
-  $$MistakesTagLinkTableFilterComposer({
+class $$QuestionsTagLinkTableFilterComposer
+    extends Composer<_$AppDatabase, $QuestionsTagLinkTable> {
+  $$QuestionsTagLinkTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  $$MistakesTableFilterComposer get mistakeID {
-    final $$MistakesTableFilterComposer composer = $composerBuilder(
+  $$QuestionsTableFilterComposer get questionID {
+    final $$QuestionsTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.mistakeID,
-      referencedTable: $db.mistakes,
+      getCurrentColumn: (t) => t.questionID,
+      referencedTable: $db.questions,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakesTableFilterComposer(
+          }) => $$QuestionsTableFilterComposer(
             $db: $db,
-            $table: $db.mistakes,
+            $table: $db.questions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -15937,29 +15965,29 @@ class $$MistakesTagLinkTableFilterComposer
   }
 }
 
-class $$MistakesTagLinkTableOrderingComposer
-    extends Composer<_$AppDatabase, $MistakesTagLinkTable> {
-  $$MistakesTagLinkTableOrderingComposer({
+class $$QuestionsTagLinkTableOrderingComposer
+    extends Composer<_$AppDatabase, $QuestionsTagLinkTable> {
+  $$QuestionsTagLinkTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  $$MistakesTableOrderingComposer get mistakeID {
-    final $$MistakesTableOrderingComposer composer = $composerBuilder(
+  $$QuestionsTableOrderingComposer get questionID {
+    final $$QuestionsTableOrderingComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.mistakeID,
-      referencedTable: $db.mistakes,
+      getCurrentColumn: (t) => t.questionID,
+      referencedTable: $db.questions,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakesTableOrderingComposer(
+          }) => $$QuestionsTableOrderingComposer(
             $db: $db,
-            $table: $db.mistakes,
+            $table: $db.questions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -15993,29 +16021,29 @@ class $$MistakesTagLinkTableOrderingComposer
   }
 }
 
-class $$MistakesTagLinkTableAnnotationComposer
-    extends Composer<_$AppDatabase, $MistakesTagLinkTable> {
-  $$MistakesTagLinkTableAnnotationComposer({
+class $$QuestionsTagLinkTableAnnotationComposer
+    extends Composer<_$AppDatabase, $QuestionsTagLinkTable> {
+  $$QuestionsTagLinkTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  $$MistakesTableAnnotationComposer get mistakeID {
-    final $$MistakesTableAnnotationComposer composer = $composerBuilder(
+  $$QuestionsTableAnnotationComposer get questionID {
+    final $$QuestionsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.mistakeID,
-      referencedTable: $db.mistakes,
+      getCurrentColumn: (t) => t.questionID,
+      referencedTable: $db.questions,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakesTableAnnotationComposer(
+          }) => $$QuestionsTableAnnotationComposer(
             $db: $db,
-            $table: $db.mistakes,
+            $table: $db.questions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -16049,51 +16077,51 @@ class $$MistakesTagLinkTableAnnotationComposer
   }
 }
 
-class $$MistakesTagLinkTableTableManager
+class $$QuestionsTagLinkTableTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $MistakesTagLinkTable,
-          MistakesTagLinkData,
-          $$MistakesTagLinkTableFilterComposer,
-          $$MistakesTagLinkTableOrderingComposer,
-          $$MistakesTagLinkTableAnnotationComposer,
-          $$MistakesTagLinkTableCreateCompanionBuilder,
-          $$MistakesTagLinkTableUpdateCompanionBuilder,
-          (MistakesTagLinkData, $$MistakesTagLinkTableReferences),
-          MistakesTagLinkData,
-          PrefetchHooks Function({bool mistakeID, bool tagID})
+          $QuestionsTagLinkTable,
+          QuestionsTagLinkData,
+          $$QuestionsTagLinkTableFilterComposer,
+          $$QuestionsTagLinkTableOrderingComposer,
+          $$QuestionsTagLinkTableAnnotationComposer,
+          $$QuestionsTagLinkTableCreateCompanionBuilder,
+          $$QuestionsTagLinkTableUpdateCompanionBuilder,
+          (QuestionsTagLinkData, $$QuestionsTagLinkTableReferences),
+          QuestionsTagLinkData,
+          PrefetchHooks Function({bool questionID, bool tagID})
         > {
-  $$MistakesTagLinkTableTableManager(
+  $$QuestionsTagLinkTableTableManager(
     _$AppDatabase db,
-    $MistakesTagLinkTable table,
+    $QuestionsTagLinkTable table,
   ) : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$MistakesTagLinkTableFilterComposer($db: db, $table: table),
+              $$QuestionsTagLinkTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$MistakesTagLinkTableOrderingComposer($db: db, $table: table),
+              $$QuestionsTagLinkTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$MistakesTagLinkTableAnnotationComposer($db: db, $table: table),
+              $$QuestionsTagLinkTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<int> mistakeID = const Value.absent(),
+                Value<int> questionID = const Value.absent(),
                 Value<int> tagID = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
-              }) => MistakesTagLinkCompanion(
-                mistakeID: mistakeID,
+              }) => QuestionsTagLinkCompanion(
+                questionID: questionID,
                 tagID: tagID,
                 rowid: rowid,
               ),
           createCompanionCallback:
               ({
-                required int mistakeID,
+                required int questionID,
                 required int tagID,
                 Value<int> rowid = const Value.absent(),
-              }) => MistakesTagLinkCompanion.insert(
-                mistakeID: mistakeID,
+              }) => QuestionsTagLinkCompanion.insert(
+                questionID: questionID,
                 tagID: tagID,
                 rowid: rowid,
               ),
@@ -16101,11 +16129,11 @@ class $$MistakesTagLinkTableTableManager
               .map(
                 (e) => (
                   e.readTable(table),
-                  $$MistakesTagLinkTableReferences(db, table, e),
+                  $$QuestionsTagLinkTableReferences(db, table, e),
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({mistakeID = false, tagID = false}) {
+          prefetchHooksCallback: ({questionID = false, tagID = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -16125,17 +16153,17 @@ class $$MistakesTagLinkTableTableManager
                       dynamic
                     >
                   >(state) {
-                    if (mistakeID) {
+                    if (questionID) {
                       state =
                           state.withJoin(
                                 currentTable: table,
-                                currentColumn: table.mistakeID,
+                                currentColumn: table.questionID,
                                 referencedTable:
-                                    $$MistakesTagLinkTableReferences
-                                        ._mistakeIDTable(db),
+                                    $$QuestionsTagLinkTableReferences
+                                        ._questionIDTable(db),
                                 referencedColumn:
-                                    $$MistakesTagLinkTableReferences
-                                        ._mistakeIDTable(db)
+                                    $$QuestionsTagLinkTableReferences
+                                        ._questionIDTable(db)
                                         .id,
                               )
                               as T;
@@ -16146,10 +16174,10 @@ class $$MistakesTagLinkTableTableManager
                                 currentTable: table,
                                 currentColumn: table.tagID,
                                 referencedTable:
-                                    $$MistakesTagLinkTableReferences
+                                    $$QuestionsTagLinkTableReferences
                                         ._tagIDTable(db),
                                 referencedColumn:
-                                    $$MistakesTagLinkTableReferences
+                                    $$QuestionsTagLinkTableReferences
                                         ._tagIDTable(db)
                                         .id,
                               )
@@ -16167,54 +16195,54 @@ class $$MistakesTagLinkTableTableManager
       );
 }
 
-typedef $$MistakesTagLinkTableProcessedTableManager =
+typedef $$QuestionsTagLinkTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $MistakesTagLinkTable,
-      MistakesTagLinkData,
-      $$MistakesTagLinkTableFilterComposer,
-      $$MistakesTagLinkTableOrderingComposer,
-      $$MistakesTagLinkTableAnnotationComposer,
-      $$MistakesTagLinkTableCreateCompanionBuilder,
-      $$MistakesTagLinkTableUpdateCompanionBuilder,
-      (MistakesTagLinkData, $$MistakesTagLinkTableReferences),
-      MistakesTagLinkData,
-      PrefetchHooks Function({bool mistakeID, bool tagID})
+      $QuestionsTagLinkTable,
+      QuestionsTagLinkData,
+      $$QuestionsTagLinkTableFilterComposer,
+      $$QuestionsTagLinkTableOrderingComposer,
+      $$QuestionsTagLinkTableAnnotationComposer,
+      $$QuestionsTagLinkTableCreateCompanionBuilder,
+      $$QuestionsTagLinkTableUpdateCompanionBuilder,
+      (QuestionsTagLinkData, $$QuestionsTagLinkTableReferences),
+      QuestionsTagLinkData,
+      PrefetchHooks Function({bool questionID, bool tagID})
     >;
-typedef $$MistakeLogsTableCreateCompanionBuilder =
-    MistakeLogsCompanion Function({
+typedef $$QuestionLogsTableCreateCompanionBuilder =
+    QuestionLogsCompanion Function({
       Value<int> id,
-      required int mistakeID,
-      required MistakeLogType type,
+      required int questionID,
+      required QuestionLogType type,
       Value<DateTime> timestamp,
       Value<String?> notes,
     });
-typedef $$MistakeLogsTableUpdateCompanionBuilder =
-    MistakeLogsCompanion Function({
+typedef $$QuestionLogsTableUpdateCompanionBuilder =
+    QuestionLogsCompanion Function({
       Value<int> id,
-      Value<int> mistakeID,
-      Value<MistakeLogType> type,
+      Value<int> questionID,
+      Value<QuestionLogType> type,
       Value<DateTime> timestamp,
       Value<String?> notes,
     });
 
-final class $$MistakeLogsTableReferences
-    extends BaseReferences<_$AppDatabase, $MistakeLogsTable, MistakeLog> {
-  $$MistakeLogsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+final class $$QuestionLogsTableReferences
+    extends BaseReferences<_$AppDatabase, $QuestionLogsTable, QuestionLog> {
+  $$QuestionLogsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $MistakesTable _mistakeIDTable(_$AppDatabase db) =>
-      db.mistakes.createAlias(
-        $_aliasNameGenerator(db.mistakeLogs.mistakeID, db.mistakes.id),
+  static $QuestionsTable _questionIDTable(_$AppDatabase db) =>
+      db.questions.createAlias(
+        $_aliasNameGenerator(db.questionLogs.questionID, db.questions.id),
       );
 
-  $$MistakesTableProcessedTableManager get mistakeID {
-    final $_column = $_itemColumn<int>('mistake_i_d')!;
+  $$QuestionsTableProcessedTableManager get questionID {
+    final $_column = $_itemColumn<int>('question_i_d')!;
 
-    final manager = $$MistakesTableTableManager(
+    final manager = $$QuestionsTableTableManager(
       $_db,
-      $_db.mistakes,
+      $_db.questions,
     ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_mistakeIDTable($_db));
+    final item = $_typedResult.readTableOrNull(_questionIDTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -16222,9 +16250,9 @@ final class $$MistakeLogsTableReferences
   }
 }
 
-class $$MistakeLogsTableFilterComposer
-    extends Composer<_$AppDatabase, $MistakeLogsTable> {
-  $$MistakeLogsTableFilterComposer({
+class $$QuestionLogsTableFilterComposer
+    extends Composer<_$AppDatabase, $QuestionLogsTable> {
+  $$QuestionLogsTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -16236,7 +16264,7 @@ class $$MistakeLogsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnWithTypeConverterFilters<MistakeLogType, MistakeLogType, String>
+  ColumnWithTypeConverterFilters<QuestionLogType, QuestionLogType, String>
   get type => $composableBuilder(
     column: $table.type,
     builder: (column) => ColumnWithTypeConverterFilters(column),
@@ -16252,20 +16280,20 @@ class $$MistakeLogsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  $$MistakesTableFilterComposer get mistakeID {
-    final $$MistakesTableFilterComposer composer = $composerBuilder(
+  $$QuestionsTableFilterComposer get questionID {
+    final $$QuestionsTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.mistakeID,
-      referencedTable: $db.mistakes,
+      getCurrentColumn: (t) => t.questionID,
+      referencedTable: $db.questions,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakesTableFilterComposer(
+          }) => $$QuestionsTableFilterComposer(
             $db: $db,
-            $table: $db.mistakes,
+            $table: $db.questions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -16276,9 +16304,9 @@ class $$MistakeLogsTableFilterComposer
   }
 }
 
-class $$MistakeLogsTableOrderingComposer
-    extends Composer<_$AppDatabase, $MistakeLogsTable> {
-  $$MistakeLogsTableOrderingComposer({
+class $$QuestionLogsTableOrderingComposer
+    extends Composer<_$AppDatabase, $QuestionLogsTable> {
+  $$QuestionLogsTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -16305,20 +16333,20 @@ class $$MistakeLogsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  $$MistakesTableOrderingComposer get mistakeID {
-    final $$MistakesTableOrderingComposer composer = $composerBuilder(
+  $$QuestionsTableOrderingComposer get questionID {
+    final $$QuestionsTableOrderingComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.mistakeID,
-      referencedTable: $db.mistakes,
+      getCurrentColumn: (t) => t.questionID,
+      referencedTable: $db.questions,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakesTableOrderingComposer(
+          }) => $$QuestionsTableOrderingComposer(
             $db: $db,
-            $table: $db.mistakes,
+            $table: $db.questions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -16329,9 +16357,9 @@ class $$MistakeLogsTableOrderingComposer
   }
 }
 
-class $$MistakeLogsTableAnnotationComposer
-    extends Composer<_$AppDatabase, $MistakeLogsTable> {
-  $$MistakeLogsTableAnnotationComposer({
+class $$QuestionLogsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $QuestionLogsTable> {
+  $$QuestionLogsTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -16341,7 +16369,7 @@ class $$MistakeLogsTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumnWithTypeConverter<MistakeLogType, String> get type =>
+  GeneratedColumnWithTypeConverter<QuestionLogType, String> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
 
   GeneratedColumn<DateTime> get timestamp =>
@@ -16350,20 +16378,20 @@ class $$MistakeLogsTableAnnotationComposer
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
 
-  $$MistakesTableAnnotationComposer get mistakeID {
-    final $$MistakesTableAnnotationComposer composer = $composerBuilder(
+  $$QuestionsTableAnnotationComposer get questionID {
+    final $$QuestionsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.mistakeID,
-      referencedTable: $db.mistakes,
+      getCurrentColumn: (t) => t.questionID,
+      referencedTable: $db.questions,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakesTableAnnotationComposer(
+          }) => $$QuestionsTableAnnotationComposer(
             $db: $db,
-            $table: $db.mistakes,
+            $table: $db.questions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -16374,42 +16402,42 @@ class $$MistakeLogsTableAnnotationComposer
   }
 }
 
-class $$MistakeLogsTableTableManager
+class $$QuestionLogsTableTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $MistakeLogsTable,
-          MistakeLog,
-          $$MistakeLogsTableFilterComposer,
-          $$MistakeLogsTableOrderingComposer,
-          $$MistakeLogsTableAnnotationComposer,
-          $$MistakeLogsTableCreateCompanionBuilder,
-          $$MistakeLogsTableUpdateCompanionBuilder,
-          (MistakeLog, $$MistakeLogsTableReferences),
-          MistakeLog,
-          PrefetchHooks Function({bool mistakeID})
+          $QuestionLogsTable,
+          QuestionLog,
+          $$QuestionLogsTableFilterComposer,
+          $$QuestionLogsTableOrderingComposer,
+          $$QuestionLogsTableAnnotationComposer,
+          $$QuestionLogsTableCreateCompanionBuilder,
+          $$QuestionLogsTableUpdateCompanionBuilder,
+          (QuestionLog, $$QuestionLogsTableReferences),
+          QuestionLog,
+          PrefetchHooks Function({bool questionID})
         > {
-  $$MistakeLogsTableTableManager(_$AppDatabase db, $MistakeLogsTable table)
+  $$QuestionLogsTableTableManager(_$AppDatabase db, $QuestionLogsTable table)
     : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$MistakeLogsTableFilterComposer($db: db, $table: table),
+              $$QuestionLogsTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$MistakeLogsTableOrderingComposer($db: db, $table: table),
+              $$QuestionLogsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$MistakeLogsTableAnnotationComposer($db: db, $table: table),
+              $$QuestionLogsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int> mistakeID = const Value.absent(),
-                Value<MistakeLogType> type = const Value.absent(),
+                Value<int> questionID = const Value.absent(),
+                Value<QuestionLogType> type = const Value.absent(),
                 Value<DateTime> timestamp = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
-              }) => MistakeLogsCompanion(
+              }) => QuestionLogsCompanion(
                 id: id,
-                mistakeID: mistakeID,
+                questionID: questionID,
                 type: type,
                 timestamp: timestamp,
                 notes: notes,
@@ -16417,13 +16445,13 @@ class $$MistakeLogsTableTableManager
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                required int mistakeID,
-                required MistakeLogType type,
+                required int questionID,
+                required QuestionLogType type,
                 Value<DateTime> timestamp = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
-              }) => MistakeLogsCompanion.insert(
+              }) => QuestionLogsCompanion.insert(
                 id: id,
-                mistakeID: mistakeID,
+                questionID: questionID,
                 type: type,
                 timestamp: timestamp,
                 notes: notes,
@@ -16432,11 +16460,11 @@ class $$MistakeLogsTableTableManager
               .map(
                 (e) => (
                   e.readTable(table),
-                  $$MistakeLogsTableReferences(db, table, e),
+                  $$QuestionLogsTableReferences(db, table, e),
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({mistakeID = false}) {
+          prefetchHooksCallback: ({questionID = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -16456,15 +16484,15 @@ class $$MistakeLogsTableTableManager
                       dynamic
                     >
                   >(state) {
-                    if (mistakeID) {
+                    if (questionID) {
                       state =
                           state.withJoin(
                                 currentTable: table,
-                                currentColumn: table.mistakeID,
-                                referencedTable: $$MistakeLogsTableReferences
-                                    ._mistakeIDTable(db),
-                                referencedColumn: $$MistakeLogsTableReferences
-                                    ._mistakeIDTable(db)
+                                currentColumn: table.questionID,
+                                referencedTable: $$QuestionLogsTableReferences
+                                    ._questionIDTable(db),
+                                referencedColumn: $$QuestionLogsTableReferences
+                                    ._questionIDTable(db)
                                     .id,
                               )
                               as T;
@@ -16481,59 +16509,59 @@ class $$MistakeLogsTableTableManager
       );
 }
 
-typedef $$MistakeLogsTableProcessedTableManager =
+typedef $$QuestionLogsTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $MistakeLogsTable,
-      MistakeLog,
-      $$MistakeLogsTableFilterComposer,
-      $$MistakeLogsTableOrderingComposer,
-      $$MistakeLogsTableAnnotationComposer,
-      $$MistakeLogsTableCreateCompanionBuilder,
-      $$MistakeLogsTableUpdateCompanionBuilder,
-      (MistakeLog, $$MistakeLogsTableReferences),
-      MistakeLog,
-      PrefetchHooks Function({bool mistakeID})
+      $QuestionLogsTable,
+      QuestionLog,
+      $$QuestionLogsTableFilterComposer,
+      $$QuestionLogsTableOrderingComposer,
+      $$QuestionLogsTableAnnotationComposer,
+      $$QuestionLogsTableCreateCompanionBuilder,
+      $$QuestionLogsTableUpdateCompanionBuilder,
+      (QuestionLog, $$QuestionLogsTableReferences),
+      QuestionLog,
+      PrefetchHooks Function({bool questionID})
     >;
-typedef $$MistakePicsLinkTableCreateCompanionBuilder =
-    MistakePicsLinkCompanion Function({
-      required int mistakeId,
+typedef $$QuestionPicsLinkTableCreateCompanionBuilder =
+    QuestionPicsLinkCompanion Function({
+      required int questionId,
       required int picId,
       Value<int> rowid,
     });
-typedef $$MistakePicsLinkTableUpdateCompanionBuilder =
-    MistakePicsLinkCompanion Function({
-      Value<int> mistakeId,
+typedef $$QuestionPicsLinkTableUpdateCompanionBuilder =
+    QuestionPicsLinkCompanion Function({
+      Value<int> questionId,
       Value<int> picId,
       Value<int> rowid,
     });
 
-final class $$MistakePicsLinkTableReferences
+final class $$QuestionPicsLinkTableReferences
     extends
         BaseReferences<
           _$AppDatabase,
-          $MistakePicsLinkTable,
-          MistakePicsLinkData
+          $QuestionPicsLinkTable,
+          QuestionPicsLinkData
         > {
-  $$MistakePicsLinkTableReferences(
+  $$QuestionPicsLinkTableReferences(
     super.$_db,
     super.$_table,
     super.$_typedResult,
   );
 
-  static $MistakesTable _mistakeIdTable(_$AppDatabase db) =>
-      db.mistakes.createAlias(
-        $_aliasNameGenerator(db.mistakePicsLink.mistakeId, db.mistakes.id),
+  static $QuestionsTable _questionIdTable(_$AppDatabase db) =>
+      db.questions.createAlias(
+        $_aliasNameGenerator(db.questionPicsLink.questionId, db.questions.id),
       );
 
-  $$MistakesTableProcessedTableManager get mistakeId {
-    final $_column = $_itemColumn<int>('mistake_id')!;
+  $$QuestionsTableProcessedTableManager get questionId {
+    final $_column = $_itemColumn<int>('question_id')!;
 
-    final manager = $$MistakesTableTableManager(
+    final manager = $$QuestionsTableTableManager(
       $_db,
-      $_db.mistakes,
+      $_db.questions,
     ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_mistakeIdTable($_db));
+    final item = $_typedResult.readTableOrNull(_questionIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -16541,7 +16569,7 @@ final class $$MistakePicsLinkTableReferences
   }
 
   static $ImagesTable _picIdTable(_$AppDatabase db) => db.images.createAlias(
-    $_aliasNameGenerator(db.mistakePicsLink.picId, db.images.id),
+    $_aliasNameGenerator(db.questionPicsLink.picId, db.images.id),
   );
 
   $$ImagesTableProcessedTableManager get picId {
@@ -16559,29 +16587,29 @@ final class $$MistakePicsLinkTableReferences
   }
 }
 
-class $$MistakePicsLinkTableFilterComposer
-    extends Composer<_$AppDatabase, $MistakePicsLinkTable> {
-  $$MistakePicsLinkTableFilterComposer({
+class $$QuestionPicsLinkTableFilterComposer
+    extends Composer<_$AppDatabase, $QuestionPicsLinkTable> {
+  $$QuestionPicsLinkTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  $$MistakesTableFilterComposer get mistakeId {
-    final $$MistakesTableFilterComposer composer = $composerBuilder(
+  $$QuestionsTableFilterComposer get questionId {
+    final $$QuestionsTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.mistakeId,
-      referencedTable: $db.mistakes,
+      getCurrentColumn: (t) => t.questionId,
+      referencedTable: $db.questions,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakesTableFilterComposer(
+          }) => $$QuestionsTableFilterComposer(
             $db: $db,
-            $table: $db.mistakes,
+            $table: $db.questions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -16615,29 +16643,29 @@ class $$MistakePicsLinkTableFilterComposer
   }
 }
 
-class $$MistakePicsLinkTableOrderingComposer
-    extends Composer<_$AppDatabase, $MistakePicsLinkTable> {
-  $$MistakePicsLinkTableOrderingComposer({
+class $$QuestionPicsLinkTableOrderingComposer
+    extends Composer<_$AppDatabase, $QuestionPicsLinkTable> {
+  $$QuestionPicsLinkTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  $$MistakesTableOrderingComposer get mistakeId {
-    final $$MistakesTableOrderingComposer composer = $composerBuilder(
+  $$QuestionsTableOrderingComposer get questionId {
+    final $$QuestionsTableOrderingComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.mistakeId,
-      referencedTable: $db.mistakes,
+      getCurrentColumn: (t) => t.questionId,
+      referencedTable: $db.questions,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakesTableOrderingComposer(
+          }) => $$QuestionsTableOrderingComposer(
             $db: $db,
-            $table: $db.mistakes,
+            $table: $db.questions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -16671,29 +16699,29 @@ class $$MistakePicsLinkTableOrderingComposer
   }
 }
 
-class $$MistakePicsLinkTableAnnotationComposer
-    extends Composer<_$AppDatabase, $MistakePicsLinkTable> {
-  $$MistakePicsLinkTableAnnotationComposer({
+class $$QuestionPicsLinkTableAnnotationComposer
+    extends Composer<_$AppDatabase, $QuestionPicsLinkTable> {
+  $$QuestionPicsLinkTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  $$MistakesTableAnnotationComposer get mistakeId {
-    final $$MistakesTableAnnotationComposer composer = $composerBuilder(
+  $$QuestionsTableAnnotationComposer get questionId {
+    final $$QuestionsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.mistakeId,
-      referencedTable: $db.mistakes,
+      getCurrentColumn: (t) => t.questionId,
+      referencedTable: $db.questions,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakesTableAnnotationComposer(
+          }) => $$QuestionsTableAnnotationComposer(
             $db: $db,
-            $table: $db.mistakes,
+            $table: $db.questions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -16727,51 +16755,51 @@ class $$MistakePicsLinkTableAnnotationComposer
   }
 }
 
-class $$MistakePicsLinkTableTableManager
+class $$QuestionPicsLinkTableTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $MistakePicsLinkTable,
-          MistakePicsLinkData,
-          $$MistakePicsLinkTableFilterComposer,
-          $$MistakePicsLinkTableOrderingComposer,
-          $$MistakePicsLinkTableAnnotationComposer,
-          $$MistakePicsLinkTableCreateCompanionBuilder,
-          $$MistakePicsLinkTableUpdateCompanionBuilder,
-          (MistakePicsLinkData, $$MistakePicsLinkTableReferences),
-          MistakePicsLinkData,
-          PrefetchHooks Function({bool mistakeId, bool picId})
+          $QuestionPicsLinkTable,
+          QuestionPicsLinkData,
+          $$QuestionPicsLinkTableFilterComposer,
+          $$QuestionPicsLinkTableOrderingComposer,
+          $$QuestionPicsLinkTableAnnotationComposer,
+          $$QuestionPicsLinkTableCreateCompanionBuilder,
+          $$QuestionPicsLinkTableUpdateCompanionBuilder,
+          (QuestionPicsLinkData, $$QuestionPicsLinkTableReferences),
+          QuestionPicsLinkData,
+          PrefetchHooks Function({bool questionId, bool picId})
         > {
-  $$MistakePicsLinkTableTableManager(
+  $$QuestionPicsLinkTableTableManager(
     _$AppDatabase db,
-    $MistakePicsLinkTable table,
+    $QuestionPicsLinkTable table,
   ) : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$MistakePicsLinkTableFilterComposer($db: db, $table: table),
+              $$QuestionPicsLinkTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$MistakePicsLinkTableOrderingComposer($db: db, $table: table),
+              $$QuestionPicsLinkTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$MistakePicsLinkTableAnnotationComposer($db: db, $table: table),
+              $$QuestionPicsLinkTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<int> mistakeId = const Value.absent(),
+                Value<int> questionId = const Value.absent(),
                 Value<int> picId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
-              }) => MistakePicsLinkCompanion(
-                mistakeId: mistakeId,
+              }) => QuestionPicsLinkCompanion(
+                questionId: questionId,
                 picId: picId,
                 rowid: rowid,
               ),
           createCompanionCallback:
               ({
-                required int mistakeId,
+                required int questionId,
                 required int picId,
                 Value<int> rowid = const Value.absent(),
-              }) => MistakePicsLinkCompanion.insert(
-                mistakeId: mistakeId,
+              }) => QuestionPicsLinkCompanion.insert(
+                questionId: questionId,
                 picId: picId,
                 rowid: rowid,
               ),
@@ -16779,11 +16807,11 @@ class $$MistakePicsLinkTableTableManager
               .map(
                 (e) => (
                   e.readTable(table),
-                  $$MistakePicsLinkTableReferences(db, table, e),
+                  $$QuestionPicsLinkTableReferences(db, table, e),
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({mistakeId = false, picId = false}) {
+          prefetchHooksCallback: ({questionId = false, picId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -16803,17 +16831,17 @@ class $$MistakePicsLinkTableTableManager
                       dynamic
                     >
                   >(state) {
-                    if (mistakeId) {
+                    if (questionId) {
                       state =
                           state.withJoin(
                                 currentTable: table,
-                                currentColumn: table.mistakeId,
+                                currentColumn: table.questionId,
                                 referencedTable:
-                                    $$MistakePicsLinkTableReferences
-                                        ._mistakeIdTable(db),
+                                    $$QuestionPicsLinkTableReferences
+                                        ._questionIdTable(db),
                                 referencedColumn:
-                                    $$MistakePicsLinkTableReferences
-                                        ._mistakeIdTable(db)
+                                    $$QuestionPicsLinkTableReferences
+                                        ._questionIdTable(db)
                                         .id,
                               )
                               as T;
@@ -16824,10 +16852,10 @@ class $$MistakePicsLinkTableTableManager
                                 currentTable: table,
                                 currentColumn: table.picId,
                                 referencedTable:
-                                    $$MistakePicsLinkTableReferences
+                                    $$QuestionPicsLinkTableReferences
                                         ._picIdTable(db),
                                 referencedColumn:
-                                    $$MistakePicsLinkTableReferences
+                                    $$QuestionPicsLinkTableReferences
                                         ._picIdTable(db)
                                         .id,
                               )
@@ -16845,24 +16873,24 @@ class $$MistakePicsLinkTableTableManager
       );
 }
 
-typedef $$MistakePicsLinkTableProcessedTableManager =
+typedef $$QuestionPicsLinkTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $MistakePicsLinkTable,
-      MistakePicsLinkData,
-      $$MistakePicsLinkTableFilterComposer,
-      $$MistakePicsLinkTableOrderingComposer,
-      $$MistakePicsLinkTableAnnotationComposer,
-      $$MistakePicsLinkTableCreateCompanionBuilder,
-      $$MistakePicsLinkTableUpdateCompanionBuilder,
-      (MistakePicsLinkData, $$MistakePicsLinkTableReferences),
-      MistakePicsLinkData,
-      PrefetchHooks Function({bool mistakeId, bool picId})
+      $QuestionPicsLinkTable,
+      QuestionPicsLinkData,
+      $$QuestionPicsLinkTableFilterComposer,
+      $$QuestionPicsLinkTableOrderingComposer,
+      $$QuestionPicsLinkTableAnnotationComposer,
+      $$QuestionPicsLinkTableCreateCompanionBuilder,
+      $$QuestionPicsLinkTableUpdateCompanionBuilder,
+      (QuestionPicsLinkData, $$QuestionPicsLinkTableReferences),
+      QuestionPicsLinkData,
+      PrefetchHooks Function({bool questionId, bool picId})
     >;
 typedef $$AnswersTableCreateCompanionBuilder =
     AnswersCompanion Function({
       Value<int> id,
-      required int mistakeId,
+      required int questionId,
       Value<String?> note,
       Value<String?> head,
       Value<String?> source,
@@ -16871,7 +16899,7 @@ typedef $$AnswersTableCreateCompanionBuilder =
 typedef $$AnswersTableUpdateCompanionBuilder =
     AnswersCompanion Function({
       Value<int> id,
-      Value<int> mistakeId,
+      Value<int> questionId,
       Value<String?> note,
       Value<String?> head,
       Value<String?> source,
@@ -16882,17 +16910,19 @@ final class $$AnswersTableReferences
     extends BaseReferences<_$AppDatabase, $AnswersTable, Answer> {
   $$AnswersTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $MistakesTable _mistakeIdTable(_$AppDatabase db) => db.mistakes
-      .createAlias($_aliasNameGenerator(db.answers.mistakeId, db.mistakes.id));
+  static $QuestionsTable _questionIdTable(_$AppDatabase db) =>
+      db.questions.createAlias(
+        $_aliasNameGenerator(db.answers.questionId, db.questions.id),
+      );
 
-  $$MistakesTableProcessedTableManager get mistakeId {
-    final $_column = $_itemColumn<int>('mistake_id')!;
+  $$QuestionsTableProcessedTableManager get questionId {
+    final $_column = $_itemColumn<int>('question_id')!;
 
-    final manager = $$MistakesTableTableManager(
+    final manager = $$QuestionsTableTableManager(
       $_db,
-      $_db.mistakes,
+      $_db.questions,
     ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_mistakeIdTable($_db));
+    final item = $_typedResult.readTableOrNull(_questionIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -16937,23 +16967,23 @@ final class $$AnswersTableReferences
     );
   }
 
-  static MultiTypedResultKey<$MistakeAnalysisTable, List<MistakeAnalysi>>
-  _mistakeAnalysisRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
-    db.mistakeAnalysis,
+  static MultiTypedResultKey<$QuestionAnalysisTable, List<QuestionAnalysi>>
+  _questionAnalysisRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.questionAnalysis,
     aliasName: $_aliasNameGenerator(
       db.answers.id,
-      db.mistakeAnalysis.bestAnswer,
+      db.questionAnalysis.bestAnswer,
     ),
   );
 
-  $$MistakeAnalysisTableProcessedTableManager get mistakeAnalysisRefs {
-    final manager = $$MistakeAnalysisTableTableManager(
+  $$QuestionAnalysisTableProcessedTableManager get questionAnalysisRefs {
+    final manager = $$QuestionAnalysisTableTableManager(
       $_db,
-      $_db.mistakeAnalysis,
+      $_db.questionAnalysis,
     ).filter((f) => f.bestAnswer.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(
-      _mistakeAnalysisRefsTable($_db),
+      _questionAnalysisRefsTable($_db),
     );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
@@ -16995,20 +17025,20 @@ class $$AnswersTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  $$MistakesTableFilterComposer get mistakeId {
-    final $$MistakesTableFilterComposer composer = $composerBuilder(
+  $$QuestionsTableFilterComposer get questionId {
+    final $$QuestionsTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.mistakeId,
-      referencedTable: $db.mistakes,
+      getCurrentColumn: (t) => t.questionId,
+      referencedTable: $db.questions,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakesTableFilterComposer(
+          }) => $$QuestionsTableFilterComposer(
             $db: $db,
-            $table: $db.mistakes,
+            $table: $db.questions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -17068,22 +17098,22 @@ class $$AnswersTableFilterComposer
     return f(composer);
   }
 
-  Expression<bool> mistakeAnalysisRefs(
-    Expression<bool> Function($$MistakeAnalysisTableFilterComposer f) f,
+  Expression<bool> questionAnalysisRefs(
+    Expression<bool> Function($$QuestionAnalysisTableFilterComposer f) f,
   ) {
-    final $$MistakeAnalysisTableFilterComposer composer = $composerBuilder(
+    final $$QuestionAnalysisTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.mistakeAnalysis,
+      referencedTable: $db.questionAnalysis,
       getReferencedColumn: (t) => t.bestAnswer,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakeAnalysisTableFilterComposer(
+          }) => $$QuestionAnalysisTableFilterComposer(
             $db: $db,
-            $table: $db.mistakeAnalysis,
+            $table: $db.questionAnalysis,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -17128,20 +17158,20 @@ class $$AnswersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  $$MistakesTableOrderingComposer get mistakeId {
-    final $$MistakesTableOrderingComposer composer = $composerBuilder(
+  $$QuestionsTableOrderingComposer get questionId {
+    final $$QuestionsTableOrderingComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.mistakeId,
-      referencedTable: $db.mistakes,
+      getCurrentColumn: (t) => t.questionId,
+      referencedTable: $db.questions,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakesTableOrderingComposer(
+          }) => $$QuestionsTableOrderingComposer(
             $db: $db,
-            $table: $db.mistakes,
+            $table: $db.questions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -17176,20 +17206,20 @@ class $$AnswersTableAnnotationComposer
   GeneratedColumn<String> get answer =>
       $composableBuilder(column: $table.answer, builder: (column) => column);
 
-  $$MistakesTableAnnotationComposer get mistakeId {
-    final $$MistakesTableAnnotationComposer composer = $composerBuilder(
+  $$QuestionsTableAnnotationComposer get questionId {
+    final $$QuestionsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.mistakeId,
-      referencedTable: $db.mistakes,
+      getCurrentColumn: (t) => t.questionId,
+      referencedTable: $db.questions,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakesTableAnnotationComposer(
+          }) => $$QuestionsTableAnnotationComposer(
             $db: $db,
-            $table: $db.mistakes,
+            $table: $db.questions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -17249,22 +17279,22 @@ class $$AnswersTableAnnotationComposer
     return f(composer);
   }
 
-  Expression<T> mistakeAnalysisRefs<T extends Object>(
-    Expression<T> Function($$MistakeAnalysisTableAnnotationComposer a) f,
+  Expression<T> questionAnalysisRefs<T extends Object>(
+    Expression<T> Function($$QuestionAnalysisTableAnnotationComposer a) f,
   ) {
-    final $$MistakeAnalysisTableAnnotationComposer composer = $composerBuilder(
+    final $$QuestionAnalysisTableAnnotationComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.mistakeAnalysis,
+      referencedTable: $db.questionAnalysis,
       getReferencedColumn: (t) => t.bestAnswer,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakeAnalysisTableAnnotationComposer(
+          }) => $$QuestionAnalysisTableAnnotationComposer(
             $db: $db,
-            $table: $db.mistakeAnalysis,
+            $table: $db.questionAnalysis,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -17289,10 +17319,10 @@ class $$AnswersTableTableManager
           (Answer, $$AnswersTableReferences),
           Answer,
           PrefetchHooks Function({
-            bool mistakeId,
+            bool questionId,
             bool answersTagsLinkRefs,
             bool answerPicsLinkRefs,
-            bool mistakeAnalysisRefs,
+            bool questionAnalysisRefs,
           })
         > {
   $$AnswersTableTableManager(_$AppDatabase db, $AnswersTable table)
@@ -17309,14 +17339,14 @@ class $$AnswersTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int> mistakeId = const Value.absent(),
+                Value<int> questionId = const Value.absent(),
                 Value<String?> note = const Value.absent(),
                 Value<String?> head = const Value.absent(),
                 Value<String?> source = const Value.absent(),
                 Value<String> answer = const Value.absent(),
               }) => AnswersCompanion(
                 id: id,
-                mistakeId: mistakeId,
+                questionId: questionId,
                 note: note,
                 head: head,
                 source: source,
@@ -17325,14 +17355,14 @@ class $$AnswersTableTableManager
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                required int mistakeId,
+                required int questionId,
                 Value<String?> note = const Value.absent(),
                 Value<String?> head = const Value.absent(),
                 Value<String?> source = const Value.absent(),
                 required String answer,
               }) => AnswersCompanion.insert(
                 id: id,
-                mistakeId: mistakeId,
+                questionId: questionId,
                 note: note,
                 head: head,
                 source: source,
@@ -17348,17 +17378,17 @@ class $$AnswersTableTableManager
               .toList(),
           prefetchHooksCallback:
               ({
-                mistakeId = false,
+                questionId = false,
                 answersTagsLinkRefs = false,
                 answerPicsLinkRefs = false,
-                mistakeAnalysisRefs = false,
+                questionAnalysisRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (answersTagsLinkRefs) db.answersTagsLink,
                     if (answerPicsLinkRefs) db.answerPicsLink,
-                    if (mistakeAnalysisRefs) db.mistakeAnalysis,
+                    if (questionAnalysisRefs) db.questionAnalysis,
                   ],
                   addJoins:
                       <
@@ -17376,15 +17406,15 @@ class $$AnswersTableTableManager
                           dynamic
                         >
                       >(state) {
-                        if (mistakeId) {
+                        if (questionId) {
                           state =
                               state.withJoin(
                                     currentTable: table,
-                                    currentColumn: table.mistakeId,
+                                    currentColumn: table.questionId,
                                     referencedTable: $$AnswersTableReferences
-                                        ._mistakeIdTable(db),
+                                        ._questionIdTable(db),
                                     referencedColumn: $$AnswersTableReferences
-                                        ._mistakeIdTable(db)
+                                        ._questionIdTable(db)
                                         .id,
                                   )
                                   as T;
@@ -17436,21 +17466,21 @@ class $$AnswersTableTableManager
                               ),
                           typedResults: items,
                         ),
-                      if (mistakeAnalysisRefs)
+                      if (questionAnalysisRefs)
                         await $_getPrefetchedData<
                           Answer,
                           $AnswersTable,
-                          MistakeAnalysi
+                          QuestionAnalysi
                         >(
                           currentTable: table,
                           referencedTable: $$AnswersTableReferences
-                              ._mistakeAnalysisRefsTable(db),
+                              ._questionAnalysisRefsTable(db),
                           managerFromTypedResult: (p0) =>
                               $$AnswersTableReferences(
                                 db,
                                 table,
                                 p0,
-                              ).mistakeAnalysisRefs,
+                              ).questionAnalysisRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
                                 (e) => e.bestAnswer == item.id,
@@ -17478,10 +17508,10 @@ typedef $$AnswersTableProcessedTableManager =
       (Answer, $$AnswersTableReferences),
       Answer,
       PrefetchHooks Function({
-        bool mistakeId,
+        bool questionId,
         bool answersTagsLinkRefs,
         bool answerPicsLinkRefs,
-        bool mistakeAnalysisRefs,
+        bool questionAnalysisRefs,
       })
     >;
 typedef $$AnswersTagsLinkTableCreateCompanionBuilder =
@@ -18210,16 +18240,16 @@ typedef $$AnswerPicsLinkTableProcessedTableManager =
       AnswerPicsLinkData,
       PrefetchHooks Function({bool answerID, bool picID})
     >;
-typedef $$MistakeAnalysisTableCreateCompanionBuilder =
-    MistakeAnalysisCompanion Function({
+typedef $$QuestionAnalysisTableCreateCompanionBuilder =
+    QuestionAnalysisCompanion Function({
       required int id,
       required int bestAnswer,
       Value<String?> reason,
       Value<String?> analysis,
       Value<int> rowid,
     });
-typedef $$MistakeAnalysisTableUpdateCompanionBuilder =
-    MistakeAnalysisCompanion Function({
+typedef $$QuestionAnalysisTableUpdateCompanionBuilder =
+    QuestionAnalysisCompanion Function({
       Value<int> id,
       Value<int> bestAnswer,
       Value<String?> reason,
@@ -18227,25 +18257,25 @@ typedef $$MistakeAnalysisTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
-final class $$MistakeAnalysisTableReferences
+final class $$QuestionAnalysisTableReferences
     extends
-        BaseReferences<_$AppDatabase, $MistakeAnalysisTable, MistakeAnalysi> {
-  $$MistakeAnalysisTableReferences(
+        BaseReferences<_$AppDatabase, $QuestionAnalysisTable, QuestionAnalysi> {
+  $$QuestionAnalysisTableReferences(
     super.$_db,
     super.$_table,
     super.$_typedResult,
   );
 
-  static $MistakesTable _idTable(_$AppDatabase db) => db.mistakes.createAlias(
-    $_aliasNameGenerator(db.mistakeAnalysis.id, db.mistakes.id),
+  static $QuestionsTable _idTable(_$AppDatabase db) => db.questions.createAlias(
+    $_aliasNameGenerator(db.questionAnalysis.id, db.questions.id),
   );
 
-  $$MistakesTableProcessedTableManager get id {
+  $$QuestionsTableProcessedTableManager get id {
     final $_column = $_itemColumn<int>('id')!;
 
-    final manager = $$MistakesTableTableManager(
+    final manager = $$QuestionsTableTableManager(
       $_db,
-      $_db.mistakes,
+      $_db.questions,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_idTable($_db));
     if (item == null) return manager;
@@ -18256,7 +18286,7 @@ final class $$MistakeAnalysisTableReferences
 
   static $AnswersTable _bestAnswerTable(_$AppDatabase db) =>
       db.answers.createAlias(
-        $_aliasNameGenerator(db.mistakeAnalysis.bestAnswer, db.answers.id),
+        $_aliasNameGenerator(db.questionAnalysis.bestAnswer, db.answers.id),
       );
 
   $$AnswersTableProcessedTableManager get bestAnswer {
@@ -18274,9 +18304,9 @@ final class $$MistakeAnalysisTableReferences
   }
 }
 
-class $$MistakeAnalysisTableFilterComposer
-    extends Composer<_$AppDatabase, $MistakeAnalysisTable> {
-  $$MistakeAnalysisTableFilterComposer({
+class $$QuestionAnalysisTableFilterComposer
+    extends Composer<_$AppDatabase, $QuestionAnalysisTable> {
+  $$QuestionAnalysisTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -18293,20 +18323,20 @@ class $$MistakeAnalysisTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  $$MistakesTableFilterComposer get id {
-    final $$MistakesTableFilterComposer composer = $composerBuilder(
+  $$QuestionsTableFilterComposer get id {
+    final $$QuestionsTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.mistakes,
+      referencedTable: $db.questions,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakesTableFilterComposer(
+          }) => $$QuestionsTableFilterComposer(
             $db: $db,
-            $table: $db.mistakes,
+            $table: $db.questions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -18340,9 +18370,9 @@ class $$MistakeAnalysisTableFilterComposer
   }
 }
 
-class $$MistakeAnalysisTableOrderingComposer
-    extends Composer<_$AppDatabase, $MistakeAnalysisTable> {
-  $$MistakeAnalysisTableOrderingComposer({
+class $$QuestionAnalysisTableOrderingComposer
+    extends Composer<_$AppDatabase, $QuestionAnalysisTable> {
+  $$QuestionAnalysisTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -18359,20 +18389,20 @@ class $$MistakeAnalysisTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  $$MistakesTableOrderingComposer get id {
-    final $$MistakesTableOrderingComposer composer = $composerBuilder(
+  $$QuestionsTableOrderingComposer get id {
+    final $$QuestionsTableOrderingComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.mistakes,
+      referencedTable: $db.questions,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakesTableOrderingComposer(
+          }) => $$QuestionsTableOrderingComposer(
             $db: $db,
-            $table: $db.mistakes,
+            $table: $db.questions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -18406,9 +18436,9 @@ class $$MistakeAnalysisTableOrderingComposer
   }
 }
 
-class $$MistakeAnalysisTableAnnotationComposer
-    extends Composer<_$AppDatabase, $MistakeAnalysisTable> {
-  $$MistakeAnalysisTableAnnotationComposer({
+class $$QuestionAnalysisTableAnnotationComposer
+    extends Composer<_$AppDatabase, $QuestionAnalysisTable> {
+  $$QuestionAnalysisTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -18421,20 +18451,20 @@ class $$MistakeAnalysisTableAnnotationComposer
   GeneratedColumn<String> get analysis =>
       $composableBuilder(column: $table.analysis, builder: (column) => column);
 
-  $$MistakesTableAnnotationComposer get id {
-    final $$MistakesTableAnnotationComposer composer = $composerBuilder(
+  $$QuestionsTableAnnotationComposer get id {
+    final $$QuestionsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.mistakes,
+      referencedTable: $db.questions,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakesTableAnnotationComposer(
+          }) => $$QuestionsTableAnnotationComposer(
             $db: $db,
-            $table: $db.mistakes,
+            $table: $db.questions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -18468,34 +18498,34 @@ class $$MistakeAnalysisTableAnnotationComposer
   }
 }
 
-class $$MistakeAnalysisTableTableManager
+class $$QuestionAnalysisTableTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $MistakeAnalysisTable,
-          MistakeAnalysi,
-          $$MistakeAnalysisTableFilterComposer,
-          $$MistakeAnalysisTableOrderingComposer,
-          $$MistakeAnalysisTableAnnotationComposer,
-          $$MistakeAnalysisTableCreateCompanionBuilder,
-          $$MistakeAnalysisTableUpdateCompanionBuilder,
-          (MistakeAnalysi, $$MistakeAnalysisTableReferences),
-          MistakeAnalysi,
+          $QuestionAnalysisTable,
+          QuestionAnalysi,
+          $$QuestionAnalysisTableFilterComposer,
+          $$QuestionAnalysisTableOrderingComposer,
+          $$QuestionAnalysisTableAnnotationComposer,
+          $$QuestionAnalysisTableCreateCompanionBuilder,
+          $$QuestionAnalysisTableUpdateCompanionBuilder,
+          (QuestionAnalysi, $$QuestionAnalysisTableReferences),
+          QuestionAnalysi,
           PrefetchHooks Function({bool id, bool bestAnswer})
         > {
-  $$MistakeAnalysisTableTableManager(
+  $$QuestionAnalysisTableTableManager(
     _$AppDatabase db,
-    $MistakeAnalysisTable table,
+    $QuestionAnalysisTable table,
   ) : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$MistakeAnalysisTableFilterComposer($db: db, $table: table),
+              $$QuestionAnalysisTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$MistakeAnalysisTableOrderingComposer($db: db, $table: table),
+              $$QuestionAnalysisTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$MistakeAnalysisTableAnnotationComposer($db: db, $table: table),
+              $$QuestionAnalysisTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
@@ -18503,7 +18533,7 @@ class $$MistakeAnalysisTableTableManager
                 Value<String?> reason = const Value.absent(),
                 Value<String?> analysis = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
-              }) => MistakeAnalysisCompanion(
+              }) => QuestionAnalysisCompanion(
                 id: id,
                 bestAnswer: bestAnswer,
                 reason: reason,
@@ -18517,7 +18547,7 @@ class $$MistakeAnalysisTableTableManager
                 Value<String?> reason = const Value.absent(),
                 Value<String?> analysis = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
-              }) => MistakeAnalysisCompanion.insert(
+              }) => QuestionAnalysisCompanion.insert(
                 id: id,
                 bestAnswer: bestAnswer,
                 reason: reason,
@@ -18528,7 +18558,7 @@ class $$MistakeAnalysisTableTableManager
               .map(
                 (e) => (
                   e.readTable(table),
-                  $$MistakeAnalysisTableReferences(db, table, e),
+                  $$QuestionAnalysisTableReferences(db, table, e),
                 ),
               )
               .toList(),
@@ -18558,11 +18588,11 @@ class $$MistakeAnalysisTableTableManager
                                 currentTable: table,
                                 currentColumn: table.id,
                                 referencedTable:
-                                    $$MistakeAnalysisTableReferences._idTable(
+                                    $$QuestionAnalysisTableReferences._idTable(
                                       db,
                                     ),
                                 referencedColumn:
-                                    $$MistakeAnalysisTableReferences
+                                    $$QuestionAnalysisTableReferences
                                         ._idTable(db)
                                         .id,
                               )
@@ -18574,10 +18604,10 @@ class $$MistakeAnalysisTableTableManager
                                 currentTable: table,
                                 currentColumn: table.bestAnswer,
                                 referencedTable:
-                                    $$MistakeAnalysisTableReferences
+                                    $$QuestionAnalysisTableReferences
                                         ._bestAnswerTable(db),
                                 referencedColumn:
-                                    $$MistakeAnalysisTableReferences
+                                    $$QuestionAnalysisTableReferences
                                         ._bestAnswerTable(db)
                                         .id,
                               )
@@ -18595,59 +18625,62 @@ class $$MistakeAnalysisTableTableManager
       );
 }
 
-typedef $$MistakeAnalysisTableProcessedTableManager =
+typedef $$QuestionAnalysisTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $MistakeAnalysisTable,
-      MistakeAnalysi,
-      $$MistakeAnalysisTableFilterComposer,
-      $$MistakeAnalysisTableOrderingComposer,
-      $$MistakeAnalysisTableAnnotationComposer,
-      $$MistakeAnalysisTableCreateCompanionBuilder,
-      $$MistakeAnalysisTableUpdateCompanionBuilder,
-      (MistakeAnalysi, $$MistakeAnalysisTableReferences),
-      MistakeAnalysi,
+      $QuestionAnalysisTable,
+      QuestionAnalysi,
+      $$QuestionAnalysisTableFilterComposer,
+      $$QuestionAnalysisTableOrderingComposer,
+      $$QuestionAnalysisTableAnnotationComposer,
+      $$QuestionAnalysisTableCreateCompanionBuilder,
+      $$QuestionAnalysisTableUpdateCompanionBuilder,
+      (QuestionAnalysi, $$QuestionAnalysisTableReferences),
+      QuestionAnalysi,
       PrefetchHooks Function({bool id, bool bestAnswer})
     >;
-typedef $$MistakeKnowledgeLinkTableCreateCompanionBuilder =
-    MistakeKnowledgeLinkCompanion Function({
-      required int mistakeId,
+typedef $$QuestionKnowledgeLinkTableCreateCompanionBuilder =
+    QuestionKnowledgeLinkCompanion Function({
+      required int questionId,
       required int knowledgeId,
       Value<int> rowid,
     });
-typedef $$MistakeKnowledgeLinkTableUpdateCompanionBuilder =
-    MistakeKnowledgeLinkCompanion Function({
-      Value<int> mistakeId,
+typedef $$QuestionKnowledgeLinkTableUpdateCompanionBuilder =
+    QuestionKnowledgeLinkCompanion Function({
+      Value<int> questionId,
       Value<int> knowledgeId,
       Value<int> rowid,
     });
 
-final class $$MistakeKnowledgeLinkTableReferences
+final class $$QuestionKnowledgeLinkTableReferences
     extends
         BaseReferences<
           _$AppDatabase,
-          $MistakeKnowledgeLinkTable,
-          MistakeKnowledgeLinkData
+          $QuestionKnowledgeLinkTable,
+          QuestionKnowledgeLinkData
         > {
-  $$MistakeKnowledgeLinkTableReferences(
+  $$QuestionKnowledgeLinkTableReferences(
     super.$_db,
     super.$_table,
     super.$_typedResult,
   );
 
-  static $MistakesTable _mistakeIdTable(_$AppDatabase db) =>
-      db.mistakes.createAlias(
-        $_aliasNameGenerator(db.mistakeKnowledgeLink.mistakeId, db.mistakes.id),
+  static $QuestionsTable _questionIdTable(_$AppDatabase db) =>
+      db.questions.createAlias(
+        $_aliasNameGenerator(
+          db.questionKnowledgeLink.questionId,
+          db.questions.id,
+        ),
       );
 
-  $$MistakesTableProcessedTableManager get mistakeId {
-    final $_column = $_itemColumn<int>('mistake_id')!;
+  $$QuestionsTableProcessedTableManager get questionId {
+    final $_column = $_itemColumn<int>('question_id')!;
 
-    final manager = $$MistakesTableTableManager(
+    final manager = $$QuestionsTableTableManager(
       $_db,
-      $_db.mistakes,
+      $_db.questions,
     ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_mistakeIdTable($_db));
+    final item = $_typedResult.readTableOrNull(_questionIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -18657,7 +18690,7 @@ final class $$MistakeKnowledgeLinkTableReferences
   static $KnowledgeTable _knowledgeIdTable(_$AppDatabase db) =>
       db.knowledge.createAlias(
         $_aliasNameGenerator(
-          db.mistakeKnowledgeLink.knowledgeId,
+          db.questionKnowledgeLink.knowledgeId,
           db.knowledge.id,
         ),
       );
@@ -18677,29 +18710,29 @@ final class $$MistakeKnowledgeLinkTableReferences
   }
 }
 
-class $$MistakeKnowledgeLinkTableFilterComposer
-    extends Composer<_$AppDatabase, $MistakeKnowledgeLinkTable> {
-  $$MistakeKnowledgeLinkTableFilterComposer({
+class $$QuestionKnowledgeLinkTableFilterComposer
+    extends Composer<_$AppDatabase, $QuestionKnowledgeLinkTable> {
+  $$QuestionKnowledgeLinkTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  $$MistakesTableFilterComposer get mistakeId {
-    final $$MistakesTableFilterComposer composer = $composerBuilder(
+  $$QuestionsTableFilterComposer get questionId {
+    final $$QuestionsTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.mistakeId,
-      referencedTable: $db.mistakes,
+      getCurrentColumn: (t) => t.questionId,
+      referencedTable: $db.questions,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakesTableFilterComposer(
+          }) => $$QuestionsTableFilterComposer(
             $db: $db,
-            $table: $db.mistakes,
+            $table: $db.questions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -18733,29 +18766,29 @@ class $$MistakeKnowledgeLinkTableFilterComposer
   }
 }
 
-class $$MistakeKnowledgeLinkTableOrderingComposer
-    extends Composer<_$AppDatabase, $MistakeKnowledgeLinkTable> {
-  $$MistakeKnowledgeLinkTableOrderingComposer({
+class $$QuestionKnowledgeLinkTableOrderingComposer
+    extends Composer<_$AppDatabase, $QuestionKnowledgeLinkTable> {
+  $$QuestionKnowledgeLinkTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  $$MistakesTableOrderingComposer get mistakeId {
-    final $$MistakesTableOrderingComposer composer = $composerBuilder(
+  $$QuestionsTableOrderingComposer get questionId {
+    final $$QuestionsTableOrderingComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.mistakeId,
-      referencedTable: $db.mistakes,
+      getCurrentColumn: (t) => t.questionId,
+      referencedTable: $db.questions,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakesTableOrderingComposer(
+          }) => $$QuestionsTableOrderingComposer(
             $db: $db,
-            $table: $db.mistakes,
+            $table: $db.questions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -18789,29 +18822,29 @@ class $$MistakeKnowledgeLinkTableOrderingComposer
   }
 }
 
-class $$MistakeKnowledgeLinkTableAnnotationComposer
-    extends Composer<_$AppDatabase, $MistakeKnowledgeLinkTable> {
-  $$MistakeKnowledgeLinkTableAnnotationComposer({
+class $$QuestionKnowledgeLinkTableAnnotationComposer
+    extends Composer<_$AppDatabase, $QuestionKnowledgeLinkTable> {
+  $$QuestionKnowledgeLinkTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  $$MistakesTableAnnotationComposer get mistakeId {
-    final $$MistakesTableAnnotationComposer composer = $composerBuilder(
+  $$QuestionsTableAnnotationComposer get questionId {
+    final $$QuestionsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.mistakeId,
-      referencedTable: $db.mistakes,
+      getCurrentColumn: (t) => t.questionId,
+      referencedTable: $db.questions,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$MistakesTableAnnotationComposer(
+          }) => $$QuestionsTableAnnotationComposer(
             $db: $db,
-            $table: $db.mistakes,
+            $table: $db.questions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -18845,57 +18878,60 @@ class $$MistakeKnowledgeLinkTableAnnotationComposer
   }
 }
 
-class $$MistakeKnowledgeLinkTableTableManager
+class $$QuestionKnowledgeLinkTableTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $MistakeKnowledgeLinkTable,
-          MistakeKnowledgeLinkData,
-          $$MistakeKnowledgeLinkTableFilterComposer,
-          $$MistakeKnowledgeLinkTableOrderingComposer,
-          $$MistakeKnowledgeLinkTableAnnotationComposer,
-          $$MistakeKnowledgeLinkTableCreateCompanionBuilder,
-          $$MistakeKnowledgeLinkTableUpdateCompanionBuilder,
-          (MistakeKnowledgeLinkData, $$MistakeKnowledgeLinkTableReferences),
-          MistakeKnowledgeLinkData,
-          PrefetchHooks Function({bool mistakeId, bool knowledgeId})
+          $QuestionKnowledgeLinkTable,
+          QuestionKnowledgeLinkData,
+          $$QuestionKnowledgeLinkTableFilterComposer,
+          $$QuestionKnowledgeLinkTableOrderingComposer,
+          $$QuestionKnowledgeLinkTableAnnotationComposer,
+          $$QuestionKnowledgeLinkTableCreateCompanionBuilder,
+          $$QuestionKnowledgeLinkTableUpdateCompanionBuilder,
+          (QuestionKnowledgeLinkData, $$QuestionKnowledgeLinkTableReferences),
+          QuestionKnowledgeLinkData,
+          PrefetchHooks Function({bool questionId, bool knowledgeId})
         > {
-  $$MistakeKnowledgeLinkTableTableManager(
+  $$QuestionKnowledgeLinkTableTableManager(
     _$AppDatabase db,
-    $MistakeKnowledgeLinkTable table,
+    $QuestionKnowledgeLinkTable table,
   ) : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$MistakeKnowledgeLinkTableFilterComposer($db: db, $table: table),
+              $$QuestionKnowledgeLinkTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
           createOrderingComposer: () =>
-              $$MistakeKnowledgeLinkTableOrderingComposer(
+              $$QuestionKnowledgeLinkTableOrderingComposer(
                 $db: db,
                 $table: table,
               ),
           createComputedFieldComposer: () =>
-              $$MistakeKnowledgeLinkTableAnnotationComposer(
+              $$QuestionKnowledgeLinkTableAnnotationComposer(
                 $db: db,
                 $table: table,
               ),
           updateCompanionCallback:
               ({
-                Value<int> mistakeId = const Value.absent(),
+                Value<int> questionId = const Value.absent(),
                 Value<int> knowledgeId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
-              }) => MistakeKnowledgeLinkCompanion(
-                mistakeId: mistakeId,
+              }) => QuestionKnowledgeLinkCompanion(
+                questionId: questionId,
                 knowledgeId: knowledgeId,
                 rowid: rowid,
               ),
           createCompanionCallback:
               ({
-                required int mistakeId,
+                required int questionId,
                 required int knowledgeId,
                 Value<int> rowid = const Value.absent(),
-              }) => MistakeKnowledgeLinkCompanion.insert(
-                mistakeId: mistakeId,
+              }) => QuestionKnowledgeLinkCompanion.insert(
+                questionId: questionId,
                 knowledgeId: knowledgeId,
                 rowid: rowid,
               ),
@@ -18903,11 +18939,11 @@ class $$MistakeKnowledgeLinkTableTableManager
               .map(
                 (e) => (
                   e.readTable(table),
-                  $$MistakeKnowledgeLinkTableReferences(db, table, e),
+                  $$QuestionKnowledgeLinkTableReferences(db, table, e),
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({mistakeId = false, knowledgeId = false}) {
+          prefetchHooksCallback: ({questionId = false, knowledgeId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -18927,17 +18963,17 @@ class $$MistakeKnowledgeLinkTableTableManager
                       dynamic
                     >
                   >(state) {
-                    if (mistakeId) {
+                    if (questionId) {
                       state =
                           state.withJoin(
                                 currentTable: table,
-                                currentColumn: table.mistakeId,
+                                currentColumn: table.questionId,
                                 referencedTable:
-                                    $$MistakeKnowledgeLinkTableReferences
-                                        ._mistakeIdTable(db),
+                                    $$QuestionKnowledgeLinkTableReferences
+                                        ._questionIdTable(db),
                                 referencedColumn:
-                                    $$MistakeKnowledgeLinkTableReferences
-                                        ._mistakeIdTable(db)
+                                    $$QuestionKnowledgeLinkTableReferences
+                                        ._questionIdTable(db)
                                         .id,
                               )
                               as T;
@@ -18948,10 +18984,10 @@ class $$MistakeKnowledgeLinkTableTableManager
                                 currentTable: table,
                                 currentColumn: table.knowledgeId,
                                 referencedTable:
-                                    $$MistakeKnowledgeLinkTableReferences
+                                    $$QuestionKnowledgeLinkTableReferences
                                         ._knowledgeIdTable(db),
                                 referencedColumn:
-                                    $$MistakeKnowledgeLinkTableReferences
+                                    $$QuestionKnowledgeLinkTableReferences
                                         ._knowledgeIdTable(db)
                                         .id,
                               )
@@ -18969,19 +19005,19 @@ class $$MistakeKnowledgeLinkTableTableManager
       );
 }
 
-typedef $$MistakeKnowledgeLinkTableProcessedTableManager =
+typedef $$QuestionKnowledgeLinkTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $MistakeKnowledgeLinkTable,
-      MistakeKnowledgeLinkData,
-      $$MistakeKnowledgeLinkTableFilterComposer,
-      $$MistakeKnowledgeLinkTableOrderingComposer,
-      $$MistakeKnowledgeLinkTableAnnotationComposer,
-      $$MistakeKnowledgeLinkTableCreateCompanionBuilder,
-      $$MistakeKnowledgeLinkTableUpdateCompanionBuilder,
-      (MistakeKnowledgeLinkData, $$MistakeKnowledgeLinkTableReferences),
-      MistakeKnowledgeLinkData,
-      PrefetchHooks Function({bool mistakeId, bool knowledgeId})
+      $QuestionKnowledgeLinkTable,
+      QuestionKnowledgeLinkData,
+      $$QuestionKnowledgeLinkTableFilterComposer,
+      $$QuestionKnowledgeLinkTableOrderingComposer,
+      $$QuestionKnowledgeLinkTableAnnotationComposer,
+      $$QuestionKnowledgeLinkTableCreateCompanionBuilder,
+      $$QuestionKnowledgeLinkTableUpdateCompanionBuilder,
+      (QuestionKnowledgeLinkData, $$QuestionKnowledgeLinkTableReferences),
+      QuestionKnowledgeLinkData,
+      PrefetchHooks Function({bool questionId, bool knowledgeId})
     >;
 
 class $AppDatabaseManager {
@@ -19018,22 +19054,22 @@ class $AppDatabaseManager {
       $$KnowledgeLogsTableTableManager(_db, _db.knowledgeLogs);
   $$KnowledgeTagLinkTableTableManager get knowledgeTagLink =>
       $$KnowledgeTagLinkTableTableManager(_db, _db.knowledgeTagLink);
-  $$MistakesTableTableManager get mistakes =>
-      $$MistakesTableTableManager(_db, _db.mistakes);
-  $$MistakesTagLinkTableTableManager get mistakesTagLink =>
-      $$MistakesTagLinkTableTableManager(_db, _db.mistakesTagLink);
-  $$MistakeLogsTableTableManager get mistakeLogs =>
-      $$MistakeLogsTableTableManager(_db, _db.mistakeLogs);
-  $$MistakePicsLinkTableTableManager get mistakePicsLink =>
-      $$MistakePicsLinkTableTableManager(_db, _db.mistakePicsLink);
+  $$QuestionsTableTableManager get questions =>
+      $$QuestionsTableTableManager(_db, _db.questions);
+  $$QuestionsTagLinkTableTableManager get questionsTagLink =>
+      $$QuestionsTagLinkTableTableManager(_db, _db.questionsTagLink);
+  $$QuestionLogsTableTableManager get questionLogs =>
+      $$QuestionLogsTableTableManager(_db, _db.questionLogs);
+  $$QuestionPicsLinkTableTableManager get questionPicsLink =>
+      $$QuestionPicsLinkTableTableManager(_db, _db.questionPicsLink);
   $$AnswersTableTableManager get answers =>
       $$AnswersTableTableManager(_db, _db.answers);
   $$AnswersTagsLinkTableTableManager get answersTagsLink =>
       $$AnswersTagsLinkTableTableManager(_db, _db.answersTagsLink);
   $$AnswerPicsLinkTableTableManager get answerPicsLink =>
       $$AnswerPicsLinkTableTableManager(_db, _db.answerPicsLink);
-  $$MistakeAnalysisTableTableManager get mistakeAnalysis =>
-      $$MistakeAnalysisTableTableManager(_db, _db.mistakeAnalysis);
-  $$MistakeKnowledgeLinkTableTableManager get mistakeKnowledgeLink =>
-      $$MistakeKnowledgeLinkTableTableManager(_db, _db.mistakeKnowledgeLink);
+  $$QuestionAnalysisTableTableManager get questionAnalysis =>
+      $$QuestionAnalysisTableTableManager(_db, _db.questionAnalysis);
+  $$QuestionKnowledgeLinkTableTableManager get questionKnowledgeLink =>
+      $$QuestionKnowledgeLinkTableTableManager(_db, _db.questionKnowledgeLink);
 }
