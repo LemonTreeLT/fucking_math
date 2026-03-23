@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fucking_math/ai/config/ai_config.dart';
 import 'package:fucking_math/ai/engine/ai_task_processor.dart';
 import 'package:fucking_math/ai/engine/ai_task_service.dart';
@@ -20,6 +21,7 @@ import 'package:fucking_math/ai/tools/orchestrator/tag_sub_handler.dart';
 import 'package:fucking_math/ai/tools/orchestrator/word_sub_handler.dart';
 import 'package:fucking_math/ai/types.dart';
 import 'package:fucking_math/providers/images.dart';
+import 'package:fucking_math/providers/prompt.dart';
 import 'package:fucking_math/widget/ai/ai_chat_items.dart';
 import 'package:get_it/get_it.dart';
 
@@ -45,6 +47,14 @@ class _AiChatState extends State<AiChat> {
   late final TextEditingController _inputCtrl;
   late final TextEditingController _modelCtrl;
   late final ScrollController _scrollCtrl;
+  late final ScrollController _inputScrollCtrl;
+  late final FocusNode _inputFocusNode;
+
+  // Slash-command prompt overlay state
+  List<Prompt> _filteredPrompts = [];
+  int _promptHighlightIndex = 0;
+  OverlayEntry? _promptOverlay;
+  final LayerLink _inputLayerLink = LayerLink();
 
   AiHistoryRepository? _historyRepo;
   AiTaskService? _taskService;
@@ -59,6 +69,9 @@ class _AiChatState extends State<AiChat> {
     _inputCtrl = TextEditingController();
     _modelCtrl = TextEditingController();
     _scrollCtrl = ScrollController();
+    _inputScrollCtrl = ScrollController();
+    _inputFocusNode = FocusNode(onKeyEvent: _handleInputKeyEvent);
+    _inputCtrl.addListener(_onInputChanged);
     _init();
   }
 
@@ -71,7 +84,6 @@ class _AiChatState extends State<AiChat> {
     final historyRepo = GetIt.I<AiHistoryRepository>();
     final sessionId = await historyRepo.createSession(title: 'Debug Chat');
 
-    // 加载可用模型
     final models = AiProviderRepository.parseModels(
       aiConfig.activeProvider?.modelsJson ?? '[]',
     );
@@ -88,6 +100,175 @@ class _AiChatState extends State<AiChat> {
       }
     });
   }
+
+  // ──────────────── Prompt overlay ────────────────
+
+  void _onInputChanged() {
+    final text = _inputCtrl.text;
+    if (text.startsWith('/')) {
+      final query = text.substring(1).toLowerCase();
+      final filtered = GetIt.I<PromptProvider>()
+          .getItems
+          .where((p) => p.name != null && p.name!.toLowerCase().contains(query))
+          .toList();
+      setState(() {
+        _filteredPrompts = filtered;
+        _promptHighlightIndex = 0;
+      });
+      if (filtered.isNotEmpty) {
+        _showOrUpdateOverlay();
+      } else {
+        _hidePromptOverlay();
+      }
+    } else {
+      _hidePromptOverlay();
+    }
+  }
+
+  void _showOrUpdateOverlay() {
+    if (_promptOverlay != null) {
+      _promptOverlay!.markNeedsBuild();
+    } else {
+      _promptOverlay = OverlayEntry(builder: (_) => _buildPromptOverlay());
+      Overlay.of(context).insert(_promptOverlay!);
+    }
+  }
+
+  void _hidePromptOverlay() {
+    _promptOverlay?.remove();
+    _promptOverlay = null;
+  }
+
+  Widget _buildPromptOverlay() {
+    if (_filteredPrompts.isEmpty) return const SizedBox.shrink();
+    return CompositedTransformFollower(
+      link: _inputLayerLink,
+      targetAnchor: Alignment.topLeft,
+      followerAnchor: Alignment.bottomLeft,
+      offset: const Offset(0, -4),
+      child: Align(
+        alignment: Alignment.bottomLeft,
+        child: Material(
+          elevation: 4,
+          borderRadius: BorderRadius.circular(8),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400, maxHeight: 220),
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: _filteredPrompts.length,
+              itemBuilder: (ctx, i) {
+                final prompt = _filteredPrompts[i];
+                final highlighted = i == _promptHighlightIndex;
+                return ListTile(
+                  dense: true,
+                  selected: highlighted,
+                  selectedTileColor: Theme.of(ctx).colorScheme.primaryContainer,
+                  title: Text(prompt.name!),
+                  subtitle: prompt.desc != null ? Text(prompt.desc!, maxLines: 1) : null,
+                  onTap: () => _selectPrompt(prompt),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  KeyEventResult _handleInputKeyEvent(FocusNode node, KeyEvent event) {
+    if (_promptOverlay == null) return KeyEventResult.ignored;
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+      return KeyEventResult.ignored;
+    }
+    switch (event.logicalKey) {
+      case LogicalKeyboardKey.arrowUp:
+        setState(() {
+          _promptHighlightIndex =
+              (_promptHighlightIndex - 1).clamp(0, _filteredPrompts.length - 1);
+        });
+        _promptOverlay?.markNeedsBuild();
+        return KeyEventResult.handled;
+      case LogicalKeyboardKey.arrowDown:
+        setState(() {
+          _promptHighlightIndex =
+              (_promptHighlightIndex + 1).clamp(0, _filteredPrompts.length - 1);
+        });
+        _promptOverlay?.markNeedsBuild();
+        return KeyEventResult.handled;
+      case LogicalKeyboardKey.enter:
+        if (_filteredPrompts.isNotEmpty) {
+          _selectPrompt(_filteredPrompts[_promptHighlightIndex]);
+        }
+        return KeyEventResult.handled;
+      case LogicalKeyboardKey.escape:
+        _hidePromptOverlay();
+        return KeyEventResult.handled;
+      case LogicalKeyboardKey.space:
+        _hidePromptOverlay();
+        return KeyEventResult.handled;
+      default:
+        return KeyEventResult.ignored;
+    }
+  }
+
+  Future<void> _selectPrompt(Prompt prompt) async {
+    _hidePromptOverlay();
+    final args = prompt.getArgs(prompt.content);
+    if (args.isEmpty) {
+      _inputCtrl.text = prompt.content;
+      _inputCtrl.selection = TextSelection.collapsed(offset: prompt.content.length);
+    } else {
+      await _showArgDialog(prompt, args);
+    }
+  }
+
+  Future<void> _showArgDialog(Prompt prompt, List<String> args) async {
+    final controllers = {for (final a in args) a: TextEditingController()};
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('填写参数: ${prompt.name ?? ''}'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: args
+                .map((arg) => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: TextField(
+                        controller: controllers[arg],
+                        decoration: InputDecoration(
+                          labelText: arg,
+                          border: const OutlineInputBorder(),
+                        ),
+                      ),
+                    ))
+                .toList(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('取消'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('确认'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      final filled = {for (final e in controllers.entries) e.key: e.value.text};
+      final result = prompt.build(filled);
+      _inputCtrl.text = result.content;
+      _inputCtrl.selection = TextSelection.collapsed(offset: result.content.length);
+    }
+    for (final c in controllers.values) {
+      c.dispose();
+    }
+  }
+
+  // ──────────────── Task management ────────────────
 
   Future<void> _startTask() async {
     final gen = ++_taskGeneration;
@@ -196,16 +377,15 @@ class _AiChatState extends State<AiChat> {
           _canRegenerate = true;
         });
         _reloadMessages();
-
       case ErrorEvent():
         setState(() {
           _isLoading = false;
           _statusMessage = null;
           _canRegenerate = true;
         });
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('错误：${event.message}')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('错误：${event.message}')),
+        );
     }
   }
 
@@ -363,9 +543,13 @@ class _AiChatState extends State<AiChat> {
   void dispose() {
     _sub?.cancel();
     _processor?.interrupt();
+    _inputCtrl.removeListener(_onInputChanged);
     _inputCtrl.dispose();
     _modelCtrl.dispose();
     _scrollCtrl.dispose();
+    _inputScrollCtrl.dispose();
+    _inputFocusNode.dispose();
+    _hidePromptOverlay();
     super.dispose();
   }
 
@@ -428,7 +612,6 @@ class _AiChatState extends State<AiChat> {
                 (!_isLoading && _canRegenerate ? 1 : 0),
             itemBuilder: (context, index) {
               if (index == visibleMessages.length && _isLoading) {
-                // Simple loading spinner while task is running
                 return buildChatBubble(
                   isUser: false,
                   content: '',
@@ -436,7 +619,6 @@ class _AiChatState extends State<AiChat> {
                   context: context,
                 );
               }
-              // 展示重新生产按钮
               if (index == visibleMessages.length && _canRegenerate) {
                 return Center(
                   child: Padding(
@@ -450,7 +632,6 @@ class _AiChatState extends State<AiChat> {
                 );
               }
               final msg = visibleMessages[index];
-
               final actionBtn = buildMessageActions(
                 msg,
                 isLoading: _isLoading,
@@ -458,7 +639,6 @@ class _AiChatState extends State<AiChat> {
                 onDeleteFromHere: _deleteFromHere,
                 onRegenerate: _regenerateFrom,
               );
-
               final cAlignment =
                   (msg.role == Roles.user || msg.role == Roles.tool)
                   ? CrossAxisAlignment.end
@@ -528,7 +708,8 @@ class _AiChatState extends State<AiChat> {
                         width: 60,
                         height: 60,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stack) => const Icon(Icons.broken_image, size: 40),
+                        errorBuilder: (context, error, stack) =>
+                            const Icon(Icons.broken_image, size: 40),
                       ),
                     ),
                   ),
@@ -556,30 +737,41 @@ class _AiChatState extends State<AiChat> {
           ),
         Padding(
           padding: const EdgeInsets.only(top: 8),
-          child: Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.attach_file),
-                onPressed: _isLoading ? null : _pickImages,
-              ),
-              Expanded(
-                child: TextField(
-                  controller: _inputCtrl,
-                  decoration: const InputDecoration(
-                    hintText: '输入消息...',
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                  ),
-                  onSubmitted: (_) => _isLoading ? null : _sendMessage(),
-                  maxLines: null,
+          child: CompositedTransformTarget(
+            link: _inputLayerLink,
+            child: Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.attach_file),
+                  onPressed: _isLoading ? null : _pickImages,
                 ),
-              ),
-              const SizedBox(width: 8),
-              IconButton.filled(
-                onPressed: _isLoading ? _cancelTask : _sendMessage,
-                icon: Icon(_isLoading ? Icons.stop : Icons.send),
-              ),
-            ],
+                Expanded(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 120),
+                    child: Scrollbar(
+                      controller: _inputScrollCtrl,
+                      child: TextField(
+                        focusNode: _inputFocusNode,
+                        controller: _inputCtrl,
+                        scrollController: _inputScrollCtrl,
+                        decoration: const InputDecoration(
+                          hintText: '输入消息...',
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                        ),
+                        onSubmitted: (_) => _isLoading ? null : _sendMessage(),
+                        maxLines: null,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                IconButton.filled(
+                  onPressed: _isLoading ? _cancelTask : _sendMessage,
+                  icon: Icon(_isLoading ? Icons.stop : Icons.send),
+                ),
+              ],
+            ),
           ),
         ),
       ],

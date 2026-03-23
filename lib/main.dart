@@ -13,11 +13,13 @@ import 'package:fucking_math/db/daos/mistake.dart';
 import 'package:fucking_math/db/daos/phrase.dart';
 import 'package:fucking_math/db/daos/tag.dart';
 import 'package:fucking_math/db/daos/word.dart';
+import 'package:fucking_math/ai/repository/ai_prompt_repository.dart';
 import 'package:fucking_math/providers/ai_provider.dart';
 import 'package:fucking_math/providers/images.dart';
 import 'package:fucking_math/providers/knowledge.dart';
 import 'package:fucking_math/providers/mistakes.dart';
 import 'package:fucking_math/providers/phrase.dart';
+import 'package:fucking_math/providers/prompt.dart';
 import 'package:fucking_math/providers/tags.dart';
 import 'package:fucking_math/providers/words.dart';
 import 'package:fucking_math/utils/repository/english.dart';
@@ -56,6 +58,9 @@ void main() async {
   getIt.registerSingleton(phraseRepo);
   getIt.registerSingleton(imagesRepo);
 
+  final promptRepo = PromptRepository(database.promptDao);
+  getIt.registerSingleton(promptRepo);
+
   final aiConfig = AiConfig(aiProviderRepo)..loadActionProvider();
   final aiProviderProvider = AiProviderProvider(aiProviderRepo)..loadProviders();
   final wordsProvider = WordsProvider(wordRepo)..loadWords();
@@ -64,6 +69,7 @@ void main() async {
   final knowledgeProvider = KnowledgeProvider(knowledgeRepo)..loadKnowledge();
   final mistakesProvider = MistakesProvider(mistakesRepo)..loadMistakes();
   final imagesProvider = ImagesProvider(imagesRepo);
+  final promptProvider = PromptProvider(promptRepo)..loadPrompts();
 
   getIt.registerSingleton<AiConfig>(aiConfig);
   getIt.registerSingleton<AiProviderProvider>(aiProviderProvider);
@@ -73,6 +79,7 @@ void main() async {
   getIt.registerSingleton<KnowledgeProvider>(knowledgeProvider);
   getIt.registerSingleton<MistakesProvider>(mistakesProvider);
   getIt.registerSingleton<ImagesProvider>(imagesProvider);
+  getIt.registerSingleton<PromptProvider>(promptProvider);
 
   getIt.registerSingleton<AppDatabase>(database);
   getIt.registerSingleton(Dio());
@@ -97,6 +104,7 @@ void main() async {
         ChangeNotifierProvider.value(value: knowledgeProvider),
         ChangeNotifierProvider.value(value: mistakesProvider),
         ChangeNotifierProvider.value(value: imagesProvider),
+        ChangeNotifierProvider.value(value: promptProvider),
       ],
       child: const App(),
     ),

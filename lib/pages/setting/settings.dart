@@ -27,6 +27,11 @@ class _SettingState extends State<Settings> {
             onPressed: () => context.go('/ai_provider_manager'),
             child: const Text("AI 提供商设置"),
           ),
+          const SizedBox(height: 8),
+          ElevatedButton(
+            onPressed: () => context.go('/prompt_manager'),
+            child: const Text("Prompt 管理"),
+          ),
           const SizedBox(height: 16),
           Row(
             children: [

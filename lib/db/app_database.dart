@@ -90,6 +90,12 @@ class AppDatabase extends _$AppDatabase {
   KnowledgeDao get knowledgeDao => KnowledgeDao(this);
   @override
   MistakesDao get mistakesDao => MistakesDao(this);
+  @override
+  PhrasesDao get phrasesDao => PhrasesDao(this);
+  @override
+  ImagesDao get imagesDao => ImagesDao(this);
+  @override
+  PromptDao get promptDao => PromptDao(this);
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
