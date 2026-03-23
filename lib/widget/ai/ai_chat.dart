@@ -32,7 +32,7 @@ class AiChat extends StatefulWidget {
   State<AiChat> createState() => _AiChatState();
 }
 
-class _AiChatState extends State<AiChat> {
+class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
   int? _sessionId;
   List<Message> _messages = [];
   List<({String path, String name})> _pendingImages = [];
@@ -56,6 +56,12 @@ class _AiChatState extends State<AiChat> {
   OverlayEntry? _promptOverlay;
   final LayerLink _inputLayerLink = LayerLink();
 
+  // History menu state
+  List<Session> _sessions = [];
+  OverlayEntry? _historyOverlay;
+  final LayerLink _historyLayerLink = LayerLink();
+  late final AnimationController _historyAnimCtrl;
+
   AiHistoryRepository? _historyRepo;
   AiTaskService? _taskService;
   AiConfig? _aiConfig;
@@ -72,6 +78,10 @@ class _AiChatState extends State<AiChat> {
     _inputScrollCtrl = ScrollController();
     _inputFocusNode = FocusNode(onKeyEvent: _handleInputKeyEvent);
     _inputCtrl.addListener(_onInputChanged);
+    _historyAnimCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
     _init();
   }
 
@@ -82,7 +92,7 @@ class _AiChatState extends State<AiChat> {
       return;
     }
     final historyRepo = GetIt.I<AiHistoryRepository>();
-    final sessionId = await historyRepo.createSession(title: 'Debug Chat');
+    final sessionId = await historyRepo.createSession(title: 'New Chat');
 
     final models = AiProviderRepository.parseModels(
       aiConfig.activeProvider?.modelsJson ?? '[]',
@@ -99,6 +109,204 @@ class _AiChatState extends State<AiChat> {
         _modelCtrl.text = models.first;
       }
     });
+    await _loadSessions();
+  }
+
+  // ──────────────── Sessions ────────────────
+
+  Future<void> _loadSessions() async {
+    final sessions = await _historyRepo!.getAllSessions();
+    if (mounted) setState(() => _sessions = sessions);
+  }
+
+  Future<void> _loadSession(int sessionId) async {
+    _hideHistoryOverlay();
+    final provider = _aiConfig?.activeProvider;
+    if (provider == null) return;
+    final conversation = await _historyRepo!.getConversation(sessionId, provider.id);
+    setState(() {
+      _sessionId = sessionId;
+      _messages = conversation.messages;
+      _canRegenerate = false;
+      _isLoading = false;
+    });
+    _scrollToBottom();
+  }
+
+  Future<void> _newSession() async {
+    _hideHistoryOverlay();
+    final id = await _historyRepo!.createSession(title: 'New Chat');
+    setState(() {
+      _sessionId = id;
+      _messages = [];
+      _canRegenerate = false;
+    });
+    await _loadSessions();
+  }
+
+  Future<void> _showRenameDialog(Session s) async {
+    final ctrl = TextEditingController(text: s.title ?? '');
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('重命名对话'),
+        content: TextField(
+          controller: ctrl,
+          autofocus: true,
+          decoration: const InputDecoration(
+            labelText: '对话名称',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('确认')),
+        ],
+      ),
+    );
+    if (confirmed == true && s.id != null) {
+      await _historyRepo!.updateSessionTitle(s.id!, ctrl.text.trim());
+      await _loadSessions();
+    }
+    ctrl.dispose();
+  }
+
+  Future<void> _deleteSession(Session s) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('删除对话'),
+        content: Text('确认删除"${s.title ?? '对话 #${s.id}'}"？'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('删除'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && s.id != null) {
+      await _historyRepo!.deleteSession(s.id!);
+      if (_sessionId == s.id) {
+        await _newSession();
+      } else {
+        await _loadSessions();
+      }
+    }
+  }
+
+  // ──────────────── History overlay ────────────────
+
+  void _toggleHistoryMenu() {
+    if (_historyOverlay != null) {
+      _hideHistoryOverlay();
+    } else {
+      _showHistoryOverlay();
+    }
+  }
+
+  void _showHistoryOverlay() {
+    _historyAnimCtrl.forward(from: 0);
+    _historyOverlay = OverlayEntry(builder: (_) => _buildHistoryOverlay());
+    Overlay.of(context).insert(_historyOverlay!);
+  }
+
+  void _hideHistoryOverlay() {
+    _historyOverlay?.remove();
+    _historyOverlay = null;
+  }
+
+  Widget _buildHistoryOverlay() {
+    final animation = CurvedAnimation(parent: _historyAnimCtrl, curve: Curves.easeOut);
+    return Stack(
+      children: [
+        // Transparent barrier
+        Positioned.fill(
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: _hideHistoryOverlay,
+          ),
+        ),
+        CompositedTransformFollower(
+          link: _historyLayerLink,
+          targetAnchor: Alignment.bottomLeft,
+          followerAnchor: Alignment.topLeft,
+          offset: const Offset(0, 4),
+          child: AnimatedBuilder(
+            animation: animation,
+            builder: (ctx, child) => FadeTransition(
+              opacity: animation,
+              child: ScaleTransition(
+                scale: Tween(begin: 0.85, end: 1.0).animate(animation),
+                alignment: Alignment.topLeft,
+                child: child,
+              ),
+            ),
+            child: Material(
+              elevation: 6,
+              borderRadius: BorderRadius.circular(12),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minWidth: 240, maxWidth: 320),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.add),
+                      title: const Text('新建对话'),
+                      onTap: _newSession,
+                    ),
+                    const Divider(height: 1),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 280),
+                      child: _sessions.isEmpty
+                          ? const Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Text('暂无历史对话', style: TextStyle(color: Colors.grey)),
+                            )
+                          : ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: _sessions.length,
+                              itemBuilder: (ctx, i) {
+                                final s = _sessions[i];
+                                final isCurrent = s.id == _sessionId;
+                                return ListTile(
+                                  selected: isCurrent,
+                                  leading: const Icon(Icons.chat_bubble_outline),
+                                  title: Text(
+                                    s.title?.isNotEmpty == true ? s.title! : '对话 #${s.id}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(Icons.edit, size: 18),
+                                        visualDensity: VisualDensity.compact,
+                                        onPressed: () => _showRenameDialog(s),
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.delete, size: 18),
+                                        visualDensity: VisualDensity.compact,
+                                        onPressed: () => _deleteSession(s),
+                                      ),
+                                    ],
+                                  ),
+                                  onTap: () => _loadSession(s.id!),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   // ──────────────── Prompt overlay ────────────────
@@ -205,7 +413,7 @@ class _AiChatState extends State<AiChat> {
         return KeyEventResult.handled;
       case LogicalKeyboardKey.space:
         _hidePromptOverlay();
-        return KeyEventResult.handled;
+        return KeyEventResult.ignored;
       default:
         return KeyEventResult.ignored;
     }
@@ -550,6 +758,8 @@ class _AiChatState extends State<AiChat> {
     _inputScrollCtrl.dispose();
     _inputFocusNode.dispose();
     _hidePromptOverlay();
+    _hideHistoryOverlay();
+    _historyAnimCtrl.dispose();
     super.dispose();
   }
 
@@ -569,38 +779,52 @@ class _AiChatState extends State<AiChat> {
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: 8),
-          child: _availableModels.isNotEmpty
-              ? DropdownButtonFormField<String>(
-                  initialValue: _selectedModel,
-                  decoration: const InputDecoration(
-                    labelText: '模型名称',
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                  ),
-                  items: _availableModels
-                      .map((model) => DropdownMenuItem(
-                            value: model,
-                            child: Text(model),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() {
-                        _selectedModel = value;
-                        _modelCtrl.text = value;
-                      });
-                    }
-                  },
-                )
-              : TextField(
-                  controller: _modelCtrl,
-                  decoration: const InputDecoration(
-                    labelText: '模型名称',
-                    hintText: '未配置模型列表，请手动输入',
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                  ),
+          child: Row(
+            children: [
+              CompositedTransformTarget(
+                link: _historyLayerLink,
+                child: IconButton(
+                  icon: const Icon(Icons.history),
+                  style: IconButton.styleFrom(shape: const CircleBorder()),
+                  onPressed: _historyRepo == null ? null : _toggleHistoryMenu,
                 ),
+              ),
+              Expanded(
+                child: _availableModels.isNotEmpty
+                    ? DropdownButtonFormField<String>(
+                        initialValue: _selectedModel,
+                        decoration: const InputDecoration(
+                          labelText: '模型名称',
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                        ),
+                        items: _availableModels
+                            .map((model) => DropdownMenuItem(
+                                  value: model,
+                                  child: Text(model),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          if (value != null) {
+                            setState(() {
+                              _selectedModel = value;
+                              _modelCtrl.text = value;
+                            });
+                          }
+                        },
+                      )
+                    : TextField(
+                        controller: _modelCtrl,
+                        decoration: const InputDecoration(
+                          labelText: '模型名称',
+                          hintText: '未配置模型列表，请手动输入',
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                        ),
+                      ),
+              ),
+            ],
+          ),
         ),
         Expanded(
           child: ListView.builder(
