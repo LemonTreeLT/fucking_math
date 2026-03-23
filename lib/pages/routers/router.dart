@@ -12,9 +12,21 @@ StatelessWidget _buildShellScreen(GoRouterState state, Widget child) =>
 class ErrorScreen extends StatelessWidget {
   const ErrorScreen({super.key});
   @override
-  Widget build(BuildContext context) => const Scaffold(
+  Widget build(BuildContext context) => Scaffold(
     body: Center(
-      child: Text('404 页面未找到', style: TextStyle(color: Colors.red)),
+      child: Column(
+        mainAxisAlignment: .center,
+        children: [
+          const Text(
+            '404 页面未找到',
+            style: TextStyle(color: Colors.red, fontSize: 32),
+          ),
+          TextButton(
+            onPressed: () => context.go("/home"),
+            child: const Text("我要回家呜呜呜"),
+          ),
+        ],
+      ),
     ),
   );
 }

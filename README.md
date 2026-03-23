@@ -42,9 +42,12 @@
     - [ ] feat(ai): 对话保存与选择
     - [ ] feat(ai): 小试卷出题功能
     - [ ] feat(ai): 创建 repo tool 以提供庞大的单工具替代方案
+    - [ ] refactor(ai_chat): 通过provider管理模型状态
+    - [ ] feat(ai_chat): 不保存空session
     - [ ] feat(ai_chat): 显示单次输出计时器
     - [ ] feat(ai_chat): 设置发送快捷键 ctrl+enter | enter | none
     - [ ] feat(ai): 显示ai的工具原始调用信息
+    - [ ] bugfix(ai_provider): 添加模型时ai chat无法获取最新的模型列表，返回provider edit时无法加载最新模型数据（猜测是provider）
 - [x] refactor: 将 mistake 表改名为 question 表，通过 tag 区分是否为错题
     - 做：可以便于理解表内容，消歧义
     - 不做：避免大规模重构，但是极容易产生误解

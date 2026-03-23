@@ -123,7 +123,10 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
     _hideHistoryOverlay();
     final provider = _aiConfig?.activeProvider;
     if (provider == null) return;
-    final conversation = await _historyRepo!.getConversation(sessionId, provider.id);
+    final conversation = await _historyRepo!.getConversation(
+      sessionId,
+      provider.id,
+    );
     setState(() {
       _sessionId = sessionId;
       _messages = conversation.messages;
@@ -159,8 +162,14 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('确认')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('取消'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('确认'),
+          ),
         ],
       ),
     );
@@ -178,7 +187,10 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
         title: const Text('删除对话'),
         content: Text('确认删除"${s.title ?? '对话 #${s.id}'}"？'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('取消'),
+          ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.pop(ctx, true),
@@ -219,7 +231,10 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
   }
 
   Widget _buildHistoryOverlay() {
-    final animation = CurvedAnimation(parent: _historyAnimCtrl, curve: Curves.easeOut);
+    final animation = CurvedAnimation(
+      parent: _historyAnimCtrl,
+      curve: Curves.easeOut,
+    );
     return Stack(
       children: [
         // Transparent barrier
@@ -263,7 +278,10 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
                       child: _sessions.isEmpty
                           ? const Padding(
                               padding: EdgeInsets.all(16),
-                              child: Text('暂无历史对话', style: TextStyle(color: Colors.grey)),
+                              child: Text(
+                                '暂无历史对话',
+                                style: TextStyle(color: Colors.grey),
+                              ),
                             )
                           : ListView.builder(
                               shrinkWrap: true,
@@ -273,9 +291,13 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
                                 final isCurrent = s.id == _sessionId;
                                 return ListTile(
                                   selected: isCurrent,
-                                  leading: const Icon(Icons.chat_bubble_outline),
+                                  leading: const Icon(
+                                    Icons.chat_bubble_outline,
+                                  ),
                                   title: Text(
-                                    s.title?.isNotEmpty == true ? s.title! : '对话 #${s.id}',
+                                    s.title?.isNotEmpty == true
+                                        ? s.title!
+                                        : '对话 #${s.id}',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -288,7 +310,10 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
                                         onPressed: () => _showRenameDialog(s),
                                       ),
                                       IconButton(
-                                        icon: const Icon(Icons.delete, size: 18),
+                                        icon: const Icon(
+                                          Icons.delete,
+                                          size: 18,
+                                        ),
                                         visualDensity: VisualDensity.compact,
                                         onPressed: () => _deleteSession(s),
                                       ),
@@ -315,8 +340,7 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
     final text = _inputCtrl.text;
     if (text.startsWith('/')) {
       final query = text.substring(1).toLowerCase();
-      final filtered = GetIt.I<PromptProvider>()
-          .getItems
+      final filtered = GetIt.I<PromptProvider>().getItems
           .where((p) => p.name != null && p.name!.toLowerCase().contains(query))
           .toList();
       setState(() {
@@ -372,7 +396,9 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
                   selected: highlighted,
                   selectedTileColor: Theme.of(ctx).colorScheme.primaryContainer,
                   title: Text(prompt.name!),
-                  subtitle: prompt.desc != null ? Text(prompt.desc!, maxLines: 1) : null,
+                  subtitle: prompt.desc != null
+                      ? Text(prompt.desc!, maxLines: 1)
+                      : null,
                   onTap: () => _selectPrompt(prompt),
                 );
               },
@@ -391,15 +417,19 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
     switch (event.logicalKey) {
       case LogicalKeyboardKey.arrowUp:
         setState(() {
-          _promptHighlightIndex =
-              (_promptHighlightIndex - 1).clamp(0, _filteredPrompts.length - 1);
+          _promptHighlightIndex = (_promptHighlightIndex - 1).clamp(
+            0,
+            _filteredPrompts.length - 1,
+          );
         });
         _promptOverlay?.markNeedsBuild();
         return KeyEventResult.handled;
       case LogicalKeyboardKey.arrowDown:
         setState(() {
-          _promptHighlightIndex =
-              (_promptHighlightIndex + 1).clamp(0, _filteredPrompts.length - 1);
+          _promptHighlightIndex = (_promptHighlightIndex + 1).clamp(
+            0,
+            _filteredPrompts.length - 1,
+          );
         });
         _promptOverlay?.markNeedsBuild();
         return KeyEventResult.handled;
@@ -424,7 +454,9 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
     final args = prompt.getArgs(prompt.content);
     if (args.isEmpty) {
       _inputCtrl.text = prompt.content;
-      _inputCtrl.selection = TextSelection.collapsed(offset: prompt.content.length);
+      _inputCtrl.selection = TextSelection.collapsed(
+        offset: prompt.content.length,
+      );
     } else {
       await _showArgDialog(prompt, args);
     }
@@ -440,16 +472,18 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: args
-                .map((arg) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: TextField(
-                        controller: controllers[arg],
-                        decoration: InputDecoration(
-                          labelText: arg,
-                          border: const OutlineInputBorder(),
-                        ),
+                .map(
+                  (arg) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: TextField(
+                      controller: controllers[arg],
+                      decoration: InputDecoration(
+                        labelText: arg,
+                        border: const OutlineInputBorder(),
                       ),
-                    ))
+                    ),
+                  ),
+                )
                 .toList(),
           ),
         ),
@@ -469,7 +503,9 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
       final filled = {for (final e in controllers.entries) e.key: e.value.text};
       final result = prompt.build(filled);
       _inputCtrl.text = result.content;
-      _inputCtrl.selection = TextSelection.collapsed(offset: result.content.length);
+      _inputCtrl.selection = TextSelection.collapsed(
+        offset: result.content.length,
+      );
     }
     for (final c in controllers.values) {
       c.dispose();
@@ -482,9 +518,9 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
     final gen = ++_taskGeneration;
     final modelToUse = _selectedModel ?? _modelCtrl.text.trim();
     if (modelToUse.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('请选择或输入模型名称')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('请选择或输入模型名称')));
       return;
     }
     final processor = await _taskService!.startTask(
@@ -530,7 +566,9 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
     if (provider == null) return;
 
     _inputCtrl.clear();
-    final imagesToSend = List<({String path, String name})>.from(_pendingImages);
+    final imagesToSend = List<({String path, String name})>.from(
+      _pendingImages,
+    );
     setState(() {
       _isLoading = true;
       _canRegenerate = false;
@@ -591,9 +629,9 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
           _statusMessage = null;
           _canRegenerate = true;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('错误：${event.message}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('错误：${event.message}')));
     }
   }
 
@@ -789,6 +827,7 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
                   onPressed: _historyRepo == null ? null : _toggleHistoryMenu,
                 ),
               ),
+              SizedBox(width: 8),
               Expanded(
                 child: _availableModels.isNotEmpty
                     ? DropdownButtonFormField<String>(
@@ -799,10 +838,12 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
                           isDense: true,
                         ),
                         items: _availableModels
-                            .map((model) => DropdownMenuItem(
-                                  value: model,
-                                  child: Text(model),
-                                ))
+                            .map(
+                              (model) => DropdownMenuItem(
+                                value: model,
+                                child: Text(model),
+                              ),
+                            )
                             .toList(),
                         onChanged: (value) {
                           if (value != null) {
@@ -951,7 +992,11 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
                           color: Colors.black54,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.close, size: 12, color: Colors.white),
+                        child: const Icon(
+                          Icons.close,
+                          size: 12,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
