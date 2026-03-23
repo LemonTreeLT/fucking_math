@@ -136,30 +136,56 @@ class Conversation {
 
   Conversation({required this.session, required this.messages});
 
-  /// 将对话转换为 OpenAI 格式的 messages 字段
-  /// 返回符合 OpenAI API 的 message 对象列表
-  /// 格式参考：[{"role": "user", "content": "..."}, ...]
-  List<Map<String, dynamic>> toOpenAIFormat() => messages.map((msg) {
-    final map = <String, dynamic>{
-      'role': msg.role.name,
-      'content': msg.content,
-    };
+  /// 将对话转换为 OpenAI 格式的 messages 字段（支持多模态图片）
+  Future<List<Map<String, dynamic>>> toOpenAIFormat() async {
+    final result = <Map<String, dynamic>>[];
+    for (final msg in messages) {
+      final map = <String, dynamic>{'role': msg.role.name};
 
-    // 处理工具调用
-    if (msg.toolCalls != null && msg.toolCalls!.isNotEmpty) {
-      try {
-        map['tool_calls'] = jsonDecode(msg.toolCalls!);
-      } catch (e) {
-        // 如果 JSON 解析失败，保留原始字符串
-        map['tool_calls'] = msg.toolCalls!;
+      if (msg.role == Roles.user &&
+          msg.images != null &&
+          msg.images!.isNotEmpty) {
+        final contentParts = <Map<String, dynamic>>[
+          if (msg.content.isNotEmpty) {'type': 'text', 'text': msg.content},
+          ...await Future.wait(
+            msg.images!.map((img) async {
+              final bytes = await File(img.imagePath).readAsBytes();
+              final b64 = base64Encode(bytes);
+              return {
+                'type': 'image_url',
+                'image_url': {'url': 'data:${_mimeType(img.name)};base64,$b64'},
+              };
+            }),
+          ),
+        ];
+        map['content'] = contentParts;
+      } else {
+        map['content'] = msg.content;
       }
+
+      if (msg.toolCalls != null && msg.toolCalls!.isNotEmpty) {
+        try {
+          map['tool_calls'] = jsonDecode(msg.toolCalls!);
+        } catch (_) {
+          map['tool_calls'] = msg.toolCalls!;
+        }
+      }
+      if (msg.toolId != null) map['tool_call_id'] = msg.toolId;
+
+      result.add(map);
     }
+    return result;
+  }
 
-    // 处理工具调用 ID
-    if (msg.toolId != null) map['tool_call_id'] = msg.toolId;
-
-    return map;
-  }).toList();
+  static String _mimeType(String name) {
+    final ext = name.split('.').last.toLowerCase();
+    return switch (ext) {
+      'png' => 'image/png',
+      'gif' => 'image/gif',
+      'webp' => 'image/webp',
+      _ => 'image/jpeg',
+    };
+  }
 
   /// 向对话中追加一条消息（不可变操作）
   /// 返回新的 Conversation 实例

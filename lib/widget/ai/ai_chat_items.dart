@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:fucking_math/ai/types.dart';
+import 'package:fucking_math/utils/types.dart' show ImageStorage;
 import 'package:markdown/markdown.dart' as md;
 
 // Inline syntax for display math: $$...$$
@@ -49,8 +52,92 @@ Widget buildChatBubble({
   required BuildContext context,
   bool isThinking = false,
   bool isLoadingSpinner = false,
+  List<ImageStorage>? images,
 }) {
   final cs = Theme.of(context).colorScheme;
+  final hasImages = isUser && images != null && images.isNotEmpty;
+
+  Widget bodyWidget;
+  if (isLoadingSpinner) {
+    bodyWidget = const SizedBox(
+      width: 20,
+      height: 20,
+      child: CircularProgressIndicator.adaptive(strokeWidth: 2),
+    );
+  } else if (hasImages) {
+    bodyWidget = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: images
+              .map(
+                (img) => ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: Image.file(
+                    File(img.imagePath),
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stack) => const Icon(Icons.broken_image, size: 40),
+                  ),
+                ),
+              )
+              .toList(),
+        ),
+        if (content.isNotEmpty) ...[
+          const SizedBox(height: 6),
+          MarkdownBody(
+            data: content,
+            selectable: true,
+            styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
+                .copyWith(p: TextStyle(color: cs.onPrimary)),
+            extensionSet: md.ExtensionSet(
+              md.ExtensionSet.gitHubFlavored.blockSyntaxes,
+              [_DisplayMathSyntax(), _InlineMathSyntax(), ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes],
+            ),
+            builders: {'math-display': _MathBuilder(isDisplay: true), 'math-inline': _MathBuilder(isDisplay: false)},
+          ),
+        ],
+      ],
+    );
+  } else {
+    bodyWidget = MarkdownBody(
+      data: content,
+      selectable: true,
+      styleSheet: MarkdownStyleSheet.fromTheme(
+        Theme.of(context),
+      ).copyWith(
+        p: TextStyle(
+          color: isUser ? cs.onPrimary : cs.onSurface,
+          fontStyle: isThinking ? FontStyle.italic : FontStyle.normal,
+        ),
+        code: TextStyle(
+          backgroundColor: isUser
+              ? cs.primaryContainer
+              : cs.surfaceContainerHighest,
+          color: isUser ? cs.onPrimaryContainer : cs.onSurface,
+          fontFamily: 'monospace',
+          fontSize: 13,
+        ),
+      ),
+      extensionSet: md.ExtensionSet(
+        md.ExtensionSet.gitHubFlavored.blockSyntaxes,
+        [
+          _DisplayMathSyntax(),
+          _InlineMathSyntax(),
+          ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes,
+        ],
+      ),
+      builders: {
+        'math-display': _MathBuilder(isDisplay: true),
+        'math-inline': _MathBuilder(isDisplay: false),
+      },
+    );
+  }
+
   return Align(
     alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
     child: Container(
@@ -65,45 +152,7 @@ Widget buildChatBubble({
                 : cs.surfaceContainer,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: isLoadingSpinner
-          ? const SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator.adaptive(strokeWidth: 2),
-            )
-          : MarkdownBody(
-              data: content,
-              selectable: true,
-              styleSheet: MarkdownStyleSheet.fromTheme(
-                Theme.of(context),
-              ).copyWith(
-                p: TextStyle(
-                  color: isUser ? cs.onPrimary : cs.onSurface,
-                  fontStyle:
-                      isThinking ? FontStyle.italic : FontStyle.normal,
-                ),
-                code: TextStyle(
-                  backgroundColor: isUser
-                      ? cs.primaryContainer
-                      : cs.surfaceContainerHighest,
-                  color: isUser ? cs.onPrimaryContainer : cs.onSurface,
-                  fontFamily: 'monospace',
-                  fontSize: 13,
-                ),
-              ),
-              extensionSet: md.ExtensionSet(
-                md.ExtensionSet.gitHubFlavored.blockSyntaxes,
-                [
-                  _DisplayMathSyntax(),
-                  _InlineMathSyntax(),
-                  ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes,
-                ],
-              ),
-              builders: {
-                'math-display': _MathBuilder(isDisplay: true),
-                'math-inline': _MathBuilder(isDisplay: false),
-              },
-            ),
+      child: bodyWidget,
     ),
   );
 }

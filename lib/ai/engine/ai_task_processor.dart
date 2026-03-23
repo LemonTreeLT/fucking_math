@@ -69,7 +69,7 @@ class AiTaskProcessor {
       // 2. 主循环
       while (!_isInterrupted && _iterationCount < maxIterations) {
         // a. 构建 API 请求参数
-        final messages = _buildMessages();
+        final messages = await _buildMessages();
         final toolDefs = tools.map((t) => t.toJsonDefinition()).toList();
 
         // b. 调用 AI API
@@ -181,8 +181,8 @@ class AiTaskProcessor {
   }
 
   /// 构建 API 请求的 messages，在前面插入系统 prompt
-  List<Map<String, dynamic>> _buildMessages() {
-    final messages = _conversation.toOpenAIFormat();
+  Future<List<Map<String, dynamic>>> _buildMessages() async {
+    final messages = await _conversation.toOpenAIFormat();
     if (systemPrompt != null && systemPrompt!.isNotEmpty) {
       messages.insert(0, {'role': 'system', 'content': systemPrompt!});
     }

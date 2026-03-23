@@ -5,6 +5,7 @@ import 'package:fucking_math/db/app_database.dart' as db;
 import 'package:fucking_math/ai/types.dart';
 import 'package:fucking_math/utils/repository/helper/exceptions.dart';
 import 'package:fucking_math/utils/types.dart' show ImageStorage;
+import 'package:fucking_math/utils/image.dart';
 
 /// AI 对话历史管理仓库层
 /// 负责消息历史和会话的 CRUD 操作，并提供数据转换功能
@@ -256,7 +257,7 @@ class AiHistoryRepository {
     name: dbImage.name,
     desc: dbImage.desc,
     path: dbImage.path,
-    imagePath: dbImage.path ?? '',
+    imagePath: dbImage.path ?? ImageHelper.buildPathString(dbImage.name),
   );
 
   /// 将数据库 SessionData 转换为 types.Session

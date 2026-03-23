@@ -15,30 +15,40 @@
 
 当前版本: v0.0.(commit数)
 
-- [ ] 转换开发路线：集中与错题相关功能的开发
+- [ ] ~~转换开发路线：集中与错题相关功能的开发~~
+- [ ] 转换开发路线：实现ai的全托管
 - [ ] 重构：使用 SearchAnchor 重构 phrase 录入中的单词补全建议功能
 - [ ] 重构: tag selector 的弹出窗口 
 - [ ] 重构: 知识点搜索部分 
 - [x] 加急: 完成基础配置文件加载与自定义数据库路径
 - [ ] 加急：ai 聊天的完整实现
     - [ ] feat: 内置 ai 助手，询问问题时自动标记或者创建有关知识点
+        - [ ] feat(ai): Prompt support
         - [ ] feat(prompt): 添加system prompt支持 
         - [ ] feat(prompt): 设置ai指导自动标记错题与获取信息 
     - [ ] feat(ai): Images upload support
+        - [ ] feat(ai_image): Images will display on chat message before getting ai response
+        - [ ] feat(ai_image): User can enlarge previews.
+        - [x] bugfix(ai_images): System can not find file.
     - [ ] 加急 feat(ai)：完成拍照上传自动解析错题
     - [x] 加急 feat(ai): 完成 ai 有关基础功能
-    - [ ] feat(ai): Prompt support
     - [ ] feat(at): 在startTask之前支持system prompt设定
-    - [ ] feat(ai): 支持图片上传
     - [ ] feat(ai): 支持 `/` 快速呼出 prompt list
     - [ ] feat(ai): 错题答案的支持
     - [ ] feat(ai): 修改master工具使其在修改前需要询问用户
     - [ ] feat(ai): 在询问对话框中提供用户输入框，并将输入回传ai
-    - [ ] feat(ai): 基于工具的ai调用实现
+    - [x] feat(ai): 基于工具的ai调用实现
     - [ ] feat(ai): 对话保存与选择
     - [ ] feat(ai): 小试卷出题功能
     - [ ] feat(ai): 创建 repo tool 以提供庞大的单工具替代方案
     - [ ] feat(ai_chat): 显示单次输出计时器
+    - [ ] feat(ai_chat): 设置发送快捷键 ctrl+enter | enter | none
+    - [ ] feat(ai): 显示ai的工具原始调用信息
+    - [ ] feat(tool): 提供工具
+- [ ] refactor: 将 mistake 表改名为 question 表，通过 tag 区分是否为错题（赶快做或者不做）
+    - 做：可以便于理解表内容，消歧义
+    - 不做：避免大规模重构，但是极容易产生误解
+- [ ] feat(repo): 添加 mistakesReason 的 repo 支持 
 - [ ] feat: 导出知识点八股文文档
 - [ ] feat(prompt): 添加prompt管理页面
 - [x] feat(prompt): 添加有关prompt以告知ai工具的规范使用

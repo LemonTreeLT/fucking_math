@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fucking_math/ai/config/ai_config.dart';
 import 'package:fucking_math/ai/engine/ai_task_processor.dart';
@@ -17,6 +19,7 @@ import 'package:fucking_math/ai/tools/orchestrator/phrase_sub_handler.dart';
 import 'package:fucking_math/ai/tools/orchestrator/tag_sub_handler.dart';
 import 'package:fucking_math/ai/tools/orchestrator/word_sub_handler.dart';
 import 'package:fucking_math/ai/types.dart';
+import 'package:fucking_math/providers/images.dart';
 import 'package:fucking_math/widget/ai/ai_chat_items.dart';
 import 'package:get_it/get_it.dart';
 
@@ -30,6 +33,7 @@ class AiChat extends StatefulWidget {
 class _AiChatState extends State<AiChat> {
   int? _sessionId;
   List<Message> _messages = [];
+  List<({String path, String name})> _pendingImages = [];
   bool _isLoading = false;
   String? _statusMessage;
   bool _canRegenerate = false;
@@ -117,23 +121,44 @@ class _AiChatState extends State<AiChat> {
     });
   }
 
+  Future<void> _pickImages() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      allowMultiple: true,
+    );
+    if (result == null) return;
+    final picked = result.files
+        .where((f) => f.path != null)
+        .map((f) => (path: f.path!, name: f.name))
+        .toList();
+    setState(() => _pendingImages = [..._pendingImages, ...picked]);
+  }
+
   Future<void> _sendMessage() async {
     final text = _inputCtrl.text.trim();
-    if (text.isEmpty || _sessionId == null) return;
+    if ((text.isEmpty && _pendingImages.isEmpty) || _sessionId == null) return;
     final provider = _aiConfig?.activeProvider;
     if (provider == null) return;
 
     _inputCtrl.clear();
+    final imagesToSend = List<({String path, String name})>.from(_pendingImages);
     setState(() {
       _isLoading = true;
       _canRegenerate = false;
+      _pendingImages = [];
     });
+
+    List<int>? imageIds;
+    if (imagesToSend.isNotEmpty) {
+      imageIds = await GetIt.I<ImagesProvider>().uploadImages(imagesToSend);
+    }
 
     await _historyRepo!.addMessage(
       providerId: provider.id,
       role: Roles.user,
       content: text,
       sessionId: _sessionId,
+      imageIds: imageIds,
     );
     setState(
       () => _messages = [
@@ -456,6 +481,7 @@ class _AiChatState extends State<AiChat> {
                               isUser: msg.role == Roles.user,
                               content: msg.content,
                               context: context,
+                              images: msg.images,
                             ),
                             actionBtn,
                           ],
@@ -484,10 +510,58 @@ class _AiChatState extends State<AiChat> {
             ),
           ),
         const Divider(height: 1),
+        if (_pendingImages.isNotEmpty)
+          SizedBox(
+            height: 80,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              itemCount: _pendingImages.length,
+              itemBuilder: (ctx, i) => Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 6),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: Image.file(
+                        File(_pendingImages[i].path),
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stack) => const Icon(Icons.broken_image, size: 40),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 0,
+                    right: 6,
+                    child: GestureDetector(
+                      onTap: () => setState(
+                        () => _pendingImages = [..._pendingImages]..removeAt(i),
+                      ),
+                      child: Container(
+                        width: 18,
+                        height: 18,
+                        decoration: const BoxDecoration(
+                          color: Colors.black54,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.close, size: 12, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         Padding(
           padding: const EdgeInsets.only(top: 8),
           child: Row(
             children: [
+              IconButton(
+                icon: const Icon(Icons.attach_file),
+                onPressed: _isLoading ? null : _pickImages,
+              ),
               Expanded(
                 child: TextField(
                   controller: _inputCtrl,

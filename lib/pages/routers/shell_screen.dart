@@ -20,7 +20,7 @@ class ShellScreen extends StatelessWidget {
               (r) => NavigationRailDestination(
                 icon: Icon(r.navIcon),
                 selectedIcon: Icon(r.navSelectedIcon),
-                label: Text(r.navLablel!),
+                label: Text(r.navLabel!),
               ),
             )
             .toList(),

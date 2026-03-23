@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fucking_math/pages/ai/home.dart';
 import 'package:fucking_math/pages/debug.dart';
 import 'package:fucking_math/pages/english/editor.dart';
 import 'package:fucking_math/pages/english/home.dart';
@@ -29,7 +30,7 @@ final List<RouterConfig> _routesConfig = [
     name: '首页',
     builder: (context, state) => const Home(),
     showInNav: true,
-    navLablel: '主页',
+    navLabel: '主页',
     navIcon: Icons.home_outlined,
     navSelectedIcon: Icons.home,
   ),
@@ -49,7 +50,7 @@ final List<RouterConfig> _routesConfig = [
         builder: (context, state) => const EnglishLearning(),
         // 这一项代表了整个“英语”模块在导航栏中的位置
         showInNav: true,
-        navLablel: '英语',
+        navLabel: '英语',
         navIcon: Icons.abc_outlined,
         navSelectedIcon: Icons.abc,
       ),
@@ -74,7 +75,7 @@ final List<RouterConfig> _routesConfig = [
         name: '错误练习',
         builder: (context, state) => const MistakesPractise(),
         showInNav: true,
-        navLablel: '错题本',
+        navLabel: '错题本',
         navIcon: Icons.edit_note_outlined,
         navSelectedIcon: Icons.edit_note,
       ),
@@ -98,7 +99,7 @@ final List<RouterConfig> _routesConfig = [
         name: '复习知识点',
         builder: (c, s) => const KnowledgeLearning(),
         showInNav: true,
-        navLablel: "知识点",
+        navLabel: "知识点",
         navIcon: Icons.checklist,
         navSelectedIcon: Icons.checklist_outlined,
       ),
@@ -117,7 +118,7 @@ final List<RouterConfig> _routesConfig = [
     name: 'Tag Manager',
     builder: (c, s) => const TagsManager(),
     showInNav: true,
-    navLablel: "Tags",
+    navLabel: "Tags",
     navIcon: Icons.tag,
     navSelectedIcon: Icons.tag_outlined,
   ),
@@ -132,9 +133,18 @@ final List<RouterConfig> _routesConfig = [
     name: 'Settings',
     builder: (c, s) => const Settings(),
     showInNav: true,
-    navLablel: 'Settings',
+    navLabel: 'Settings',
     navIcon: Icons.settings,
     navSelectedIcon: Icons.settings_outlined,
+  ),
+  RouterConfig(
+    path: '/ai',
+    name: 'Ai',
+    builder: (c, s) => const AiChatHome(),
+    showInNav: true,
+    navLabel: 'AI',
+    navIcon: Icons.auto_awesome,
+    navSelectedIcon: Icons.auto_awesome_outlined,
   ),
   // 调试页面
   if (kDebugMode)
@@ -143,7 +153,7 @@ final List<RouterConfig> _routesConfig = [
       name: '调试页面',
       builder: (context, state) => const Debug(),
       showInNav: true,
-      navLablel: '调试',
+      navLabel: '调试',
       navIcon: Icons.bug_report,
       navSelectedIcon: Icons.bug_report_outlined,
     ),
@@ -173,7 +183,7 @@ class RouterConfig {
   final Widget Function(BuildContext, GoRouterState) builder;
   // 用于导航栏
   final bool showInNav;
-  final String? navLablel;
+  final String? navLabel;
   final IconData? navIcon;
   final IconData? navSelectedIcon;
 
@@ -187,7 +197,7 @@ class RouterConfig {
     required this.name,
     required this.builder,
     this.showInNav = false,
-    this.navLablel,
+    this.navLabel,
     this.navIcon,
     this.navSelectedIcon,
     this.routes = const [],
