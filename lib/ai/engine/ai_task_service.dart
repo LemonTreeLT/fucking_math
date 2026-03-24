@@ -20,6 +20,7 @@ class AiTaskService {
     required List<BaseAiTool> tools,
     String? systemPrompt,
     int maxIterations = 10,
+    void Function()? onTitleChanged,
   }) {
     final provider = _aiConfig.activeProvider;
     if (provider == null) {
@@ -37,6 +38,7 @@ class AiTaskService {
       aiConfig: _aiConfig,
       historyRepo: _historyRepo,
       maxIterations: maxIterations,
+      onTitleChanged: onTitleChanged,
     );
 
     _tasks[taskId] = processor;

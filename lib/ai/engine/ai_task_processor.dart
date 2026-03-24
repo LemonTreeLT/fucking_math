@@ -19,6 +19,7 @@ class AiTaskProcessor {
   final AiConfig aiConfig;
   final AiHistoryRepository historyRepo;
   final int maxIterations;
+  final void Function()? onTitleChanged;
 
   Completer<bool>? _pendingInteraction;
   bool _isInterrupted = false;
@@ -38,6 +39,7 @@ class AiTaskProcessor {
     required this.aiConfig,
     required this.historyRepo,
     this.maxIterations = 10,
+    this.onTitleChanged,
   }) {
     _toolMap = {for (var t in tools) t.name: t};
   }
@@ -125,6 +127,12 @@ class AiTaskProcessor {
               final context = ToolContext(
                 onLog: (msg) => _eventController.add(LogEvent(msg)),
                 onConfirm: _waitForUser,
+                getTitle: () async =>
+                    (await historyRepo.getSessionById(sessionId))?.title,
+                setTitle: (title) async {
+                  await historyRepo.updateSessionTitle(sessionId, title);
+                  onTitleChanged?.call();
+                },
               );
               try {
                 result = await tool.call(toolCall.arguments, context);

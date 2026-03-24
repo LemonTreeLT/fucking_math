@@ -35,12 +35,24 @@ class ToolCall {
 class ToolContext {
   final void Function(String message) onLog;
   final Future<bool> Function(String prompt) onConfirm;
+  final Future<String?> Function() getTitle;
+  final Future<void> Function(String title) setTitle;
 
-  const ToolContext({required this.onLog, required this.onConfirm});
+  const ToolContext({
+    required this.onLog,
+    required this.onConfirm,
+    required this.getTitle,
+    required this.setTitle,
+  });
 
   /// 不需要交互的默认上下文（用于简单场景/测试）
   static final noop = ToolContext(
     onLog: (_) {},
     onConfirm: (_) async => true,
+    getTitle: _noopGetTitle,
+    setTitle: _noopSetTitle,
   );
+
+  static Future<String?> _noopGetTitle() async => null;
+  static Future<void> _noopSetTitle(String _) async {}
 }
