@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:fucking_math/ai/config/ai_config.dart';
 import 'package:fucking_math/ai/core/ai_client.dart';
@@ -145,7 +146,7 @@ class AiTaskProcessor {
             await historyRepo.addMessage(
               providerId: providerId,
               role: Roles.tool,
-              content: '[${toolCall.name}]\n$result',
+              content: '[${toolCall.name}]\n${jsonEncode(toolCall.arguments)}\n===\n$result',
               sessionId: sessionId,
               toolId: toolCall.id,
             );

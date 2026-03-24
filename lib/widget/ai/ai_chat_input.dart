@@ -2,12 +2,15 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fucking_math/configs/config.dart';
 import 'package:fucking_math/widget/ai/ai_chat_prompt_overlay.dart';
 
-typedef OnSendMessage = Future<void> Function(
-  String text,
-  List<({String path, String name})> images,
-);
+typedef OnSendMessage =
+    Future<void> Function(
+      String text,
+      List<({String path, String name})> images,
+    );
 
 class AiChatInput extends StatefulWidget {
   const AiChatInput({
@@ -58,8 +61,6 @@ class _AiChatInputState extends State<AiChatInput> {
                         border: OutlineInputBorder(),
                         isDense: true,
                       ),
-                      onSubmitted: (_) =>
-                          widget.isLoading ? null : _handleSend(),
                       maxLines: null,
                     ),
                   ),
@@ -89,17 +90,32 @@ class _AiChatInputState extends State<AiChatInput> {
       itemCount: _pendingImages.length,
       itemBuilder: (ctx, i) => Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 6),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(6),
-              child: Image.file(
-                File(_pendingImages[i].path),
-                width: 60,
-                height: 60,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stack) =>
-                    const Icon(Icons.broken_image, size: 40),
+          GestureDetector(
+            onTap: () => showDialog(
+              context: context,
+              builder: (_) => Dialog(
+                child: InteractiveViewer(
+                  child: Image.file(
+                    File(_pendingImages[i].path),
+                    fit: BoxFit.contain,
+                    errorBuilder: (_, _, _) =>
+                        const Icon(Icons.broken_image, size: 100),
+                  ),
+                ),
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(right: 6),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: Image.file(
+                  File(_pendingImages[i].path),
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stack) =>
+                      const Icon(Icons.broken_image, size: 40),
+                ),
               ),
             ),
           ),
@@ -151,9 +167,34 @@ class _AiChatInputState extends State<AiChatInput> {
     super.dispose();
   }
 
-  KeyEventResult _handleKeyEvent(FocusNode node, KeyEvent event) =>
-      _promptKey.currentState?.handleKeyEvent(node, event) ??
-      KeyEventResult.ignored;
+  KeyEventResult _handleKeyEvent(FocusNode node, KeyEvent event) {
+    final overlayResult = _promptKey.currentState?.handleKeyEvent(node, event);
+    if (overlayResult == KeyEventResult.handled) return KeyEventResult.handled;
+
+    if (event is! KeyDownEvent) return KeyEventResult.ignored;
+    if (widget.isLoading) return KeyEventResult.ignored;
+
+    final isEnter = event.logicalKey == LogicalKeyboardKey.enter;
+    if (!isEnter) return KeyEventResult.ignored;
+
+    final isCtrl = HardwareKeyboard.instance.isControlPressed;
+    final isShift = HardwareKeyboard.instance.isShiftPressed;
+
+    switch (Config.sendShortcut) {
+      case 'enter':
+        if (!isCtrl && !isShift) {
+          _handleSend();
+          return KeyEventResult.handled;
+        }
+      case 'ctrl_enter':
+        if (isCtrl) {
+          _handleSend();
+          return KeyEventResult.handled;
+        }
+      // 'none': no keyboard shortcut
+    }
+    return KeyEventResult.ignored;
+  }
 
   Future<void> _pickImages() async {
     final result = await FilePicker.platform.pickFiles(

@@ -4,7 +4,7 @@ import 'package:fucking_math/db/tables/tables_knowledge.dart';
 import 'package:fucking_math/db/tables/tables_tags.dart';
 import 'package:fucking_math/utils/types.dart' show SubjectConverter;
 
-// Warning: This sturcture is designed more for math questions, may need adjustments for other subjects.
+// Warning: This structure is designed more for math questions, may need adjustments for other subjects.
 // 题目表
 class Questions extends Table {
   IntColumn get id => integer().autoIncrement()();

@@ -7,6 +7,32 @@ import 'package:fucking_math/ai/types.dart';
 import 'package:fucking_math/utils/types.dart' show ImageStorage;
 import 'package:markdown/markdown.dart' as md;
 
+// Parses "[ToolName]\n{argsJson}\n===\nresult" (new format)
+// or "[ToolName]\nresult" (old format, backward compatible)
+({String label, String? args, String result}) parseToolContent(String content) {
+  final newline = content.indexOf('\n');
+  final bracketEnd = content.indexOf(']');
+  final hasMeta =
+      content.startsWith('[') &&
+      bracketEnd != -1 &&
+      (newline == -1 || bracketEnd < newline);
+  final label = hasMeta ? content.substring(1, bracketEnd) : 'Tool';
+  final body = hasMeta && newline != -1
+      ? content.substring(newline + 1)
+      : content;
+
+  const sep = '\n===\n';
+  final sepIdx = body.indexOf(sep);
+  if (sepIdx != -1) {
+    return (
+      label: label,
+      args: body.substring(0, sepIdx),
+      result: body.substring(sepIdx + sep.length),
+    );
+  }
+  return (label: label, args: null, result: body);
+}
+
 // Inline syntax for display math: $$...$$
 class _DisplayMathSyntax extends md.InlineSyntax {
   _DisplayMathSyntax() : super(r'\$\$([^\$]+)\$\$');
@@ -74,14 +100,30 @@ Widget buildChatBubble({
           runSpacing: 6,
           children: images
               .map(
-                (img) => ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: Image.file(
-                    File(img.imagePath),
-                    width: 60,
-                    height: 60,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stack) => const Icon(Icons.broken_image, size: 40),
+                (img) => GestureDetector(
+                  onTap: () => showDialog(
+                    context: context,
+                    builder: (_) => Dialog(
+                      child: InteractiveViewer(
+                        child: Image.file(
+                          File(img.imagePath),
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, _, _) =>
+                              const Icon(Icons.broken_image, size: 100),
+                        ),
+                      ),
+                    ),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: Image.file(
+                      File(img.imagePath),
+                      width: 60,
+                      height: 60,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stack) =>
+                          const Icon(Icons.broken_image, size: 40),
+                    ),
                   ),
                 ),
               )
@@ -92,13 +134,19 @@ Widget buildChatBubble({
           MarkdownBody(
             data: content,
             selectable: true,
-            styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
-                .copyWith(p: TextStyle(color: cs.onPrimary)),
-            extensionSet: md.ExtensionSet(
-              md.ExtensionSet.gitHubFlavored.blockSyntaxes,
-              [_DisplayMathSyntax(), _InlineMathSyntax(), ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes],
-            ),
-            builders: {'math-display': _MathBuilder(isDisplay: true), 'math-inline': _MathBuilder(isDisplay: false)},
+            styleSheet: MarkdownStyleSheet.fromTheme(
+              Theme.of(context),
+            ).copyWith(p: TextStyle(color: cs.onPrimary)),
+            extensionSet:
+                md.ExtensionSet(md.ExtensionSet.gitHubFlavored.blockSyntaxes, [
+                  _DisplayMathSyntax(),
+                  _InlineMathSyntax(),
+                  ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes,
+                ]),
+            builders: {
+              'math-display': _MathBuilder(isDisplay: true),
+              'math-inline': _MathBuilder(isDisplay: false),
+            },
           ),
         ],
       ],
@@ -107,9 +155,7 @@ Widget buildChatBubble({
     bodyWidget = MarkdownBody(
       data: content,
       selectable: true,
-      styleSheet: MarkdownStyleSheet.fromTheme(
-        Theme.of(context),
-      ).copyWith(
+      styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
         p: TextStyle(
           color: isUser ? cs.onPrimary : cs.onSurface,
           fontStyle: isThinking ? FontStyle.italic : FontStyle.normal,
@@ -123,14 +169,12 @@ Widget buildChatBubble({
           fontSize: 13,
         ),
       ),
-      extensionSet: md.ExtensionSet(
-        md.ExtensionSet.gitHubFlavored.blockSyntaxes,
-        [
-          _DisplayMathSyntax(),
-          _InlineMathSyntax(),
-          ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes,
-        ],
-      ),
+      extensionSet:
+          md.ExtensionSet(md.ExtensionSet.gitHubFlavored.blockSyntaxes, [
+            _DisplayMathSyntax(),
+            _InlineMathSyntax(),
+            ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes,
+          ]),
       builders: {
         'math-display': _MathBuilder(isDisplay: true),
         'math-inline': _MathBuilder(isDisplay: false),
@@ -148,8 +192,8 @@ Widget buildChatBubble({
         color: isUser
             ? cs.primary
             : isThinking
-                ? cs.surfaceContainerHighest
-                : cs.surfaceContainer,
+            ? cs.surfaceContainerHighest
+            : cs.surfaceContainer,
         borderRadius: BorderRadius.circular(12),
       ),
       child: bodyWidget,
@@ -161,17 +205,13 @@ Widget buildToolRow(
   String content,
   void Function(String) onExpand,
   BuildContext context,
-  Widget actionButtons
+  Widget actionButtons,
 ) {
   final cs = Theme.of(context).colorScheme;
-
-  // Parse "[ToolName]\nresult" format written by AiTaskProcessor
-  final newline = content.indexOf('\n');
-  final bracketEnd = content.indexOf(']');
-  final hasMeta =
-      content.startsWith('[') && bracketEnd != -1 && bracketEnd < newline;
-  final toolLabel = hasMeta ? content.substring(1, bracketEnd) : 'Tool';
-  final body = hasMeta ? content.substring(newline + 1) : content;
+  final parsed = parseToolContent(content);
+  final preview = parsed.result.length > 100
+      ? '${parsed.result.substring(0, 100)}...'
+      : parsed.result;
 
   return Container(
     margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
@@ -194,7 +234,7 @@ Widget buildToolRow(
             borderRadius: BorderRadius.circular(4),
           ),
           child: Text(
-            toolLabel,
+            parsed.label,
             style: TextStyle(
               fontSize: 11,
               color: cs.onSecondaryContainer,
@@ -205,7 +245,7 @@ Widget buildToolRow(
         const SizedBox(width: 6),
         Expanded(
           child: SelectableText(
-            body.length > 120 ? '${body.substring(0, 100)}...' : body,
+            preview,
             style: TextStyle(
               fontSize: 12,
               fontFamily: 'monospace',
@@ -213,17 +253,16 @@ Widget buildToolRow(
             ),
           ),
         ),
-        if (body.length > 120)
-          TextButton(
-            onPressed: () => onExpand(content),
-            style: TextButton.styleFrom(
-              padding: EdgeInsets.zero,
-              minimumSize: const Size(40, 24),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            child: const Text('展开', style: TextStyle(fontSize: 12)),
+        TextButton(
+          onPressed: () => onExpand(content),
+          style: TextButton.styleFrom(
+            padding: EdgeInsets.zero,
+            minimumSize: const Size(40, 24),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
-          actionButtons
+          child: const Text('展开', style: TextStyle(fontSize: 12)),
+        ),
+        actionButtons,
       ],
     ),
   );
@@ -255,15 +294,12 @@ Widget buildMessageActions(
   );
 }
 
-IconButton _actionBtn(
-  IconData icon,
-  String tooltip,
-  VoidCallback onPressed,
-) => IconButton(
-  onPressed: onPressed,
-  icon: Icon(icon),
-  iconSize: 14,
-  padding: EdgeInsets.zero,
-  constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
-  tooltip: tooltip,
-);
+IconButton _actionBtn(IconData icon, String tooltip, VoidCallback onPressed) =>
+    IconButton(
+      onPressed: onPressed,
+      icon: Icon(icon),
+      iconSize: 14,
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+      tooltip: tooltip,
+    );

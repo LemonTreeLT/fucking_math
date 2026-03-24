@@ -26,6 +26,7 @@ class Config {
   static late final File configFile;
   static late final bool isDesktop;
   static late final Directory imagesStorage;
+  static String sendShortcut = 'enter';
 
   // =============== LOADER CODES ABOVE ===============
   static Future<void> initialize() async {
@@ -71,6 +72,7 @@ class Config {
   dbFileName = ConfigLoader.loadDatabaseName(config);
   dbFile = ConfigLoader.loadDatabaseFile(config, defaultDataStorage, dbFileName);
   imagesStorage = ConfigLoader.loadImageDirectory(config, defaultDataStorage);
+  sendShortcut = (config['Chat']?['send_shortcut'] as String?) ?? 'enter';
 
   // 7. 确保最终文件夹存在
   await imagesStorage.create(recursive: true);
@@ -100,6 +102,14 @@ class Config {
         file: configFile,
         section: "Data",
         key: "path",
+        newValue: newValue,
+      );
+
+  static Future<void> saveSendShortcut(String newValue) async =>
+      await TomlEditor.updateValue(
+        file: configFile,
+        section: "Chat",
+        key: "send_shortcut",
         newValue: newValue,
       );
 }

@@ -24,16 +24,16 @@
 - [x] 加急: 完成基础配置文件加载与自定义数据库路径
 - [ ] 加急：ai 聊天的完整实现
     - [ ] feat: 内置 ai 助手，询问问题时自动标记或者创建有关知识点
-        - [x] feat(ai): Prompt support
-        - [ ] feat(prompt): 添加system prompt支持 
+        - [ ] feat(ai): Prompt support
+        - [x] feat(prompt): 添加system prompt支持
     - [ ] feat(prompt): 设置ai指导自动标记题目与获取信息
-    - [ ] feat(ai): Images upload support
-        - [ ] feat(ai_image): Images will display on chat message before getting ai response
-        - [ ] feat(ai_image): User can enlarge previews.
+    - [x] feat(ai): Images upload support
+        - [x] feat(ai_image): Images will display on chat message before getting ai response
+        - [x] feat(ai_image): User can enlarge previews.
         - [x] bugfix(ai_images): System can not find file.
     - [ ] 加急 feat(ai)：完成拍照上传自动解析题目
     - [x] 加急 feat(ai): 完成 ai 有关基础功能
-    - [ ] feat(at): 在startTask之前支持system prompt设定
+    - [x] feat(at): 在startTask之前支持system prompt设定
     - [x] feat(ai): 支持 `/` 快速呼出 prompt list
     - [ ] feat(tool): 题目答案的支持
     - [ ] feat(ai): 修改master工具使其在修改前需要询问用户
@@ -42,21 +42,22 @@
     - [x] feat(ai): 对话保存与选择
     - [ ] feat(ai): 小试卷出题功能
     - [ ] feat(ai): 创建 repo tool 以提供庞大的单工具替代方案
-    - [ ] refactor(ai_chat): 通过provider管理模型状态
     - [x] feat(ai_chat): 不保存空session
-    - [ ] feat(ai_chat): 显示单次输出计时器
-    - [ ] feat(ai_chat): 设置发送快捷键 ctrl+enter | enter | none
-    - [ ] feat(ai): 显示ai的工具原始调用信息
-    - [ ] bugfix(ai_provider): 添加模型时ai chat无法获取最新的模型列表，返回provider edit时无法加载最新模型数据（猜测是provider）
+    - [x] feat(ai_chat): 显示单次输出计时器
+    - [x] feat(ai_chat): 设置发送快捷键 ctrl+enter | enter | none
+    - [ ] feat(ai_chat): 支持 c-v 粘贴图像
+    - [ ] feat(ai_chat): 添加对消息的编辑功能（包括ai与用户）
+    - [ ] feat(ai_chat): 在system_prompt选择中支持从列表中加载已有prompt
+    - [x] feat(ai): 显示ai的工具原始调用信息
+    - [x] bugfix(ai_provider): 添加模型时ai chat无法获取最新的模型列表，返回provider edit时无法加载最新模型数据
+    - [x] refactor(ai_chat): 通过provider管理模型状态
 - [x] refactor: 将 mistake 表改名为 question 表，通过 tag 区分是否为错题
-    - 做：可以便于理解表内容，消歧义
-    - 不做：避免大规模重构，但是极容易产生误解
 - [ ] feat(repo): 添加 questionsReason 的 repo 支持
 - [ ] feat: 导出知识点八股文文档
 - [x] feat(prompt): 添加prompt管理页面
 - [x] feat(prompt): 添加有关prompt以告知ai工具的规范使用
 - [x] feat(repo): 为所有repo提供根据id更新指定字段的方式
-    - [ ] feat(tool): 为 master 工具提供所有 repo 的 update 方法
+    - ~~[ ] feat(tool): 为 master 工具提供所有 repo 的 update 方法~~
 - [x] feat(ai_provider): 模型名字保存与自动输入功能
 - [x] bug(ai_provider): 切换供应商不会对应切换原供应商的active状态
 - [x] 重构: Provider 改为统一接受对应 Repo，Repo 通过GetIt注册单例

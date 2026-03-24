@@ -12,6 +12,8 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingState extends State<Settings> {
+  String _sendShortcut = Config.sendShortcut;
+
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
@@ -33,6 +35,8 @@ class _SettingState extends State<Settings> {
             child: const Text("Prompt 管理"),
           ),
           const SizedBox(height: 16),
+          _buildSendShortcutSelector(),
+          const SizedBox(height: 16),
           Row(
             children: [
               Column(
@@ -42,6 +46,24 @@ class _SettingState extends State<Settings> {
           ),
         ],
       ),
+    ),
+  );
+
+  Widget _buildSendShortcutSelector() => _getGenSettingCard(
+    hint: '发送快捷键',
+    child: DropdownButton<String>(
+      value: _sendShortcut,
+      items: const [
+        DropdownMenuItem(value: 'enter', child: Text('Enter')),
+        DropdownMenuItem(value: 'ctrl_enter', child: Text('Ctrl + Enter')),
+        DropdownMenuItem(value: 'none', child: Text('仅按钮')),
+      ],
+      onChanged: (v) async {
+        if (v == null) return;
+        setState(() => _sendShortcut = v);
+        Config.sendShortcut = v;
+        await Config.saveSendShortcut(v);
+      },
     ),
   );
 

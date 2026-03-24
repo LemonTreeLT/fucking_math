@@ -19,8 +19,11 @@ import 'package:fucking_math/ai/tools/orchestrator/tag_sub_handler.dart';
 import 'package:fucking_math/ai/tools/orchestrator/word_sub_handler.dart';
 import 'package:fucking_math/ai/types.dart';
 import 'package:fucking_math/providers/images.dart';
+import 'package:fucking_math/utils/types.dart' show ImageStorage;
 import 'package:fucking_math/widget/ai/ai_chat_history.dart';
 import 'package:fucking_math/widget/ai/ai_chat_input.dart';
+import 'package:fucking_math/widget/ai/ai_chat_items.dart'
+    show parseToolContent;
 import 'package:fucking_math/widget/ai/ai_chat_message_list.dart';
 import 'package:get_it/get_it.dart';
 
@@ -57,7 +60,7 @@ class _AiChatState extends State<AiChat> {
             onShowContent: _showContentDialog,
           ),
         ),
-        if (_statusMessage != null) _buildStatus(),
+        if (_isLoading) _buildStatus(),
         const Divider(height: 1),
         AiChatInput(
           isLoading: _isLoading,
@@ -81,7 +84,20 @@ class _AiChatState extends State<AiChat> {
           onRename: _renameSession,
           onDelete: _deleteSession,
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 4),
+        IconButton(
+          icon: Icon(
+            _systemPrompt != null
+                ? Icons.psychology
+                : Icons.psychology_outlined,
+            color: _systemPrompt != null
+                ? Theme.of(context).colorScheme.primary
+                : null,
+          ),
+          tooltip: 'System Prompt',
+          onPressed: _showSystemPromptEditor,
+        ),
+        const SizedBox(width: 4),
         Expanded(child: _buildModelSelector()),
       ],
     ),
@@ -121,38 +137,114 @@ class _AiChatState extends State<AiChat> {
     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     child: Row(
       children: [
-        const SizedBox(
-          width: 16,
-          height: 16,
-          child: CircularProgressIndicator(strokeWidth: 2),
-        ),
-        const SizedBox(width: 8),
-        Text(
-          _statusMessage!,
-          style: TextStyle(color: Colors.grey[600], fontSize: 12),
-        ),
+        if (_statusMessage != null)
+          Text(
+            _statusMessage!,
+            style: TextStyle(color: Colors.grey[600], fontSize: 12),
+          ),
+        if (_elapsedDisplay.isNotEmpty) ...[
+          if (_statusMessage != null) const SizedBox(width: 8),
+          Text(
+            _elapsedDisplay,
+            style: TextStyle(color: Colors.grey[500], fontSize: 12),
+          ),
+        ],
       ],
     ),
   );
 
-  void _showContentDialog(String content) => showDialog(
-    context: context,
-    builder: (ctx) => AlertDialog(
-      title: const Text('工具结果'),
-      content: SingleChildScrollView(
-        child: SelectableText(
-          content,
-          style: const TextStyle(fontSize: 12, fontFamily: 'monospace'),
+  void _showContentDialog(String content) {
+    final parsed = parseToolContent(content);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('工具详情: ${parsed.label}'),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '调用参数',
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Theme.of(ctx).colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 4),
+              SelectableText(
+                parsed.args ?? '无参数数据',
+                style: const TextStyle(fontSize: 12, fontFamily: 'monospace'),
+              ),
+              const Divider(height: 16),
+              Text(
+                '返回结果',
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Theme.of(ctx).colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 4),
+              SelectableText(
+                parsed.result,
+                style: const TextStyle(fontSize: 12, fontFamily: 'monospace'),
+              ),
+            ],
+          ),
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('关闭'),
+          ),
+        ],
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(ctx),
-          child: const Text('关闭'),
+    );
+  }
+
+  Future<void> _showSystemPromptEditor() async {
+    final ctrl = TextEditingController(text: _systemPrompt ?? '');
+    final result = await showDialog<String?>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('System Prompt'),
+        content: SizedBox(
+          width: 500,
+          height: 280,
+          child: TextField(
+            controller: ctrl,
+            maxLines: null,
+            expands: true,
+            textAlignVertical: TextAlignVertical.top,
+            decoration: const InputDecoration(
+              hintText: '输入系统提示词...',
+              border: OutlineInputBorder(),
+              alignLabelWithHint: true,
+            ),
+          ),
         ),
-      ],
-    ),
-  );
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('取消'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, ''),
+            child: const Text('清除'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, ctrl.text.trim()),
+            child: const Text('确认'),
+          ),
+        ],
+      ),
+    );
+    ctrl.dispose();
+    if (result == null) return;
+    setState(() => _systemPrompt = result.isEmpty ? null : result);
+  }
 
   // ============ LAYOUT CODES ABOVE ============
 
@@ -162,6 +254,10 @@ class _AiChatState extends State<AiChat> {
   bool _isLoading = false;
   bool _canRegenerate = false;
   String? _statusMessage;
+  DateTime? _taskStartTime;
+  Timer? _elapsedTimer;
+  String _elapsedDisplay = '';
+  String? _systemPrompt;
 
   AiTaskProcessor? _processor;
   StreamSubscription? _sub;
@@ -187,11 +283,47 @@ class _AiChatState extends State<AiChat> {
 
   @override
   void dispose() {
+    _aiConfig?.removeListener(_onAiConfigChanged);
+    _elapsedTimer?.cancel();
     _sub?.cancel();
     _processor?.interrupt();
     _modelCtrl.dispose();
     _scrollCtrl.dispose();
     super.dispose();
+  }
+
+  void _onAiConfigChanged() {
+    final models = AiProviderRepository.parseModels(
+      _aiConfig?.activeProvider?.modelsJson ?? '[]',
+    );
+    if (!mounted) return;
+    setState(() {
+      _availableModels = models;
+      if (models.isNotEmpty && (_selectedModel == null || !models.contains(_selectedModel))) {
+        _selectedModel = models.first;
+        _modelCtrl.text = models.first;
+      }
+    });
+  }
+
+  void _startElapsedTimer() {
+    _taskStartTime = DateTime.now();
+    _elapsedTimer?.cancel();
+    _elapsedTimer = Timer.periodic(const Duration(milliseconds: 100), (_) {
+      if (!mounted) return;
+      final elapsed = DateTime.now().difference(_taskStartTime!);
+      setState(
+        () => _elapsedDisplay =
+            '${(elapsed.inMilliseconds / 1000).toStringAsFixed(1)}s',
+      );
+    });
+  }
+
+  void _stopElapsedTimer() {
+    _elapsedTimer?.cancel();
+    _elapsedTimer = null;
+    _taskStartTime = null;
+    _elapsedDisplay = '';
   }
 
   Future<void> _init() async {
@@ -203,6 +335,7 @@ class _AiChatState extends State<AiChat> {
     final models = AiProviderRepository.parseModels(
       aiConfig.activeProvider?.modelsJson ?? '[]',
     );
+    aiConfig.addListener(_onAiConfigChanged);
     setState(() {
       _historyRepo = GetIt.I<AiHistoryRepository>();
       _taskService = GetIt.I<AiTaskService>();
@@ -271,12 +404,24 @@ class _AiChatState extends State<AiChat> {
       _isLoading = true;
       _canRegenerate = false;
     });
+    _startElapsedTimer();
 
     _sessionId ??= await _historyRepo!.createSession(title: 'New Chat');
 
     List<int>? imageIds;
+    List<ImageStorage>? localImages;
     if (images.isNotEmpty) {
       imageIds = await GetIt.I<ImagesProvider>().uploadImages(images);
+      if (imageIds != null && imageIds.length == images.length) {
+        localImages = List.generate(
+          imageIds.length,
+          (i) => ImageStorage(
+            imagePath: images[i].path,
+            id: imageIds![i],
+            name: images[i].name,
+          ),
+        );
+      }
     }
 
     await _historyRepo!.addMessage(
@@ -294,6 +439,7 @@ class _AiChatState extends State<AiChat> {
           content: text,
           providerId: provider.id,
           session: Session(id: _sessionId),
+          images: localImages,
         ),
       ],
     );
@@ -314,6 +460,7 @@ class _AiChatState extends State<AiChat> {
     final processor = await _taskService!.startTask(
       sessionId: _sessionId!,
       model: modelToUse,
+      systemPrompt: _systemPrompt,
       onTitleChanged: _loadSessions,
       tools: [
         GetDbSchemaTool(),
@@ -352,12 +499,14 @@ class _AiChatState extends State<AiChat> {
       case WaitUserEvent():
         _showConfirmDialog(event.prompt);
       case DoneEvent():
+        _stopElapsedTimer();
         setState(() {
           _statusMessage = null;
           _canRegenerate = true;
         });
         _reloadMessages();
       case ErrorEvent():
+        _stopElapsedTimer();
         setState(() {
           _isLoading = false;
           _statusMessage = null;
@@ -395,6 +544,7 @@ class _AiChatState extends State<AiChat> {
     _taskGeneration++;
     _sub?.cancel();
     _processor?.interrupt();
+    _stopElapsedTimer();
     setState(() {
       _isLoading = false;
       _statusMessage = null;
@@ -416,6 +566,7 @@ class _AiChatState extends State<AiChat> {
       _canRegenerate = false;
       _statusMessage = null;
     });
+    _startElapsedTimer();
     _scrollToBottom();
     await _startTask();
   }
@@ -437,6 +588,7 @@ class _AiChatState extends State<AiChat> {
       _canRegenerate = false;
       _statusMessage = null;
     });
+    _startElapsedTimer();
     _scrollToBottom();
     await _startTask();
   }

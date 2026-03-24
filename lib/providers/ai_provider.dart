@@ -72,7 +72,13 @@ class AiProviderProvider extends BaseRepositoryProvider<AiProvider, AiProviderRe
   /// 更新 AI 提供商的模型列表
   Future<void> updateModels(int providerId, List<String> models) async => justDoIt<int>(
     action: () => rep.updateModels(providerId, models),
-    onSuccess: (_) => loadProviders(),
+    onSuccess: (_) async {
+      final aiConfig = GetIt.I<AiConfig>();
+      if (aiConfig.activeProvider?.id == providerId) {
+        await aiConfig.refreshActiveProvider();
+      }
+      await loadProviders();
+    },
     errMsg: "更新模型列表失败",
   );
 }

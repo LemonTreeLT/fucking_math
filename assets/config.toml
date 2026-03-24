@@ -19,3 +19,7 @@
 [Image]
 # 图片文件夹路径
 # path = ""
+
+[Chat]
+# 发送快捷键: enter | ctrl_enter | none
+# send_shortcut = "enter"

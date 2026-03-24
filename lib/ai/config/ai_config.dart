@@ -31,6 +31,12 @@ class AiConfig extends ChangeNotifier {
   Future<void> loadActionProvider() async =>
       _activeProvider = await _repository.getActiveProvider();
 
+  /// 从 DB 重新加载激活提供商并通知监听者
+  Future<void> refreshActiveProvider() async {
+    _activeProvider = await _repository.getActiveProvider();
+    notifyListeners();
+  }
+
   /// 切换激活的 AI 提供商
   Future<void> switchProvider(int id) async {
     await _repository.setProviderActive(id);
