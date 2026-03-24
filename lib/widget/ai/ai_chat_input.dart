@@ -25,10 +25,10 @@ class AiChatInput extends StatefulWidget {
   final VoidCallback onCancel;
 
   @override
-  State<AiChatInput> createState() => _AiChatInputState();
+  State<AiChatInput> createState() => AiChatInputState();
 }
 
-class _AiChatInputState extends State<AiChatInput> {
+class AiChatInputState extends State<AiChatInput> {
   // ──────────────── Layout ────────────────
 
   @override
@@ -150,6 +150,11 @@ class _AiChatInputState extends State<AiChatInput> {
   final _layerLink = LayerLink();
   final _promptKey = GlobalKey<AiChatPromptOverlayState>();
   List<({String path, String name})> _pendingImages = [];
+
+  void setText(String text) {
+    _inputCtrl.text = text;
+    _inputCtrl.selection = TextSelection.collapsed(offset: text.length);
+  }
 
   @override
   void initState() {

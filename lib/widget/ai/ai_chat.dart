@@ -37,6 +37,8 @@ class AiChat extends StatefulWidget {
 class _AiChatState extends State<AiChat> {
   // ──────────────── Layout ────────────────
 
+  final _inputKey = GlobalKey<AiChatInputState>();
+
   @override
   Widget build(BuildContext context) {
     if (_initError != null) {
@@ -58,11 +60,13 @@ class _AiChatState extends State<AiChat> {
             onDeleteFromHere: _deleteFromHere,
             onRegenerateFrom: _regenerateFrom,
             onShowContent: _showContentDialog,
+            onEdit: _editMessage,
           ),
         ),
         if (_isLoading) _buildStatus(),
         const Divider(height: 1),
         AiChatInput(
+          key: _inputKey,
           isLoading: _isLoading,
           onSend: _onSend,
           onCancel: _cancelTask,
@@ -613,6 +617,11 @@ class _AiChatState extends State<AiChat> {
           ? _messages.sublist(0, currentIndex)
           : _messages.where((m) => !toDelete.contains(m)).toList(),
     );
+  }
+
+  Future<void> _editMessage(Message msg) async {
+    _inputKey.currentState?.setText(msg.content);
+    await _deleteFromHere(msg);
   }
 
   Future<void> _reloadMessages() async {

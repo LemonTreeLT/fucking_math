@@ -14,6 +14,7 @@ class AiChatMessageList extends StatelessWidget {
     required this.onDeleteFromHere,
     required this.onRegenerateFrom,
     required this.onShowContent,
+    required this.onEdit,
   });
 
   final List<Message> messages;
@@ -25,6 +26,7 @@ class AiChatMessageList extends StatelessWidget {
   final void Function(Message) onDeleteFromHere;
   final void Function(Message) onRegenerateFrom;
   final void Function(String) onShowContent;
+  final void Function(Message) onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +67,7 @@ class AiChatMessageList extends StatelessWidget {
           onDelete: onDelete,
           onDeleteFromHere: onDeleteFromHere,
           onRegenerate: onRegenerateFrom,
+          onEdit: onEdit,
         );
         final alignment = (msg.role == Roles.user || msg.role == Roles.tool)
             ? CrossAxisAlignment.end

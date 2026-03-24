@@ -274,6 +274,7 @@ Widget buildMessageActions(
   required void Function(Message) onDelete,
   required void Function(Message) onDeleteFromHere,
   required void Function(Message) onRegenerate,
+  required void Function(Message) onEdit,
 }) {
   if (isLoading) return const SizedBox.shrink();
   return Padding(
@@ -281,6 +282,8 @@ Widget buildMessageActions(
     child: Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        if (msg.role == Roles.user)
+          _actionBtn(Icons.edit_outlined, '编辑', () => onEdit(msg)),
         if (msg.role == Roles.assistant)
           _actionBtn(Icons.refresh, '重新生成', () => onRegenerate(msg)),
         _actionBtn(Icons.delete_outline, '删除此条', () => onDelete(msg)),
