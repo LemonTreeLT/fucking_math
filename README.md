@@ -39,11 +39,11 @@
     - [ ] feat(ai): 修改master工具使其在修改前需要询问用户
     - [ ] feat(ai): 在询问对话框中提供用户输入框，并将输入回传ai
     - [x] feat(ai): 基于工具的ai调用实现
-    - [ ] feat(ai): 对话保存与选择
+    - [x] feat(ai): 对话保存与选择
     - [ ] feat(ai): 小试卷出题功能
     - [ ] feat(ai): 创建 repo tool 以提供庞大的单工具替代方案
     - [ ] refactor(ai_chat): 通过provider管理模型状态
-    - [ ] feat(ai_chat): 不保存空session
+    - [x] feat(ai_chat): 不保存空session
     - [ ] feat(ai_chat): 显示单次输出计时器
     - [ ] feat(ai_chat): 设置发送快捷键 ctrl+enter | enter | none
     - [ ] feat(ai): 显示ai的工具原始调用信息

@@ -91,18 +91,15 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
       setState(() => _initError = '未配置 AI 提供商，请先在设置中添加提供商');
       return;
     }
-    final historyRepo = GetIt.I<AiHistoryRepository>();
-    final sessionId = await historyRepo.createSession(title: 'New Chat');
 
     final models = AiProviderRepository.parseModels(
       aiConfig.activeProvider?.modelsJson ?? '[]',
     );
 
     setState(() {
-      _historyRepo = historyRepo;
+      _historyRepo = GetIt.I<AiHistoryRepository>();
       _taskService = GetIt.I<AiTaskService>();
       _aiConfig = aiConfig;
-      _sessionId = sessionId;
       _availableModels = models;
       if (models.isNotEmpty) {
         _selectedModel = models.first;
@@ -138,13 +135,11 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
 
   Future<void> _newSession() async {
     _hideHistoryOverlay();
-    final id = await _historyRepo!.createSession(title: 'New Chat');
     setState(() {
-      _sessionId = id;
+      _sessionId = null;
       _messages = [];
       _canRegenerate = false;
     });
-    await _loadSessions();
   }
 
   Future<void> _showRenameDialog(Session s) async {
@@ -201,11 +196,8 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
     );
     if (confirmed == true && s.id != null) {
       await _historyRepo!.deleteSession(s.id!);
-      if (_sessionId == s.id) {
-        await _newSession();
-      } else {
-        await _loadSessions();
-      }
+      if (_sessionId == s.id) _newSession();
+      await _loadSessions();
     }
   }
 
@@ -561,7 +553,7 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
 
   Future<void> _sendMessage() async {
     final text = _inputCtrl.text.trim();
-    if ((text.isEmpty && _pendingImages.isEmpty) || _sessionId == null) return;
+    if (text.isEmpty && _pendingImages.isEmpty) return;
     final provider = _aiConfig?.activeProvider;
     if (provider == null) return;
 
@@ -574,6 +566,9 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
       _canRegenerate = false;
       _pendingImages = [];
     });
+
+    // Lazy session creation: only persist when first message is sent
+    _sessionId ??= await _historyRepo!.createSession(title: 'New Chat');
 
     List<int>? imageIds;
     if (imagesToSend.isNotEmpty) {
@@ -599,6 +594,7 @@ class _AiChatState extends State<AiChat> with TickerProviderStateMixin {
       ],
     );
     _scrollToBottom();
+    await _loadSessions();
     await _startTask();
   }
 
