@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fucking_math/configs/config.dart';
 import 'package:fucking_math/widget/ai/ai_chat_prompt_overlay.dart';
+import 'package:pasteboard/pasteboard.dart';
+import 'package:path_provider/path_provider.dart';
 
 typedef OnSendMessage =
     Future<void> Function(
@@ -179,6 +181,12 @@ class AiChatInputState extends State<AiChatInput> {
     if (event is! KeyDownEvent) return KeyEventResult.ignored;
     if (widget.isLoading) return KeyEventResult.ignored;
 
+    if (event.logicalKey == LogicalKeyboardKey.keyV &&
+        HardwareKeyboard.instance.isControlPressed) {
+      _pasteImageFromClipboard();
+      return KeyEventResult.ignored;
+    }
+
     final isEnter = event.logicalKey == LogicalKeyboardKey.enter;
     if (!isEnter) return KeyEventResult.ignored;
 
@@ -212,6 +220,17 @@ class AiChatInputState extends State<AiChatInput> {
         .map((f) => (path: f.path!, name: f.name))
         .toList();
     setState(() => _pendingImages = [..._pendingImages, ...picked]);
+  }
+
+  Future<void> _pasteImageFromClipboard() async {
+    final bytes = await Pasteboard.image;
+    if (bytes == null) return;
+    final tempDir = await getTemporaryDirectory();
+    final name = 'clipboard_${DateTime.now().millisecondsSinceEpoch}.png';
+    final file = File('${tempDir.path}/$name');
+    await file.writeAsBytes(bytes);
+    if (!mounted) return;
+    setState(() => _pendingImages = [..._pendingImages, (path: file.path, name: name)]);
   }
 
   Future<void> _handleSend() async {

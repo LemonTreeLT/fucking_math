@@ -22,7 +22,7 @@ class AiTaskProcessor {
   final int maxIterations;
   final void Function()? onTitleChanged;
 
-  Completer<bool>? _pendingInteraction;
+  Completer<(bool, String?)>? _pendingInteraction;
   bool _isInterrupted = false;
   final _eventController = StreamController<TaskEvent>.broadcast();
   late Conversation _conversation;
@@ -199,16 +199,16 @@ class AiTaskProcessor {
   }
 
   /// 挂起循环等待用户确认
-  Future<bool> _waitForUser(String prompt) {
-    _pendingInteraction = Completer<bool>();
+  Future<(bool, String?)> _waitForUser(String prompt) {
+    _pendingInteraction = Completer<(bool, String?)>();
     _eventController.add(WaitUserEvent(prompt));
     return _pendingInteraction!.future;
   }
 
   /// 用户回复确认结果，恢复循环
-  void respond(bool approved) {
+  void respond(bool approved, [String? message]) {
     if (_pendingInteraction != null && !_pendingInteraction!.isCompleted) {
-      _pendingInteraction!.complete(approved);
+      _pendingInteraction!.complete((approved, message));
     }
   }
 
@@ -216,7 +216,7 @@ class AiTaskProcessor {
   void interrupt() {
     _isInterrupted = true;
     if (_pendingInteraction != null && !_pendingInteraction!.isCompleted) {
-      _pendingInteraction!.complete(false);
+      _pendingInteraction!.complete((false, null));
     }
   }
 }

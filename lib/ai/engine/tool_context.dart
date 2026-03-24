@@ -34,7 +34,7 @@ class ToolCall {
 /// 工具执行上下文，注入到 BaseAiTool.call() 中，提供日志和交互能力
 class ToolContext {
   final void Function(String message) onLog;
-  final Future<bool> Function(String prompt) onConfirm;
+  final Future<(bool, String?)> Function(String prompt) onConfirm;
   final Future<String?> Function() getTitle;
   final Future<void> Function(String title) setTitle;
 
@@ -48,7 +48,7 @@ class ToolContext {
   /// 不需要交互的默认上下文（用于简单场景/测试）
   static final noop = ToolContext(
     onLog: (_) {},
-    onConfirm: (_) async => true,
+    onConfirm: (_) async => (true, null),
     getTitle: _noopGetTitle,
     setTitle: _noopSetTitle,
   );

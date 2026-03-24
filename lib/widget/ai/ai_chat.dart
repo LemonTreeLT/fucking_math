@@ -25,6 +25,7 @@ import 'package:fucking_math/widget/ai/ai_chat_input.dart';
 import 'package:fucking_math/widget/ai/ai_chat_items.dart'
     show parseToolContent;
 import 'package:fucking_math/widget/ai/ai_chat_message_list.dart';
+import 'package:fucking_math/widget/ai/ai_system_prompt_dialog.dart';
 import 'package:get_it/get_it.dart';
 
 class AiChat extends StatefulWidget {
@@ -209,43 +210,10 @@ class _AiChatState extends State<AiChat> {
   }
 
   Future<void> _showSystemPromptEditor() async {
-    final ctrl = TextEditingController(text: _systemPrompt ?? '');
     final result = await showDialog<String?>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('System Prompt'),
-        content: SizedBox(
-          width: 500,
-          height: 280,
-          child: TextField(
-            controller: ctrl,
-            maxLines: null,
-            expands: true,
-            textAlignVertical: TextAlignVertical.top,
-            decoration: const InputDecoration(
-              hintText: '输入系统提示词...',
-              border: OutlineInputBorder(),
-              alignLabelWithHint: true,
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('取消'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, ''),
-            child: const Text('清除'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, ctrl.text.trim()),
-            child: const Text('确认'),
-          ),
-        ],
-      ),
+      builder: (_) => AiSystemPromptDialog(initialPrompt: _systemPrompt),
     );
-    ctrl.dispose();
     if (result == null) return;
     setState(() => _systemPrompt = result.isEmpty ? null : result);
   }
@@ -522,27 +490,52 @@ class _AiChatState extends State<AiChat> {
     }
   }
 
-  Future<void> _showConfirmDialog(String prompt) async => _processor?.respond(
-    await showDialog<bool>(
-          context: context,
-          barrierDismissible: false,
-          builder: (ctx) => AlertDialog(
-            title: const Text('AI 请求确认'),
-            content: Text(prompt),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('拒绝'),
+  Future<void> _showConfirmDialog(String prompt) async {
+    final controller = TextEditingController();
+    final result = await showDialog<(bool, String?)>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: const Text('AI 请求确认'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(prompt),
+            const SizedBox(height: 12),
+            TextField(
+              controller: controller,
+              decoration: const InputDecoration(
+                hintText: '补充信息或拒绝理由',
+                border: OutlineInputBorder(),
+                isDense: true,
               ),
-              FilledButton(
-                onPressed: () => Navigator.pop(ctx, true),
-                child: const Text('允许'),
-              ),
-            ],
+              maxLines: 3,
+              minLines: 1,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(
+              ctx,
+              (false, controller.text.isEmpty ? null : controller.text),
+            ),
+            child: const Text('拒绝'),
           ),
-        ) ??
-        false,
-  );
+          FilledButton(
+            onPressed: () => Navigator.pop(
+              ctx,
+              (true, controller.text.isEmpty ? null : controller.text),
+            ),
+            child: const Text('允许'),
+          ),
+        ],
+      ),
+    );
+    final (approved, message) = result ?? (false, null);
+    _processor?.respond(approved, message);
+  }
 
   void _cancelTask() {
     _taskGeneration++;

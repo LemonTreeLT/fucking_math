@@ -59,9 +59,29 @@ class MasterOrchestratorTool extends BaseAiTool {
 
   @override
   Future<String> call(Map<String, dynamic> args, [ToolContext? context]) async {
+    if (context == null) {
+      return '此操作需要用户交互确认，无法在无上下文场景中执行';
+    }
+
     final actions = (args['actions'] as List).cast<Map<String, dynamic>>();
+
+    // 构建操作摘要供用户确认
+    final summary = actions.asMap().entries.map((e) {
+      final a = e.value;
+      return '${e.key + 1}. [${a['target']}] ${a['action']}'
+          '${a['data'] != null ? ' — ${jsonEncode(a['data'])}' : ''}';
+    }).join('\n');
+
+    final (confirmed, userMessage) = await context.onConfirm(
+      '即将执行 ${actions.length} 项操作：\n$summary',
+    );
+    if (!confirmed) {
+      return '用户已取消操作${userMessage != null ? '：$userMessage' : ''}';
+    }
+
     final results = await Future.wait(actions.map(_executeAction));
-    return jsonEncode(results);
+    final resultJson = jsonEncode(results);
+    return userMessage != null ? '$resultJson\n用户补充：$userMessage' : resultJson;
   }
 
   Future<Map<String, dynamic>> _executeAction(Map<String, dynamic> item) async {

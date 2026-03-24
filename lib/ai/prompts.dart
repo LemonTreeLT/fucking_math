@@ -26,6 +26,13 @@ final mathQuestionImageSolver = Prompt(
 - 遇到模糊数字（如 1/3 或 1/9），结合后续计算结果反向校验。
 """,
 );
+final generalBehaviorGuide = Prompt(
+  name: "常规行为规范指导",
+  desc: "包含了用户进行题目询问，图片上传等一系列操作的ai需要注意的事务",
+  content: r"""
+
+""",
+);
 final databaseStringConduct = Prompt(
   name: "Code of Conduct",
   desc: "Standardize data that ai push into database",

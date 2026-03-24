@@ -31,13 +31,13 @@
         - [x] feat(ai_image): Images will display on chat message before getting ai response
         - [x] feat(ai_image): User can enlarge previews.
         - [x] bugfix(ai_images): System can not find file.
-    - [ ] 加急 feat(ai)：完成拍照上传自动解析题目
+    - [x] 加急 feat(ai)：完成拍照上传自动解析题目
     - [x] 加急 feat(ai): 完成 ai 有关基础功能
     - [x] feat(at): 在startTask之前支持system prompt设定
     - [x] feat(ai): 支持 `/` 快速呼出 prompt list
     - [ ] feat(tool): 题目答案的支持
-    - [ ] feat(ai): 修改master工具使其在修改前需要询问用户
-    - [ ] feat(ai): 在询问对话框中提供用户输入框，并将输入回传ai
+    - [x] feat(ai): 修改master工具使其在修改前需要询问用户
+    - [x] feat(ai): 在询问对话框中提供用户输入框，并将输入回传ai
     - [x] feat(ai): 基于工具的ai调用实现
     - [x] feat(ai): 对话保存与选择
     - [ ] feat(ai): 小试卷出题功能
@@ -45,9 +45,9 @@
     - [x] feat(ai_chat): 不保存空session
     - [x] feat(ai_chat): 显示单次输出计时器
     - [x] feat(ai_chat): 设置发送快捷键 ctrl+enter | enter | none
-    - [ ] feat(ai_chat): 支持 c-v 粘贴图像
-    - [ ] feat(ai_chat): 添加对消息的编辑功能（包括ai与用户）
-    - [ ] feat(ai_chat): 在system_prompt选择中支持从列表中加载已有prompt
+    - [x] feat(ai_chat): 支持 c-v 粘贴图像
+    - [x] feat(ai_chat): 添加对消息的编辑功能（包括ai与用户）
+    - [x] feat(ai_chat): 在system_prompt选择中支持从列表中加载已有prompt
     - [x] feat(ai): 显示ai的工具原始调用信息
     - [x] bugfix(ai_provider): 添加模型时ai chat无法获取最新的模型列表，返回provider edit时无法加载最新模型数据
     - [x] refactor(ai_chat): 通过provider管理模型状态

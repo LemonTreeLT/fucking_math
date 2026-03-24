@@ -53,15 +53,15 @@ class RunSqlMutationTool extends BaseAiTool {
         '摘要：${result.summary}$warningText\n\n'
         'SQL：\n$sql';
 
-    final confirmed = await context.onConfirm(confirmMessage);
+    final (confirmed, userMessage) = await context.onConfirm(confirmMessage);
     if (!confirmed) {
-      return '用户已取消操作';
+      return '用户已取消操作${userMessage != null ? '：$userMessage' : ''}';
     }
 
     final db = GetIt.instance<AppDatabase>();
     try {
       await db.customStatement(sql.trim());
-      return '操作成功执行';
+      return userMessage != null ? '操作成功执行\n用户补充：$userMessage' : '操作成功执行';
     } catch (e) {
       return '执行失败：$e';
     }
