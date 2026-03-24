@@ -1,3 +1,4 @@
+import 'package:fucking_math/ai/prompts.dart' show builtInPrompts;
 import 'package:fucking_math/ai/repository/ai_prompt_repository.dart';
 import 'package:fucking_math/ai/types.dart' show Prompt;
 import 'package:fucking_math/providers/base_db_provider.dart';
@@ -8,7 +9,7 @@ class PromptProvider extends BaseRepositoryProvider<Prompt, PromptRepository>
 
   Future<void> loadPrompts() => justDoIt<List<Prompt>>(
     action: () => rep.getAllPrompts(),
-    onSuccess: setItems,
+    onSuccess: (dbPrompts) => setItems([...builtInPrompts, ...dbPrompts]),
     errMsg: "加载 Prompt 失败",
   );
 

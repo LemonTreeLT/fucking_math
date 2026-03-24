@@ -63,6 +63,7 @@
 - [x] 重构: Provider 改为统一接受对应 Repo，Repo 通过GetIt注册单例
     - [x] Repo 注册
     - [x] Provider 重构
+- [ ] bugfix: Ai 创建单词之后单词页面的 共 x 词 等数据不同步更新
 
 
 ## 大饼
